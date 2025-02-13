@@ -6,6 +6,18 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 
 public interface SkyFiAPI {
-    @GET("https://app.skyfi.com/platform-api/ping")
+    // Core
+    @GET("/ping")
     Call<Pong> ping();
+
+    @GET("/health_check")
+    Call<HealthCheck> healthCheck();
+
+    // Auth
+    @GET("/auth/whoami")
+    Call<User> whoami();
+
+    // Ordering
+    @GET("/orders")
+    Call<OrderResponse> getOrders();
 }
