@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <com.atakmap.android.gui.PanEditTextPreference
+        android:key="plugin_dmrcot_tx_interval"
+        android:title="@string/api_key" />
+</PreferenceScreen>

@@ -4,8 +4,9 @@
     <string name="app_name">SkyFi</string>
     <!-- description -->
     <string name="app_desc">Download and display satellite imagery from SkyFi</string>
-
-
+    <string name="api_key">API Key</string>
+    <string name="preferences_title">SkyFi Preferences</string>
+    <string name="preferences_summary">Set your SkyFi API key here</string>
 
 
 </resources>

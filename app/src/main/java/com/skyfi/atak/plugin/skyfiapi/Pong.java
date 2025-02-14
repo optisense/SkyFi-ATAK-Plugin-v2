@@ -1,4 +1,4 @@
-package com.skyfi.atak.plugin;
+package com.skyfi.atak.plugin.skyfiapi;
 
 public class Pong {
     String message;

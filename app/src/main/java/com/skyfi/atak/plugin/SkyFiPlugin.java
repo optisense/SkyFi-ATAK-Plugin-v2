@@ -5,6 +5,8 @@ import android.util.Log;
 
 import com.atak.plugins.impl.PluginContextProvider;
 import com.atak.plugins.impl.PluginLayoutInflater;
+import com.atakmap.app.preferences.ToolsPreferenceFragment;
+import com.skyfi.atak.plugin.skyfiapi.Pong;
 import com.skyfi.atak.plugin.skyfiapi.SkyFiAPI;
 import com.skyfi.atak.plugin.skyfiapi.UserAgentInterceptor;
 
@@ -62,6 +64,14 @@ public class SkyFiPlugin implements IPlugin {
                     }
                 })
                 .build();
+
+        ToolsPreferenceFragment.register(
+                new ToolsPreferenceFragment.ToolPreference(
+                        pluginContext.getString(R.string.preferences_title),
+                        pluginContext.getString(R.string.preferences_summary),
+                        pluginContext.getString(R.string.preferences_title),
+                        pluginContext.getResources().getDrawable(R.drawable.ic_launcher),
+                        new PreferencesFragment(pluginContext)));
 
         OkHttpClient.Builder okHttpClient = new OkHttpClient.Builder();
         okHttpClient.addInterceptor(new UserAgentInterceptor());
