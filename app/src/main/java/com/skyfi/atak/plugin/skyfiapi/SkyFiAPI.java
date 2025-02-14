@@ -16,6 +16,6 @@ public interface SkyFiAPI {
     Call<User> whoami();
 
     // Ordering
-    @GET("/orders")
+    @GET("/platform-api/orders")
     Call<OrderResponse> getOrders();
 }

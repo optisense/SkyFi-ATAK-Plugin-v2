@@ -7,6 +7,7 @@
     <string name="api_key">API Key</string>
     <string name="preferences_title">SkyFi Preferences</string>
     <string name="preferences_summary">Set your SkyFi API key here</string>
+    <string name="view_orders">View Orders</string>
 
 
 </resources>

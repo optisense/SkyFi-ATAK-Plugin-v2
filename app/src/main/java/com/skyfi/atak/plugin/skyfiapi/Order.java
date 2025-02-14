@@ -1,5 +1,6 @@
 package com.skyfi.atak.plugin.skyfiapi;
 
+import java.util.Arrays;
 import java.util.Date;
 
 public class Order {
@@ -8,7 +9,7 @@ public class Order {
     private int orderCost;
     private String ownerId;
     private String status;
-    private int aoiSqkm;
+    private float aoiSqkm;
     private String tilesUrl;
     private String downloadImageUrl;
     private String downloadPayloadUrl;
@@ -32,6 +33,40 @@ public class Order {
     private int sarAzimuthAngleMax;
     private int sarNumberOfLooks;
 
+    @Override
+    public String toString() {
+        return "Order{" +
+                "aio='" + aio + '\'' +
+                ", id='" + id + '\'' +
+                ", orderType='" + orderType + '\'' +
+                ", orderCost=" + orderCost +
+                ", ownerId='" + ownerId + '\'' +
+                ", status='" + status + '\'' +
+                ", aoiSqkm=" + aoiSqkm +
+                ", tilesUrl='" + tilesUrl + '\'' +
+                ", downloadImageUrl='" + downloadImageUrl + '\'' +
+                ", downloadPayloadUrl='" + downloadPayloadUrl + '\'' +
+                ", createdAt=" + createdAt +
+                ", deliveryDriver='" + deliveryDriver + '\'' +
+                ", webhookUrl='" + webhookUrl + '\'' +
+                ", windowStart=" + windowStart +
+                ", windowEnd=" + windowEnd +
+                ", productType='" + productType + '\'' +
+                ", resolution='" + resolution + '\'' +
+                ", priorityItem=" + priorityItem +
+                ", maxCloudCoveragePercent=" + maxCloudCoveragePercent +
+                ", maxOffNadirAngle=" + maxOffNadirAngle +
+                ", requiredProvider='" + requiredProvider + '\'' +
+                ", sarProductTypes=" + Arrays.toString(sarProductTypes) +
+                ", sarPolarisation='" + sarPolarisation + '\'' +
+                ", sarGrazingAngleMin=" + sarGrazingAngleMin +
+                ", sarGrazingAngleMax=" + sarGrazingAngleMax +
+                ", sarAzimuthAngleMin=" + sarAzimuthAngleMin +
+                ", sarAzimuthAngleMax=" + sarAzimuthAngleMax +
+                ", sarNumberOfLooks=" + sarNumberOfLooks +
+                '}';
+    }
+
     public String getAio() {
         return aio;
     }
@@ -40,11 +75,11 @@ public class Order {
         this.aio = aio;
     }
 
-    public int getAoiSqkm() {
+    public float getAoiSqkm() {
         return aoiSqkm;
     }
 
-    public void setAoiSqkm(int aoiSqkm) {
+    public void setAoiSqkm(float aoiSqkm) {
         this.aoiSqkm = aoiSqkm;
     }
 
