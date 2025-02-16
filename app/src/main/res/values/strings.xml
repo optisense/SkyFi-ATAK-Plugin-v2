@@ -8,6 +8,8 @@
     <string name="preferences_title">SkyFi Preferences</string>
     <string name="preferences_summary">Set your SkyFi API key here</string>
     <string name="view_orders">View Orders</string>
+    <string name="settings">Settings</string>
+    <string name="km2">KM²: </string>
 
 
 </resources>

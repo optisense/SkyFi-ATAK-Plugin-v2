@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/order_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="My Order"
+        android:textSize="20sp" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/aoi_sqkm_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingEnd="5dp"
+            android:text="@string/km2"
+            android:textSize="15sp" />
+        <TextView
+            android:id="@+id/aoi_sqkm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="5.3"
+            android:textSize="15sp" />
+        <ImageView
+            android:src="@drawable/cloud"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:paddingStart="20dp"
+            />
+        <TextView
+            android:id="@+id/cloud_coverage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="5.3"
+            android:textSize="15sp" />
+    </LinearLayout>
+
+</LinearLayout>

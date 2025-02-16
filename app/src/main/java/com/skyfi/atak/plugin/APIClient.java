@@ -17,7 +17,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class APIClient {
-    private final static String LOGTAG = "SkyFi API Client";
+    private final static String LOGTAG = "SkyFiAPIClient";
     private OkHttpClient.Builder okHttpClient;
     private Retrofit retrofit;
     private SkyFiAPI skyFiAPI;

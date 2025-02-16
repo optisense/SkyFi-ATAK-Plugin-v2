@@ -1,6 +1,7 @@
 package com.skyfi.atak.plugin;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -13,6 +14,10 @@ import com.skyfi.atak.plugin.skyfiapi.OrderResponse;
 import com.skyfi.atak.plugin.skyfiapi.Pong;
 import com.skyfi.atak.plugin.skyfiapi.SkyFiAPI;
 
+import java.util.ArrayList;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import gov.tak.api.plugin.IPlugin;
 import gov.tak.api.plugin.IServiceController;
 import gov.tak.api.ui.IHostUIService;
@@ -25,7 +30,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SkyFiPlugin implements IPlugin, View.OnClickListener {
+public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickListener {
 
     private static final String LOGTAG = "SkyFiPlugin";
     IServiceController serviceController;
@@ -35,6 +40,7 @@ public class SkyFiPlugin implements IPlugin, View.OnClickListener {
     Pane templatePane;
     SkyFiAPI apiClient;
     View mainView;
+    MainRecyclerViewAdapter mainRecyclerViewAdapter;
 
     public SkyFiPlugin() {}
 
@@ -87,7 +93,6 @@ public class SkyFiPlugin implements IPlugin, View.OnClickListener {
                 Log.e(LOGTAG, "Failed to ping API", throwable);
             }
         });
-
     }
 
     @Override
@@ -133,37 +138,25 @@ public class SkyFiPlugin implements IPlugin, View.OnClickListener {
             uiService.showPane(templatePane, null);
         }
 
-        Button viewOrders = mainView.findViewById(R.id.view_orders);
-        viewOrders.setOnClickListener(this);
+        ArrayList<String> options = new ArrayList<>();
+        options.add(pluginContext.getString(R.string.view_orders));
+        options.add(pluginContext.getString(R.string.settings));
+
+        RecyclerView recyclerView = mainView.findViewById(R.id.main_recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(pluginContext));
+        mainRecyclerViewAdapter = new MainRecyclerViewAdapter(pluginContext, options);
+        mainRecyclerViewAdapter.setClickListener(this);
+        recyclerView.setAdapter(mainRecyclerViewAdapter);
     }
 
     @Override
-    public void onClick(View view) {
-        if (view.getId() == R.id.view_orders) {
-            if (apiClient == null) {
-                Log.e(LOGTAG, "Failed to view orders: apiClient is null");
-                return;
-            }
-
-            new APIClient().getApiClient().getOrders().enqueue(new Callback<OrderResponse>() {
-                @Override
-                public void onResponse(Call<OrderResponse> call, Response<OrderResponse> response) {
-                    for (Order order : response.body().getOrders()) {
-                        Log.d(LOGTAG, order.toString());
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<OrderResponse> call, Throwable throwable) {
-                    // TODO: AlertDialog
-                    Log.e(LOGTAG, "Failed to get orders: " + throwable.getLocalizedMessage(), throwable);
-                    Log.d(LOGTAG, call.request().headers().toString());
-                    for (int i=0; i<call.request().headers().size(); i++) {
-                        Log.d(LOGTAG, call.request().headers().name(i) + ": " + call.request().headers().value(i));
-                    }
-                    Log.d(LOGTAG, "URL: " + call.request().url());
-                }
-            });
+    public void onItemClick(View view, int position) {
+        Log.d(LOGTAG, "Position: " + position);
+        switch (position) {
+            case 0:
+                Intent intent = new Intent(pluginContext, Orders.class);
+                pluginContext.startActivity(intent);
+                break;
         }
     }
 }
