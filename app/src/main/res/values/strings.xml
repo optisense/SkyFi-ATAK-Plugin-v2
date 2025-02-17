@@ -10,6 +10,7 @@
     <string name="view_orders">View Orders</string>
     <string name="settings">Settings</string>
     <string name="km2">KM²: </string>
+    <string name="resolution">Resolution: </string>
 
 
 </resources>

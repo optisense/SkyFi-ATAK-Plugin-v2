@@ -14,7 +14,7 @@ public class Order {
     private String downloadImageUrl;
     private String downloadPayloadUrl;
     private Date createdAt;
-    private String aio;
+    private String aoi;
     private String deliveryDriver;
     private String webhookUrl;
     private Date windowStart;
@@ -32,11 +32,12 @@ public class Order {
     private int sarAzimuthAngleMin;
     private int sarAzimuthAngleMax;
     private int sarNumberOfLooks;
+    private Archive archive;
 
     @Override
     public String toString() {
         return "Order{" +
-                "aio='" + aio + '\'' +
+                "aio='" + aoi + '\'' +
                 ", id='" + id + '\'' +
                 ", orderType='" + orderType + '\'' +
                 ", orderCost=" + orderCost +
@@ -67,12 +68,12 @@ public class Order {
                 '}';
     }
 
-    public String getAio() {
-        return aio;
+    public String getAoi() {
+        return aoi;
     }
 
-    public void setAio(String aio) {
-        this.aio = aio;
+    public void setAoi(String aoi) {
+        this.aoi = aoi;
     }
 
     public float getAoiSqkm() {
@@ -289,5 +290,13 @@ public class Order {
 
     public void setWindowStart(Date windowStart) {
         this.windowStart = windowStart;
+    }
+
+    public Archive getArchive() {
+        return archive;
+    }
+
+    public void setArchive(Archive archive) {
+        this.archive = archive;
     }
 }

@@ -2,15 +2,15 @@ package com.skyfi.atak.plugin.skyfiapi;
 
 import java.util.Date;
 
-public class Archives {
+public class Archive {
     private String archiveId;
     private String provider;
     private String constellation;
     private String productType;
-    private int platformResolution;
+    private float platformResolution;
     private String resolution;
     private Date captureTimestamp;
-    private int cloudCoveragePercent;
+    private float cloudCoveragePercent;
     private int offNadirAngle;
     private String footprint;
     private int minSqKm;
@@ -18,9 +18,9 @@ public class Archives {
     private int priceForOneSquareKm;
     private int priceFullScene;
     private boolean openData;
-    private int totalAreaSquareKm;
+    private float totalAreaSquareKm;
     private int deliveryTimeHours;
-    private int gsd;
+    private float gsd;
     private String titlesUrl;
     private int overlapRatio;
     private int overlapSqkm;
@@ -41,11 +41,11 @@ public class Archives {
         this.captureTimestamp = captureTimestamp;
     }
 
-    public int getCloudCoveragePercent() {
+    public float getCloudCoveragePercent() {
         return cloudCoveragePercent;
     }
 
-    public void setCloudCoveragePercent(int cloudCoveragePercent) {
+    public void setCloudCoveragePercent(float cloudCoveragePercent) {
         this.cloudCoveragePercent = cloudCoveragePercent;
     }
 
@@ -73,11 +73,11 @@ public class Archives {
         this.footprint = footprint;
     }
 
-    public int getGsd() {
+    public float getGsd() {
         return gsd;
     }
 
-    public void setGsd(int gsd) {
+    public void setGsd(float gsd) {
         this.gsd = gsd;
     }
 
@@ -129,11 +129,11 @@ public class Archives {
         this.overlapSqkm = overlapSqkm;
     }
 
-    public int getPlatformResolution() {
+    public float getPlatformResolution() {
         return platformResolution;
     }
 
-    public void setPlatformResolution(int platformResolution) {
+    public void setPlatformResolution(float platformResolution) {
         this.platformResolution = platformResolution;
     }
 
@@ -185,11 +185,11 @@ public class Archives {
         this.titlesUrl = titlesUrl;
     }
 
-    public int getTotalAreaSquareKm() {
+    public float getTotalAreaSquareKm() {
         return totalAreaSquareKm;
     }
 
-    public void setTotalAreaSquareKm(int totalAreaSquareKm) {
+    public void setTotalAreaSquareKm(float totalAreaSquareKm) {
         this.totalAreaSquareKm = totalAreaSquareKm;
     }
 }

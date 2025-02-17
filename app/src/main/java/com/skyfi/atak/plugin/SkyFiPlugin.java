@@ -2,12 +2,19 @@ package com.skyfi.atak.plugin;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
 import com.atak.plugins.impl.PluginContextProvider;
 import com.atak.plugins.impl.PluginLayoutInflater;
+import com.atakmap.android.dropdown.DropDownMapComponent;
+import com.atakmap.android.dropdown.DropDownReceiver;
+import com.atakmap.android.ipc.AtakBroadcast;
+import com.atakmap.android.maps.MapEvent;
+import com.atakmap.android.maps.MapView;
 import com.atakmap.app.preferences.ToolsPreferenceFragment;
 import com.skyfi.atak.plugin.skyfiapi.Order;
 import com.skyfi.atak.plugin.skyfiapi.OrderResponse;
@@ -30,7 +37,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickListener {
+import static android.content.Context.RECEIVER_NOT_EXPORTED;
+
+public class SkyFiPlugin extends DropDownMapComponent implements IPlugin, MainRecyclerViewAdapter.ItemClickListener {
 
     private static final String LOGTAG = "SkyFiPlugin";
     IServiceController serviceController;
@@ -41,6 +50,7 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
     SkyFiAPI apiClient;
     View mainView;
     MainRecyclerViewAdapter mainRecyclerViewAdapter;
+    private MapView mapView;
 
     public SkyFiPlugin() {}
 
@@ -55,6 +65,10 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
 
         // obtain the UI service
         uiService = serviceController.getService(IHostUIService.class);
+
+        try {
+            Looper.prepare();
+        } catch (Exception e) {}
 
         // initialize the toolbar button for the plugin
 
@@ -93,6 +107,19 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
                 Log.e(LOGTAG, "Failed to ping API", throwable);
             }
         });
+
+        AtakBroadcast.DocumentedIntentFilter documentedIntentFilter = new AtakBroadcast.DocumentedIntentFilter();
+        documentedIntentFilter.addAction(Orders.ACTION);
+        registerDropDownReceiver(new Orders(MapView.getMapView(), pluginContext), documentedIntentFilter);
+    }
+
+    @Override
+    public void onCreate(Context context, Intent intent, MapView mapView) {
+        super.onCreate(context, intent, mapView);
+        this.mapView = mapView;
+        Log.d(LOGTAG, "onCreate");
+        Orders orders = new Orders(this.mapView, pluginContext);
+        registerReceiverUsingPluginContext(pluginContext, "orders", orders, Orders.ACTION);
     }
 
     @Override
@@ -149,13 +176,28 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
         recyclerView.setAdapter(mainRecyclerViewAdapter);
     }
 
+    private void registerReceiverUsingPluginContext(Context pluginContext, String name, DropDownReceiver rec, String actionName) {
+        Log.d(LOGTAG, "Registering " + name + " receiver with intent filter");
+        AtakBroadcast.DocumentedIntentFilter mainIntentFilter = new AtakBroadcast.DocumentedIntentFilter();
+        mainIntentFilter.addAction(actionName);
+        //this.registerReceiver(pluginContext, rec, mainIntentFilter);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mainView.getContext().registerReceiver(new Orders(mapView, pluginContext), mainIntentFilter, RECEIVER_NOT_EXPORTED);
+        } else {
+            mainView.getContext().registerReceiver(new Orders(mapView, pluginContext), mainIntentFilter);
+        }
+    }
+
     @Override
     public void onItemClick(View view, int position) {
         Log.d(LOGTAG, "Position: " + position);
         switch (position) {
             case 0:
-                Intent intent = new Intent(pluginContext, Orders.class);
-                pluginContext.startActivity(intent);
+                Log.d(LOGTAG, "Launching orders");
+                Intent intent = new Intent();
+                intent.setAction(Orders.ACTION);
+                //pluginContext.startActivity(intent);
+                AtakBroadcast.getInstance().sendBroadcast(intent);
                 break;
         }
     }

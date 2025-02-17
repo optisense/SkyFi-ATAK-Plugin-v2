@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/order_name"
@@ -28,11 +28,10 @@
             android:id="@+id/aoi_sqkm"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="5.3"
             android:textSize="15sp" />
         <ImageView
             android:src="@drawable/cloud"
-            android:layout_width="20dp"
+            android:layout_width="wrap_content"
             android:layout_height="20dp"
             android:paddingStart="20dp"
             />
@@ -40,7 +39,30 @@
             android:id="@+id/cloud_coverage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="5.3"
+            android:textSize="15sp" />
+        <ImageView
+            android:src="@drawable/map_dollar"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:paddingStart="20dp"
+            android:paddingEnd="5dp"
+            />
+        <TextView
+            android:id="@+id/cost"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp" />
+        <TextView
+            android:id="@+id/resolution_label"
+            android:text="@string/resolution"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="5dp"
+            android:textSize="15sp" />
+        <TextView
+            android:id="@+id/resolution"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:textSize="15sp" />
     </LinearLayout>
 
