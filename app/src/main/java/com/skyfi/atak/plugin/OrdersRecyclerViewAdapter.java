@@ -44,7 +44,7 @@ public class OrdersRecyclerViewAdapter extends RecyclerView.Adapter<OrdersRecycl
             holder.aoiSqkm.setText(String.valueOf(order.getAoiSqkm()));
             holder.cost.setText(String.format("$%s", order.getOrderCost()));
             if (order.getArchive() != null) {
-                holder.cloudCoverage.setText(String.valueOf(order.getArchive().getCloudCoveragePercent()));
+                holder.cloudCoverage.setText(String.format("%s%%", order.getArchive().getCloudCoveragePercent()));
                 holder.resolution.setText(order.getArchive().getResolution());
             }
             else {

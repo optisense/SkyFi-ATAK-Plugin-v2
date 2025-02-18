@@ -4,20 +4,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Looper;
-import android.util.Log;
+import com.atakmap.coremap.log.Log;
 import android.view.View;
-import android.widget.Button;
 
 import com.atak.plugins.impl.PluginContextProvider;
 import com.atak.plugins.impl.PluginLayoutInflater;
 import com.atakmap.android.dropdown.DropDownMapComponent;
 import com.atakmap.android.dropdown.DropDownReceiver;
 import com.atakmap.android.ipc.AtakBroadcast;
-import com.atakmap.android.maps.MapEvent;
 import com.atakmap.android.maps.MapView;
 import com.atakmap.app.preferences.ToolsPreferenceFragment;
-import com.skyfi.atak.plugin.skyfiapi.Order;
-import com.skyfi.atak.plugin.skyfiapi.OrderResponse;
 import com.skyfi.atak.plugin.skyfiapi.Pong;
 import com.skyfi.atak.plugin.skyfiapi.SkyFiAPI;
 
