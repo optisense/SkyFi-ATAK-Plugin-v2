@@ -112,13 +112,6 @@ android {
     compileSdkVersion 34
     buildToolsVersion "30.0.3"
 
-    packagingOptions {
-        resources {
-            pickFirsts.add('META-INF/NOTICE.md')
-            pickFirsts.add('META-INF/LICENSE.md')
-        }
-    }
-
 
     // this is required and should not be removed otherwise the TAK 
     // innersigning check will fail and the plugin will not load

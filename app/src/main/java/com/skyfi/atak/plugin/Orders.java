@@ -3,8 +3,15 @@ package com.skyfi.atak.plugin;
 import android.content.Context;
 import android.content.Intent;
 
+import com.atakmap.android.contentservices.ServiceListing;
+import com.atakmap.android.layers.LayersManagerBroadcastReceiver;
+import com.atakmap.android.maps.tilesets.mobac.WMSQueryLayers;
+import com.atakmap.android.maps.tilesets.mobac.WMTSQueryLayers;
+import com.atakmap.android.maps.tilesets.mobac.WebMapLayer;
+import com.atakmap.android.maps.tilesets.mobac.WebMapLayerService;
 import com.atakmap.coremap.log.Log;
 
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -12,11 +19,16 @@ import com.atak.plugins.impl.PluginLayoutInflater;
 import com.atakmap.android.dropdown.DropDown;
 import com.atakmap.android.dropdown.DropDownReceiver;
 import com.atakmap.android.maps.MapView;
+import com.atakmap.coremap.maps.coords.GeoBounds;
+import com.atakmap.map.layer.raster.mobac.CustomMobacMapSource;
+import com.atakmap.map.layer.raster.mobac.CustomWmsMobacMapSource;
 import com.atakmap.map.layer.raster.mobac.MobacMapSourceFactory;
 import com.skyfi.atak.plugin.skyfiapi.Order;
 import com.skyfi.atak.plugin.skyfiapi.OrderResponse;
 import com.skyfi.atak.plugin.skyfiapi.SkyFiAPI;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -107,14 +119,32 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
     public void onItemClick(View view, int position) {
         try {
             Order order = orders.get(position);
-            String tileUrl = order.getTilesUrl().replace("{z}", "%7B$z%7D");
-            tileUrl = tileUrl.replace("{x}", "%7B$x%7D");
-            tileUrl = tileUrl.replace("{y}", "%7B$y%7D");
+            String tileUrl = order.getTilesUrl().replace("{z}", "{$z}");
+            tileUrl = tileUrl.replace("{x}", "{$x}");
+            tileUrl = tileUrl.replace("{y}", "{$y}");
 
             Log.d(LOGTAG, "Got order " + tileUrl);
-            MobacMapSourceFactory.create(tileUrl);
 
-            Log.i(LOGTAG, "Saved map xml");
+            // Jackson doesn't work for whatever reason so the XML file is created manually.
+            // ATAK does it this way too
+            StringBuilder sb = new StringBuilder();
+            sb.append("<?xml version='1.0' encoding='UTF-8'?>\n");
+            sb.append("<customMapSource><name>SkyFi</name><minZoom>0</minZoom><maxZoom>20</maxZoom>");
+            sb.append("<tileType>png</tileType><tileUpdate>None</tileUpdate><url>");
+            sb.append(tileUrl);
+            sb.append("</url><backgroundColor>#000000</backgroundColor></customMapSource>");
+
+            File f = new File(Environment.getExternalStorageDirectory().getPath() + "/atak/imagery/skyfi.xml");
+            if (!f.exists())
+                f.createNewFile();
+            else {
+                f.delete();
+                f.createNewFile();
+            }
+            FileWriter fw = new FileWriter(Environment.getExternalStorageDirectory().getPath() + "/atak/imagery/skyfi.xml");
+            fw.write(sb.toString());
+            fw.close();
+
         } catch (Exception e) {
             Log.e(LOGTAG, "Failed to make map source", e);
         }
