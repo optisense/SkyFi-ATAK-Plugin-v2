@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ProgressBar;
 
 import com.atak.plugins.impl.PluginLayoutInflater;
 import com.atakmap.android.dropdown.DropDown;
@@ -41,6 +42,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static android.view.View.GONE;
 import static com.atakmap.android.importexport.ImportExportMapComponent.ACTION_IMPORT_DATA;
 import static com.atakmap.android.layers.LayersManagerBroadcastReceiver.ACTION_SELECT_LAYER;
 import static com.atakmap.android.layers.LayersManagerBroadcastReceiver.EXTRA_LAYER_NAME;
@@ -85,6 +87,8 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
             @Override
             public void onResponse(Call<OrderResponse> call, Response<OrderResponse> response) {
                 if (response.body() != null) {
+                    ProgressBar progressBar = mainView.findViewById(R.id.progress_loader);
+                    progressBar.setVisibility(GONE);
                     orders.clear();
                     orders.addAll(Arrays.asList(response.body().getOrders()));
                     synchronized (ordersRecyclerViewAdapter) {
@@ -144,8 +148,6 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
             String tileUrl = order.getTilesUrl().replace("{z}", "{$z}");
             tileUrl = tileUrl.replace("{x}", "{$x}");
             tileUrl = tileUrl.replace("{y}", "{$y}");
-
-            Log.d(LOGTAG, "Got order " + tileUrl);
 
             // Jackson doesn't work for whatever reason so the XML file is created manually.
             // ATAK does it this way too
