@@ -6,9 +6,11 @@ import android.content.Intent;
 
 import com.atakmap.android.ipc.AtakBroadcast;
 import com.atakmap.android.layers.LayersMapComponent;
+import com.atakmap.android.util.ATAKUtilities;
 import com.atakmap.coremap.io.IOProviderFactory;
 import com.atakmap.coremap.log.Log;
 
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Environment;
 import android.view.LayoutInflater;
@@ -23,6 +25,7 @@ import com.skyfi.atak.plugin.skyfiapi.Order;
 import com.skyfi.atak.plugin.skyfiapi.OrderResponse;
 import com.skyfi.atak.plugin.skyfiapi.SkyFiAPI;
 
+import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.io.WKTReader;
 
@@ -30,6 +33,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -57,7 +61,6 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
     public Orders(MapView mapView, Context context) {
         super(mapView);
         this.context = context;
-        //inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mainView = PluginLayoutInflater.inflate(context, R.layout.orders, null);
 
         recyclerView = mainView.findViewById(R.id.order_recycler_view);
@@ -71,7 +74,12 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
     public void onReceive(Context context, Intent intent) {
         this.intent = intent;
 
-        showDropDown(mainView, HALF_WIDTH, FULL_HEIGHT, FULL_WIDTH, FULL_HEIGHT, false);
+        int orientation = context.getResources().getConfiguration().orientation;
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            showDropDown(mainView, HALF_WIDTH, FULL_HEIGHT, FULL_WIDTH, FULL_HEIGHT, false);
+        } else {
+            showDropDown(mainView, FULL_WIDTH, HALF_HEIGHT, FULL_WIDTH, HALF_HEIGHT, false);
+        }
         apiClient = new APIClient().getApiClient();
         apiClient.getOrders().enqueue(new Callback<OrderResponse>() {
             @Override
@@ -170,13 +178,18 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
             selectLayer.putExtra(EXTRA_SELECTION, "SkyFi");
             AtakBroadcast.getInstance().sendBroadcast(selectLayer);
 
+            // Get the order's vertices and move the map to fit the imagery
             WKTReader wktReader = new WKTReader();
             Geometry aoi = wktReader.read(order.getAoi());
-            double lat = aoi.getCentroid().getY();
-            double lon = aoi.getCentroid().getX();
 
-            getMapView().getMapController().panZoomTo(new GeoPoint(lat, lon), 10, true);
+            List<GeoPoint> geoPoints = new ArrayList<>();
+            for (Coordinate coordinate : aoi.getCoordinates()) {
+                geoPoints.add(new GeoPoint(coordinate.getY(), coordinate.getX()));
+            }
 
+            GeoPoint[] points = geoPoints.toArray(new GeoPoint[geoPoints.size()]);
+
+            ATAKUtilities.scaleToFit(MapView.getMapView(), points, 1000, 1000);
         } catch (Exception e) {
             Log.e(LOGTAG, "Failed to make map source", e);
         }
