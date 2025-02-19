@@ -1,19 +1,12 @@
 package com.skyfi.atak.plugin;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 
-import com.atakmap.android.contentservices.Service;
-import com.atakmap.android.contentservices.ServiceListing;
-import com.atakmap.android.contentservices.ServiceType;
 import com.atakmap.android.ipc.AtakBroadcast;
-import com.atakmap.android.layers.LayersManagerBroadcastReceiver;
 import com.atakmap.android.layers.LayersMapComponent;
-import com.atakmap.android.maps.tilesets.mobac.QueryLayers;
-import com.atakmap.android.maps.tilesets.mobac.WMSQueryLayers;
-import com.atakmap.android.maps.tilesets.mobac.WMTSQueryLayers;
-import com.atakmap.android.maps.tilesets.mobac.WebMapLayer;
-import com.atakmap.android.maps.tilesets.mobac.WebMapLayerService;
+import com.atakmap.coremap.io.IOProviderFactory;
 import com.atakmap.coremap.log.Log;
 
 import android.net.Uri;
@@ -25,22 +18,18 @@ import com.atak.plugins.impl.PluginLayoutInflater;
 import com.atakmap.android.dropdown.DropDown;
 import com.atakmap.android.dropdown.DropDownReceiver;
 import com.atakmap.android.maps.MapView;
-import com.atakmap.coremap.maps.coords.GeoBounds;
-import com.atakmap.map.layer.raster.mobac.CustomMobacMapSource;
-import com.atakmap.map.layer.raster.mobac.CustomWmsMobacMapSource;
-import com.atakmap.map.layer.raster.mobac.MobacMapSourceFactory;
+import com.atakmap.coremap.maps.coords.GeoPoint;
 import com.skyfi.atak.plugin.skyfiapi.Order;
 import com.skyfi.atak.plugin.skyfiapi.OrderResponse;
 import com.skyfi.atak.plugin.skyfiapi.SkyFiAPI;
 
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.io.WKTReader;
+
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -49,7 +38,9 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static com.atakmap.android.importexport.ImportExportMapComponent.ACTION_IMPORT_DATA;
-import static com.atakmap.android.layers.LayersManagerBroadcastReceiver.ACTION_REFRESH_LAYER_MANAGER;
+import static com.atakmap.android.layers.LayersManagerBroadcastReceiver.ACTION_SELECT_LAYER;
+import static com.atakmap.android.layers.LayersManagerBroadcastReceiver.EXTRA_LAYER_NAME;
+import static com.atakmap.android.layers.LayersManagerBroadcastReceiver.EXTRA_SELECTION;
 
 public class Orders extends DropDownReceiver implements DropDown.OnStateListener, OrdersRecyclerViewAdapter.ItemClickListener {
     public final static String ACTION = "com.skyfi.orders";
@@ -132,6 +123,16 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
     public void onItemClick(View view, int position) {
         try {
             Order order = orders.get(position);
+
+            if (order.getTilesUrl() == null) {
+                new AlertDialog.Builder(MapView.getMapView().getContext())
+                        .setTitle(context.getString(R.string.order_pending_title))
+                        .setMessage(context.getString(R.string.order_pending))
+                        .setPositiveButton(context.getString(R.string.ok), (dialogInterface, i) -> {})
+                        .create().show();
+                return;
+            }
+
             String tileUrl = order.getTilesUrl().replace("{z}", "{$z}");
             tileUrl = tileUrl.replace("{x}", "{$x}");
             tileUrl = tileUrl.replace("{y}", "{$y}");
@@ -148,13 +149,10 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
             sb.append("</url><backgroundColor>#000000</backgroundColor></customMapSource>");
 
             File f = new File(Environment.getExternalStorageDirectory().getPath() + "/atak/imagery/skyfi.xml");
-            if (!f.exists())
-                f.createNewFile();
-            else {
-                f.delete();
-                f.createNewFile();
-            }
-            FileWriter fw = new FileWriter(Environment.getExternalStorageDirectory().getPath() + "/atak/imagery/skyfi.xml");
+            if (IOProviderFactory.exists(f))
+                IOProviderFactory.delete(f);
+            IOProviderFactory.createNewFile(f);
+            FileWriter fw = IOProviderFactory.getFileWriter(f);
             fw.write(sb.toString());
             fw.close();
 
@@ -165,6 +163,19 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
             intent.putExtra("showNotifications", true);
             intent.putExtra("uri", Uri.fromFile(f).toString());
             AtakBroadcast.getInstance().sendBroadcast(intent);
+
+            Intent selectLayer = new Intent();
+            selectLayer.setAction(ACTION_SELECT_LAYER);
+            selectLayer.putExtra(EXTRA_LAYER_NAME, "SkyFi");
+            selectLayer.putExtra(EXTRA_SELECTION, "SkyFi");
+            AtakBroadcast.getInstance().sendBroadcast(selectLayer);
+
+            WKTReader wktReader = new WKTReader();
+            Geometry aoi = wktReader.read(order.getAoi());
+            double lat = aoi.getCentroid().getY();
+            double lon = aoi.getCentroid().getX();
+
+            getMapView().getMapController().panZoomTo(new GeoPoint(lat, lon), 10, true);
 
         } catch (Exception e) {
             Log.e(LOGTAG, "Failed to make map source", e);

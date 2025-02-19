@@ -64,7 +64,28 @@
             android:id="@+id/resolution"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingStart="5dp"
             android:textSize="15sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="5dp">
+
+        <TextView
+            android:id="@+id/status_label"
+            android:text="@string/status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp" />
+        <TextView
+            android:id="@+id/status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp" />
+
     </LinearLayout>
 
     <View

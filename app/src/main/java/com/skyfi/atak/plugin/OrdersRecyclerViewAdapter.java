@@ -43,6 +43,7 @@ public class OrdersRecyclerViewAdapter extends RecyclerView.Adapter<OrdersRecycl
             holder.orderName.setText(order.getCreatedAt().toString());
             holder.aoiSqkm.setText(String.valueOf(order.getAoiSqkm()));
             holder.cost.setText(String.format("$%s", order.getOrderCost()));
+            holder.status.setText(order.getStatus());
             if (order.getArchive() != null) {
                 holder.cloudCoverage.setText(String.format("%s%%", order.getArchive().getCloudCoveragePercent()));
                 holder.resolution.setText(order.getArchive().getResolution());
@@ -70,6 +71,7 @@ public class OrdersRecyclerViewAdapter extends RecyclerView.Adapter<OrdersRecycl
         TextView cloudCoverage;
         TextView cost;
         TextView resolution;
+        TextView status;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -78,6 +80,7 @@ public class OrdersRecyclerViewAdapter extends RecyclerView.Adapter<OrdersRecycl
             cloudCoverage = itemView.findViewById(R.id.cloud_coverage);
             cost = itemView.findViewById(R.id.cost);
             resolution = itemView.findViewById(R.id.resolution);
+            status = itemView.findViewById(R.id.status);
             itemView.setOnClickListener(this);
         }
 

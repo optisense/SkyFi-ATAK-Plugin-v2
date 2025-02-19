@@ -11,4 +11,8 @@
     <string name="settings">Settings</string>
     <string name="km2">KM²: </string>
     <string name="resolution">Resolution: </string>
+    <string name="status">"Status: "</string>
+    <string name="order_pending">This order is still processing, please check back later.</string>
+    <string name="order_pending_title">Order Pending</string>
+    <string name="ok">OK</string>
 </resources>
