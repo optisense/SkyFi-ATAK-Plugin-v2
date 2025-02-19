@@ -3,14 +3,20 @@ package com.skyfi.atak.plugin;
 import android.content.Context;
 import android.content.Intent;
 
+import com.atakmap.android.contentservices.Service;
 import com.atakmap.android.contentservices.ServiceListing;
+import com.atakmap.android.contentservices.ServiceType;
+import com.atakmap.android.ipc.AtakBroadcast;
 import com.atakmap.android.layers.LayersManagerBroadcastReceiver;
+import com.atakmap.android.layers.LayersMapComponent;
+import com.atakmap.android.maps.tilesets.mobac.QueryLayers;
 import com.atakmap.android.maps.tilesets.mobac.WMSQueryLayers;
 import com.atakmap.android.maps.tilesets.mobac.WMTSQueryLayers;
 import com.atakmap.android.maps.tilesets.mobac.WebMapLayer;
 import com.atakmap.android.maps.tilesets.mobac.WebMapLayerService;
 import com.atakmap.coremap.log.Log;
 
+import android.net.Uri;
 import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,14 +35,21 @@ import com.skyfi.atak.plugin.skyfiapi.SkyFiAPI;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static com.atakmap.android.importexport.ImportExportMapComponent.ACTION_IMPORT_DATA;
+import static com.atakmap.android.layers.LayersManagerBroadcastReceiver.ACTION_REFRESH_LAYER_MANAGER;
 
 public class Orders extends DropDownReceiver implements DropDown.OnStateListener, OrdersRecyclerViewAdapter.ItemClickListener {
     public final static String ACTION = "com.skyfi.orders";
@@ -144,6 +157,14 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
             FileWriter fw = new FileWriter(Environment.getExternalStorageDirectory().getPath() + "/atak/imagery/skyfi.xml");
             fw.write(sb.toString());
             fw.close();
+
+            Intent intent = new Intent();
+            intent.setAction(ACTION_IMPORT_DATA);
+            intent.putExtra("contentType", LayersMapComponent.IMPORTER_CONTENT_TYPE);
+            intent.putExtra("mimeType", LayersMapComponent.IMPORTER_DEFAULT_MIME_TYPE);
+            intent.putExtra("showNotifications", true);
+            intent.putExtra("uri", Uri.fromFile(f).toString());
+            AtakBroadcast.getInstance().sendBroadcast(intent);
 
         } catch (Exception e) {
             Log.e(LOGTAG, "Failed to make map source", e);
