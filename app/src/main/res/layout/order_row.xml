@@ -89,6 +89,20 @@
             android:layout_height="wrap_content"
             android:textSize="15sp" />
 
+        <TextView
+            android:id="@+id/provider_label"
+            android:text="@string/provider"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:paddingStart="5dp"
+            android:textSize="15sp" />
+        <TextView
+            android:id="@+id/provider"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15sp" />
+
     </LinearLayout>
 
     <View

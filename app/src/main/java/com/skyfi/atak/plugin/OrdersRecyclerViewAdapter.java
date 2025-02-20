@@ -55,10 +55,12 @@ public class OrdersRecyclerViewAdapter extends RecyclerView.Adapter<OrdersRecycl
                 double cloudCoveragePercent = (double)Math.round(order.getArchive().getCloudCoveragePercent() * 100d) / 100d;
                 holder.cloudCoverage.setText(String.format("%s%%", cloudCoveragePercent));
                 holder.resolution.setText(order.getArchive().getResolution());
+                holder.provider.setText(order.getArchive().getProvider());
             }
             else {
                 holder.cloudCoverage.setText("?");
                 holder.resolution.setText("?");
+                holder.provider.setText("?");
             }
         } catch (Exception e) {
             Log.d(LOGTAG, "Failed", e);
@@ -80,6 +82,7 @@ public class OrdersRecyclerViewAdapter extends RecyclerView.Adapter<OrdersRecycl
         TextView cost;
         TextView resolution;
         TextView status;
+        TextView provider;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -89,6 +92,7 @@ public class OrdersRecyclerViewAdapter extends RecyclerView.Adapter<OrdersRecycl
             cost = itemView.findViewById(R.id.cost);
             resolution = itemView.findViewById(R.id.resolution);
             status = itemView.findViewById(R.id.status);
+            provider = itemView.findViewById(R.id.provider);
             itemView.setOnClickListener(this);
         }
 
