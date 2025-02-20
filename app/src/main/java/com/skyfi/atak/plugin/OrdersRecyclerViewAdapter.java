@@ -6,8 +6,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.atakmap.android.util.Cont;
 import com.skyfi.atak.plugin.skyfiapi.Order;
 
 import java.util.List;
@@ -21,12 +23,17 @@ public class OrdersRecyclerViewAdapter extends RecyclerView.Adapter<OrdersRecycl
     private List<Order> mData;
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
+    private int selectedPosition = -1;
+    private Context context;
 
     // data is passed into the constructor
     OrdersRecyclerViewAdapter(Context context, List<Order> data) {
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
+        this.context = context;
     }
+
+
 
     // inflates the row layout from xml when needed
     @NonNull
@@ -41,6 +48,12 @@ public class OrdersRecyclerViewAdapter extends RecyclerView.Adapter<OrdersRecycl
     public void onBindViewHolder(ViewHolder holder, int position) {
         Order order = mData.get(position);
         try {
+            if (position == selectedPosition) {
+                holder.linearLayout.setBackgroundColor(Color.BLUE);
+            } else {
+                holder.linearLayout.setBackgroundColor(context.getColor(R.color.darker_gray));
+            }
+
             holder.orderName.setText(order.getCreatedAt().toString());
             holder.aoiSqkm.setText(String.valueOf(order.getAoiSqkm()));
             holder.cost.setText(String.format("$%s", order.getOrderCost()));
@@ -83,6 +96,8 @@ public class OrdersRecyclerViewAdapter extends RecyclerView.Adapter<OrdersRecycl
         TextView resolution;
         TextView status;
         TextView provider;
+        LinearLayout linearLayout;
+        RecyclerView recyclerView;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -93,12 +108,18 @@ public class OrdersRecyclerViewAdapter extends RecyclerView.Adapter<OrdersRecycl
             resolution = itemView.findViewById(R.id.resolution);
             status = itemView.findViewById(R.id.status);
             provider = itemView.findViewById(R.id.provider);
+            linearLayout = itemView.findViewById(R.id.linear_layout);
             itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
-            if (mClickListener != null) mClickListener.onItemClick(view, getAdapterPosition());
+            if (mClickListener != null) {
+                mClickListener.onItemClick(view, getAdapterPosition());
+                selectedPosition = getAdapterPosition();
+                notifyDataSetChanged();
+            }
+
         }
     }
 

@@ -189,13 +189,6 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
         try {
             Order order = orders.get(position);
 
-
-            if (lastClickedView != null)
-                lastClickedView.setBackgroundColor(context.getResources().getColor(R.color.darker_gray));
-
-            lastClickedView = view;
-            view.setBackgroundColor(Color.BLUE);
-
             if (order.getTilesUrl() == null) {
                 new AlertDialog.Builder(MapView.getMapView().getContext())
                         .setTitle(context.getString(R.string.order_pending_title))
@@ -243,8 +236,8 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
 
             Intent selectLayer = new Intent();
             selectLayer.setAction(ACTION_SELECT_LAYER);
-            selectLayer.putExtra(EXTRA_LAYER_NAME, "SkyFi");
-            selectLayer.putExtra(EXTRA_SELECTION, "SkyFi");
+            selectLayer.putExtra(EXTRA_LAYER_NAME, "SkyFi Google");
+            selectLayer.putExtra(EXTRA_SELECTION, "SkyFi Google");
             AtakBroadcast.getInstance().sendBroadcast(selectLayer);
 
             // Get the order's vertices and move the map to fit the imagery
