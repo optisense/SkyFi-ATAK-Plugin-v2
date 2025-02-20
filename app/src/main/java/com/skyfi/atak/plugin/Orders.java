@@ -213,10 +213,17 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
             // ATAK does it this way too
             StringBuilder sb = new StringBuilder();
             sb.append("<?xml version='1.0' encoding='UTF-8'?>\n");
-            sb.append("<customMapSource><name>SkyFi</name><minZoom>0</minZoom><maxZoom>20</maxZoom>");
-            sb.append("<tileType>png</tileType><tileUpdate>None</tileUpdate><url>");
+            sb.append("<customMultiLayerMapSource><name>SkyFi Google</name><layers>");
+
+            // Google
+            sb.append("<customMapSource><url>http://mt1.google.com/vt/lyrs=y&amp;x={$x}&amp;y={$y}&amp;z={$z}</url><layers>Google</layers>");
+            sb.append("<name>Google Street</name><minZoom>0</minZoom><maxZoom>22</maxZoom><tileType>jpg</tileType></customMapSource>");
+
+            //SkyFi
+            sb.append("<customMapSource><url>");
             sb.append(tileUrl);
-            sb.append("</url><backgroundColor>#000000</backgroundColor></customMapSource>");
+            sb.append("</url><minZoom>0</minZoom><maxZoom>22</maxZoom><name>skyfi</name><tileType>png</tileType><layers>skyfi</layers></customMapSource>");
+            sb.append("</layers></customMultiLayerMapSource>");
 
             File f = new File(Environment.getExternalStorageDirectory().getPath() + "/atak/imagery/skyfi.xml");
             if (IOProviderFactory.exists(f))
