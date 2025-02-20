@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
 
 import com.atak.plugins.impl.PluginLayoutInflater;
@@ -43,6 +44,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 import static com.atakmap.android.importexport.ImportExportMapComponent.ACTION_IMPORT_DATA;
 import static com.atakmap.android.layers.LayersManagerBroadcastReceiver.ACTION_SELECT_LAYER;
 import static com.atakmap.android.layers.LayersManagerBroadcastReceiver.EXTRA_LAYER_NAME;
@@ -59,6 +61,12 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
     private SkyFiAPI apiClient;
     private final RecyclerView recyclerView;
     private Context context;
+    private int pageNumber = 0;
+    private int pageSize = 10;
+
+    Button nextButton;
+    Button previousButton;
+    ProgressBar progressBar;
 
     public Orders(MapView mapView, Context context) {
         super(mapView);
@@ -70,25 +78,53 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
         ordersRecyclerViewAdapter = new OrdersRecyclerViewAdapter(context, orders);
         ordersRecyclerViewAdapter.setClickListener(this);
         recyclerView.setAdapter(ordersRecyclerViewAdapter);
+
+        progressBar = mainView.findViewById(R.id.progress_loader);
+
+        nextButton = mainView.findViewById(R.id.next_button);
+        previousButton = mainView.findViewById(R.id.previous_button);
+
+        nextButton.setOnClickListener(view -> {
+            pageNumber++;
+            getOrders();
+        });
+
+        previousButton.setOnClickListener(view -> {
+            pageNumber--;
+            getOrders();
+        });
     }
 
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        this.intent = intent;
-
-        int orientation = context.getResources().getConfiguration().orientation;
-        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            showDropDown(mainView, HALF_WIDTH, FULL_HEIGHT, FULL_WIDTH, FULL_HEIGHT, false);
-        } else {
-            showDropDown(mainView, FULL_WIDTH, HALF_HEIGHT, FULL_WIDTH, HALF_HEIGHT, false);
-        }
+    private void getOrders() {
+        progressBar.setVisibility(VISIBLE);
+        recyclerView.setVisibility(GONE);
+        nextButton.setVisibility(GONE);
+        previousButton.setVisibility(GONE);
+        
         apiClient = new APIClient().getApiClient();
-        apiClient.getOrders().enqueue(new Callback<OrderResponse>() {
+        apiClient.getOrders(pageNumber, pageSize).enqueue(new Callback<OrderResponse>() {
             @Override
             public void onResponse(Call<OrderResponse> call, Response<OrderResponse> response) {
                 if (response.body() != null) {
-                    ProgressBar progressBar = mainView.findViewById(R.id.progress_loader);
+
                     progressBar.setVisibility(GONE);
+                    recyclerView.setVisibility(VISIBLE);
+
+                    int total = response.body().getTotal();
+                    pageNumber = response.body().getRequest().getPageNumber();
+                    pageSize = response.body().getRequest().getPageSize();
+                    int totalPages = (int) Math.ceil((double) total / pageSize);
+
+                    if (pageNumber + 1 < totalPages)
+                        nextButton.setVisibility(VISIBLE);
+                    else
+                        nextButton.setVisibility(GONE);
+
+                    if (pageNumber > 0)
+                        previousButton.setVisibility(VISIBLE);
+                    else
+                        previousButton.setVisibility(GONE);
+
                     orders.clear();
                     orders.addAll(Arrays.asList(response.body().getOrders()));
                     synchronized (ordersRecyclerViewAdapter) {
@@ -104,6 +140,20 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
                 Log.e(LOGTAG, "Failed to get orders", throwable);
             }
         });
+    }
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        this.intent = intent;
+
+        int orientation = context.getResources().getConfiguration().orientation;
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            showDropDown(mainView, HALF_WIDTH, FULL_HEIGHT, FULL_WIDTH, FULL_HEIGHT, false);
+        } else {
+            showDropDown(mainView, FULL_WIDTH, HALF_HEIGHT, FULL_WIDTH, HALF_HEIGHT, false);
+        }
+
+        getOrders();
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.skyfi.atak.plugin.skyfiapi;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Query;
 
 public interface SkyFiAPI {
     // Core
@@ -17,5 +18,5 @@ public interface SkyFiAPI {
 
     // Ordering
     @GET("/platform-api/orders")
-    Call<OrderResponse> getOrders();
+    Call<OrderResponse> getOrders(@Query("pageNumber") int pageNumber, @Query("pageSize") int pageSize);
 }

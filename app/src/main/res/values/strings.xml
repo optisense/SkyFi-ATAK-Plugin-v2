@@ -15,4 +15,7 @@
     <string name="order_pending">This order is still processing, please check back later.</string>
     <string name="order_pending_title">Order Pending</string>
     <string name="ok">OK</string>
+    <string name="skyfi_orders">SkyFi / Orders</string>
+    <string name="next_page">Next Page</string>
+    <string name="previous_page">Previous Page</string>
 </resources>

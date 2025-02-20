@@ -1,6 +1,6 @@
 package com.skyfi.atak.plugin.skyfiapi;
 
-class OrderRequest {
+public class OrderRequest {
     private String orderType;
     private int pageNumber;
     private int pageSize;
