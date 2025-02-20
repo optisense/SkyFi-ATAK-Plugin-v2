@@ -1,6 +1,7 @@
 package com.skyfi.atak.plugin;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,7 +44,13 @@ public class OrdersRecyclerViewAdapter extends RecyclerView.Adapter<OrdersRecycl
             holder.orderName.setText(order.getCreatedAt().toString());
             holder.aoiSqkm.setText(String.valueOf(order.getAoiSqkm()));
             holder.cost.setText(String.format("$%s", order.getOrderCost()));
+
             holder.status.setText(order.getStatus());
+            if (order.getStatus().equals("PROCESSING_COMPLETE"))
+                holder.status.setTextColor(Color.GREEN);
+            else
+                holder.status.setTextColor(Color.YELLOW);
+
             if (order.getArchive() != null) {
                 holder.cloudCoverage.setText(String.format("%s%%", order.getArchive().getCloudCoveragePercent()));
                 holder.resolution.setText(order.getArchive().getResolution());
