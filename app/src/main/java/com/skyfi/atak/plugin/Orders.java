@@ -11,12 +11,12 @@ import com.atakmap.coremap.io.IOProviderFactory;
 import com.atakmap.coremap.log.Log;
 
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ProgressBar;
 
 import com.atak.plugins.impl.PluginLayoutInflater;
 import com.atakmap.android.dropdown.DropDown;
@@ -39,6 +39,7 @@ import java.util.List;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -63,10 +64,11 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
     private Context context;
     private int pageNumber = 0;
     private int pageSize = 10;
+    private View lastClickedView;
 
     Button nextButton;
     Button previousButton;
-    ProgressBar progressBar;
+    SwipeRefreshLayout updateOrders;
 
     public Orders(MapView mapView, Context context) {
         super(mapView);
@@ -78,8 +80,6 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
         ordersRecyclerViewAdapter = new OrdersRecyclerViewAdapter(context, orders);
         ordersRecyclerViewAdapter.setClickListener(this);
         recyclerView.setAdapter(ordersRecyclerViewAdapter);
-
-        progressBar = mainView.findViewById(R.id.progress_loader);
 
         nextButton = mainView.findViewById(R.id.next_button);
         previousButton = mainView.findViewById(R.id.previous_button);
@@ -93,13 +93,16 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
             pageNumber--;
             getOrders();
         });
+
+        updateOrders = mainView.findViewById(R.id.pull_to_refresh);
+        updateOrders.setOnRefreshListener(this::getOrders);
     }
 
     private void getOrders() {
-        progressBar.setVisibility(VISIBLE);
         recyclerView.setVisibility(GONE);
         nextButton.setVisibility(GONE);
         previousButton.setVisibility(GONE);
+        updateOrders.setRefreshing(true);
         
         apiClient = new APIClient().getApiClient();
         apiClient.getOrders(pageNumber, pageSize).enqueue(new Callback<OrderResponse>() {
@@ -107,7 +110,7 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
             public void onResponse(Call<OrderResponse> call, Response<OrderResponse> response) {
                 if (response.body() != null) {
 
-                    progressBar.setVisibility(GONE);
+                    updateOrders.setRefreshing(false);
                     recyclerView.setVisibility(VISIBLE);
 
                     int total = response.body().getTotal();
@@ -185,6 +188,13 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
     public void onItemClick(View view, int position) {
         try {
             Order order = orders.get(position);
+
+
+            if (lastClickedView != null)
+                lastClickedView.setBackgroundColor(context.getResources().getColor(R.color.darker_gray));
+
+            lastClickedView = view;
+            view.setBackgroundColor(Color.BLUE);
 
             if (order.getTilesUrl() == null) {
                 new AlertDialog.Builder(MapView.getMapView().getContext())
