@@ -52,7 +52,8 @@ public class OrdersRecyclerViewAdapter extends RecyclerView.Adapter<OrdersRecycl
                 holder.status.setTextColor(Color.YELLOW);
 
             if (order.getArchive() != null) {
-                holder.cloudCoverage.setText(String.format("%s%%", order.getArchive().getCloudCoveragePercent()));
+                double cloudCoveragePercent = (double)Math.round(order.getArchive().getCloudCoveragePercent() * 100d) / 100d;
+                holder.cloudCoverage.setText(String.format("%s%%", cloudCoveragePercent));
                 holder.resolution.setText(order.getArchive().getResolution());
             }
             else {
