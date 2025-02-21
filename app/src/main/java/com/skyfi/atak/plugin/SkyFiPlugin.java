@@ -2,8 +2,11 @@ package com.skyfi.atak.plugin;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Looper;
+
+import com.atakmap.android.importexport.ImportExportMapComponent;
 import com.atakmap.coremap.log.Log;
 import android.view.View;
 
@@ -33,6 +36,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static android.content.Context.RECEIVER_EXPORTED;
 import static android.content.Context.RECEIVER_NOT_EXPORTED;
 
 public class SkyFiPlugin extends DropDownMapComponent implements IPlugin, MainRecyclerViewAdapter.ItemClickListener {
@@ -176,7 +180,6 @@ public class SkyFiPlugin extends DropDownMapComponent implements IPlugin, MainRe
         Log.d(LOGTAG, "Registering " + name + " receiver with intent filter");
         AtakBroadcast.DocumentedIntentFilter mainIntentFilter = new AtakBroadcast.DocumentedIntentFilter();
         mainIntentFilter.addAction(actionName);
-        //this.registerReceiver(pluginContext, rec, mainIntentFilter);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             mainView.getContext().registerReceiver(new Orders(mapView, pluginContext), mainIntentFilter, RECEIVER_NOT_EXPORTED);
         } else {
@@ -186,13 +189,11 @@ public class SkyFiPlugin extends DropDownMapComponent implements IPlugin, MainRe
 
     @Override
     public void onItemClick(View view, int position) {
-        Log.d(LOGTAG, "Position: " + position);
         switch (position) {
             case 0:
                 Log.d(LOGTAG, "Launching orders");
                 Intent intent = new Intent();
                 intent.setAction(Orders.ACTION);
-                //pluginContext.startActivity(intent);
                 AtakBroadcast.getInstance().sendBroadcast(intent);
                 break;
         }

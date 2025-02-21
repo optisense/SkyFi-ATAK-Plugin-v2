@@ -11,10 +11,9 @@ import com.atakmap.coremap.io.IOProviderFactory;
 import com.atakmap.coremap.log.Log;
 
 import android.content.res.Configuration;
-import android.graphics.Color;
-import android.net.Uri;
+ import android.net.Uri;
 import android.os.Environment;
-import android.view.LayoutInflater;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 
@@ -55,16 +54,14 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
     public final static String ACTION = "com.skyfi.orders";
     private final static String LOGTAG = "SkyFiOrders";
     private View mainView;
-    private LayoutInflater inflater;
     private ArrayList<Order> orders = new ArrayList<>();
     private final OrdersRecyclerViewAdapter ordersRecyclerViewAdapter;
-    private Intent intent;
     private SkyFiAPI apiClient;
     private final RecyclerView recyclerView;
     private Context context;
     private int pageNumber = 0;
     private int pageSize = 10;
-    private View lastClickedView;
+    private String mobacUri;
 
     Button nextButton;
     Button previousButton;
@@ -147,16 +144,19 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        this.intent = intent;
+        if (intent.getAction() == null) return;
 
-        int orientation = context.getResources().getConfiguration().orientation;
-        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            showDropDown(mainView, HALF_WIDTH, FULL_HEIGHT, FULL_WIDTH, FULL_HEIGHT, false);
-        } else {
-            showDropDown(mainView, FULL_WIDTH, HALF_HEIGHT, FULL_WIDTH, HALF_HEIGHT, false);
+        if (intent.getAction().equals(ACTION)) {
+
+            int orientation = context.getResources().getConfiguration().orientation;
+            if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                showDropDown(mainView, HALF_WIDTH, FULL_HEIGHT, FULL_WIDTH, FULL_HEIGHT, false);
+            } else {
+                showDropDown(mainView, FULL_WIDTH, HALF_HEIGHT, FULL_WIDTH, HALF_HEIGHT, false);
+            }
+
+            getOrders();
         }
-
-        getOrders();
     }
 
     @Override
@@ -226,19 +226,26 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
             fw.write(sb.toString());
             fw.close();
 
+            mobacUri = Uri.fromFile(f).toString();
+
             Intent intent = new Intent();
             intent.setAction(ACTION_IMPORT_DATA);
             intent.putExtra("contentType", LayersMapComponent.IMPORTER_CONTENT_TYPE);
             intent.putExtra("mimeType", LayersMapComponent.IMPORTER_DEFAULT_MIME_TYPE);
-            intent.putExtra("showNotifications", true);
-            intent.putExtra("uri", Uri.fromFile(f).toString());
+            intent.putExtra("showNotifications", false);
+            intent.putExtra("uri", mobacUri);
             AtakBroadcast.getInstance().sendBroadcast(intent);
 
-            Intent selectLayer = new Intent();
-            selectLayer.setAction(ACTION_SELECT_LAYER);
-            selectLayer.putExtra(EXTRA_LAYER_NAME, "SkyFi Google");
-            selectLayer.putExtra(EXTRA_SELECTION, "SkyFi Google");
-            AtakBroadcast.getInstance().sendBroadcast(selectLayer);
+            // Wait one second before selecting the new map
+            // Otherwise there is a race condition selecting the new map occurs before the import has completed
+            Handler handler = new Handler();
+            handler.postDelayed(() -> {
+                Intent selectLayer = new Intent();
+                selectLayer.setAction(ACTION_SELECT_LAYER);
+                selectLayer.putExtra(EXTRA_LAYER_NAME, "SkyFi Google");
+                selectLayer.putExtra(EXTRA_SELECTION, "SkyFi Google");
+                AtakBroadcast.getInstance().sendBroadcast(selectLayer);
+            }, 1000);
 
             // Get the order's vertices and move the map to fit the imagery
             WKTReader wktReader = new WKTReader();
