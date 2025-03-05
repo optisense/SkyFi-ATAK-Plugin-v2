@@ -1,17 +1,15 @@
 package com.skyfi.atak.plugin;
 
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-
 import com.atakmap.android.maps.MapView;
+import com.atakmap.android.preference.AtakPreferences;
 
 public class Preferences {
     public static final String PREF_API_KEY = "pref_api_key";
     private String apiKey;
 
     public Preferences() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MapView.getMapView().getContext());
-        apiKey = prefs.getString(PREF_API_KEY, "");
+        AtakPreferences prefs = AtakPreferences.getInstance(MapView.getMapView().getContext());
+        apiKey = prefs.get(PREF_API_KEY, "");
     }
 
     public String getApiKey() {

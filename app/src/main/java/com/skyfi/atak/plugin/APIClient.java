@@ -1,7 +1,5 @@
 package com.skyfi.atak.plugin;
 
-import android.util.Log;
-
 import com.skyfi.atak.plugin.skyfiapi.SkyFiAPI;
 import com.skyfi.atak.plugin.skyfiapi.UserAgentInterceptor;
 

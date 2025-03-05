@@ -1,5 +1,7 @@
 package com.skyfi.atak.plugin.skyfiapi;
 
+import java.util.Arrays;
+
 public class OrderResponse {
     private OrderRequest request;
     private int total;
@@ -7,6 +9,15 @@ public class OrderResponse {
 
     public Order[] getOrders() {
         return orders;
+    }
+
+    @Override
+    public String toString() {
+        return "OrderResponse{" +
+                "orders=" + Arrays.toString(orders) +
+                ", request=" + request +
+                ", total=" + total +
+                '}';
     }
 
     public void setOrders(Order[] orders) {

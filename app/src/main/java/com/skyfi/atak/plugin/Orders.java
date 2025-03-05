@@ -11,7 +11,7 @@ import com.atakmap.coremap.io.IOProviderFactory;
 import com.atakmap.coremap.log.Log;
 
 import android.content.res.Configuration;
- import android.net.Uri;
+import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
 import android.view.View;
@@ -106,31 +106,35 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
             @Override
             public void onResponse(Call<OrderResponse> call, Response<OrderResponse> response) {
                 if (response.body() != null) {
+                    try {
 
-                    updateOrders.setRefreshing(false);
-                    recyclerView.setVisibility(VISIBLE);
+                        updateOrders.setRefreshing(false);
+                        recyclerView.setVisibility(VISIBLE);
 
-                    int total = response.body().getTotal();
-                    pageNumber = response.body().getRequest().getPageNumber();
-                    pageSize = response.body().getRequest().getPageSize();
-                    int totalPages = (int) Math.ceil((double) total / pageSize);
+                        int total = response.body().getTotal();
+                        pageNumber = response.body().getRequest().getPageNumber();
+                        pageSize = response.body().getRequest().getPageSize();
+                        int totalPages = (int) Math.ceil((double) total / pageSize);
 
-                    if (pageNumber + 1 < totalPages)
-                        nextButton.setVisibility(VISIBLE);
-                    else
-                        nextButton.setVisibility(GONE);
+                        if (pageNumber + 1 < totalPages)
+                            nextButton.setVisibility(VISIBLE);
+                        else
+                            nextButton.setVisibility(GONE);
 
-                    if (pageNumber > 0)
-                        previousButton.setVisibility(VISIBLE);
-                    else
-                        previousButton.setVisibility(GONE);
+                        if (pageNumber > 0)
+                            previousButton.setVisibility(VISIBLE);
+                        else
+                            previousButton.setVisibility(GONE);
 
-                    orders.clear();
-                    orders.addAll(Arrays.asList(response.body().getOrders()));
-                    synchronized (ordersRecyclerViewAdapter) {
-                        ordersRecyclerViewAdapter.notifyDataSetChanged();
+                        orders.clear();
+                        orders.addAll(Arrays.asList(response.body().getOrders()));
+                        synchronized (ordersRecyclerViewAdapter) {
+                            ordersRecyclerViewAdapter.notifyDataSetChanged();
+                        }
+                    } catch (Exception e) {
+                        Log.e(LOGTAG, "Failed to get orders", e);
                     }
-                } else {
+                } else{
                     Log.e(LOGTAG, "Order response body is null");
                 }
             }
@@ -206,7 +210,7 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
             // ATAK does it this way too
             StringBuilder sb = new StringBuilder();
             sb.append("<?xml version='1.0' encoding='UTF-8'?>\n");
-            sb.append("<customMultiLayerMapSource><name>SkyFi Google</name><layers>");
+            sb.append(String.format("<customMultiLayerMapSource><name>SkyFi %s</name><layers>", order.getId()));
 
             // Google
             sb.append("<customMapSource><url>http://mt1.google.com/vt/lyrs=y&amp;x={$x}&amp;y={$y}&amp;z={$z}</url><layers>Google</layers>");
@@ -218,7 +222,7 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
             sb.append("</url><minZoom>0</minZoom><maxZoom>22</maxZoom><name>skyfi</name><tileType>png</tileType><layers>skyfi</layers></customMapSource>");
             sb.append("</layers></customMultiLayerMapSource>");
 
-            File f = new File(Environment.getExternalStorageDirectory().getPath() + "/atak/imagery/skyfi.xml");
+            File f = new File(Environment.getExternalStorageDirectory().getPath() + "/atak/imagery/skyfi_" + order.getId() + ".xml");
             if (IOProviderFactory.exists(f))
                 IOProviderFactory.delete(f);
             IOProviderFactory.createNewFile(f);
@@ -237,15 +241,15 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
             AtakBroadcast.getInstance().sendBroadcast(intent);
 
             // Wait one second before selecting the new map
-            // Otherwise there is a race condition selecting the new map occurs before the import has completed
+            // Otherwise there is a race condition when selecting the new map occurs before the import has completed
             Handler handler = new Handler();
             handler.postDelayed(() -> {
                 Intent selectLayer = new Intent();
                 selectLayer.setAction(ACTION_SELECT_LAYER);
-                selectLayer.putExtra(EXTRA_LAYER_NAME, "SkyFi Google");
-                selectLayer.putExtra(EXTRA_SELECTION, "SkyFi Google");
+                selectLayer.putExtra(EXTRA_LAYER_NAME, "SkyFi " + order.getId());
+                selectLayer.putExtra(EXTRA_SELECTION, "SkyFi " + order.getId());
                 AtakBroadcast.getInstance().sendBroadcast(selectLayer);
-            }, 1000);
+            }, 2000);
 
             // Get the order's vertices and move the map to fit the imagery
             WKTReader wktReader = new WKTReader();
