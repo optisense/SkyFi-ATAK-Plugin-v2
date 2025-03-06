@@ -228,7 +228,7 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
             // ATAK does it this way too
             StringBuilder sb = new StringBuilder();
             sb.append("<?xml version='1.0' encoding='UTF-8'?>\n");
-            sb.append(String.format("<customMultiLayerMapSource><name>SkyFi %s</name><layers>", order.getId()));
+            sb.append(String.format("<customMultiLayerMapSource><name>SkyFi %s</name><layers>", order.getOrderName()));
 
             // Google
             sb.append("<customMapSource><url>http://mt1.google.com/vt/lyrs=y&amp;x={$x}&amp;y={$y}&amp;z={$z}</url><layers>Google</layers>");
@@ -240,7 +240,7 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
             sb.append("</url><minZoom>0</minZoom><maxZoom>22</maxZoom><name>skyfi</name><tileType>png</tileType><layers>skyfi</layers></customMapSource>");
             sb.append("</layers></customMultiLayerMapSource>");
 
-            File f = new File(Environment.getExternalStorageDirectory().getPath() + "/atak/imagery/skyfi_" + order.getId() + ".xml");
+            File f = new File(Environment.getExternalStorageDirectory().getPath() + "/atak/imagery/skyfi_" + order.getOrderName() + ".xml");
             if (IOProviderFactory.exists(f))
                 IOProviderFactory.delete(f);
             IOProviderFactory.createNewFile(f);
@@ -264,10 +264,11 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
             handler.postDelayed(() -> {
                 Intent selectLayer = new Intent();
                 selectLayer.setAction(ACTION_SELECT_LAYER);
-                selectLayer.putExtra(EXTRA_LAYER_NAME, "SkyFi " + order.getId());
-                selectLayer.putExtra(EXTRA_SELECTION, "SkyFi " + order.getId());
+                selectLayer.putExtra(EXTRA_LAYER_NAME, "SkyFi " + order.getOrderName());
+                selectLayer.putExtra(EXTRA_SELECTION, "SkyFi " + order.getOrderName());
                 AtakBroadcast.getInstance().sendBroadcast(selectLayer);
-            }, 2000);
+                Log.d(LOGTAG, "selected " + "SkyFi " + order.getOrderName());
+            }, 5000);
 
             // Get the order's vertices and move the map to fit the imagery
             WKTReader wktReader = new WKTReader();

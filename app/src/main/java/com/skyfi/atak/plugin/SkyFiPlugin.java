@@ -166,7 +166,7 @@ public class SkyFiPlugin extends DropDownMapComponent implements IPlugin, MainRe
 
         ArrayList<String> options = new ArrayList<>();
         options.add(pluginContext.getString(R.string.view_orders));
-        options.add(pluginContext.getString(R.string.settings));
+        //options.add(pluginContext.getString(R.string.settings));
 
         RecyclerView recyclerView = mainView.findViewById(R.id.main_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(pluginContext));

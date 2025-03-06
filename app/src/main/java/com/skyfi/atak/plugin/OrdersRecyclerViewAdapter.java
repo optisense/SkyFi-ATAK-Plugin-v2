@@ -54,7 +54,7 @@ public class OrdersRecyclerViewAdapter extends RecyclerView.Adapter<OrdersRecycl
                 holder.linearLayout.setBackgroundColor(context.getColor(R.color.darker_gray));
             }
 
-            holder.orderName.setText(order.getCreatedAt().toString());
+            holder.orderName.setText(order.getOrderName());
             holder.aoiSqkm.setText(String.valueOf(order.getAoiSqkm()));
             holder.cost.setText(String.format("$%s", order.getOrderCost()));
 

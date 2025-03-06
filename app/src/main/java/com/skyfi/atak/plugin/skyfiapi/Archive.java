@@ -11,7 +11,7 @@ public class Archive {
     private String resolution;
     private Date captureTimestamp;
     private float cloudCoveragePercent;
-    private int offNadirAngle;
+    private float offNadirAngle;
     private String footprint;
     private int minSqKm;
     private int maxSqKm;
@@ -97,11 +97,11 @@ public class Archive {
         this.minSqKm = minSqKm;
     }
 
-    public int getOffNadirAngle() {
+    public float getOffNadirAngle() {
         return offNadirAngle;
     }
 
-    public void setOffNadirAngle(int offNadirAngle) {
+    public void setOffNadirAngle(float offNadirAngle) {
         this.offNadirAngle = offNadirAngle;
     }
 

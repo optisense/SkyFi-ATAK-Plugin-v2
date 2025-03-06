@@ -32,12 +32,15 @@ public class Order {
     private int sarAzimuthAngleMin;
     private int sarAzimuthAngleMax;
     private int sarNumberOfLooks;
+    private String geocodeLocation;
+    private String orderLabel;
+    private String orderCode;
     private Archive archive;
 
     @Override
     public String toString() {
         return "Order{" +
-                "aio='" + aoi + '\'' +
+                "aoi='" + aoi + '\'' +
                 ", id='" + id + '\'' +
                 ", orderType='" + orderType + '\'' +
                 ", orderCost=" + orderCost +
@@ -65,6 +68,10 @@ public class Order {
                 ", sarAzimuthAngleMin=" + sarAzimuthAngleMin +
                 ", sarAzimuthAngleMax=" + sarAzimuthAngleMax +
                 ", sarNumberOfLooks=" + sarNumberOfLooks +
+                ", geocodeLocation='" + geocodeLocation + '\'' +
+                ", orderLabel='" + orderLabel + '\'' +
+                ", orderCode='" + orderCode + '\'' +
+                ", archive=" + archive +
                 '}';
     }
 
@@ -290,6 +297,38 @@ public class Order {
 
     public void setWindowStart(Date windowStart) {
         this.windowStart = windowStart;
+    }
+
+    public String getGeocodeLocation() {
+        return geocodeLocation;
+    }
+
+    public void setGeocodeLocation(String geocodeLocation) {
+        this.geocodeLocation = geocodeLocation;
+    }
+
+    public String getOrderCode() {
+        return orderCode;
+    }
+
+    public void setOrderCode(String orderCode) {
+        this.orderCode = orderCode;
+    }
+
+    public String getOrderLabel() {
+        return orderLabel;
+    }
+
+    public void setOrderLabel(String orderLabel) {
+        this.orderLabel = orderLabel;
+    }
+
+    // Order name is its user created label if there is one, otherwise use the geocoded location
+    public String getOrderName() {
+        if (orderLabel != null && !orderLabel.isEmpty())
+            return orderLabel;
+        else
+            return geocodeLocation + " - " + orderCode;
     }
 
     public Archive getArchive() {
