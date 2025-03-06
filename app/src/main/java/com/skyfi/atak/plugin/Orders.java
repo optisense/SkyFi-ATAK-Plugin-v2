@@ -105,10 +105,16 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
         apiClient.getOrders(pageNumber, pageSize).enqueue(new Callback<OrderResponse>() {
             @Override
             public void onResponse(Call<OrderResponse> call, Response<OrderResponse> response) {
+                updateOrders.setRefreshing(false);
+
                 if (response.body() != null) {
                     try {
+                        if (!response.isSuccessful()) {
+                            Log.e(LOGTAG, "Failed to get orders: " + response.message() + " " + response.code());
+                            showAlert(context.getString(R.string.failed_to_get_orders), response.code() + ": " + response.message());
+                            return;
+                        }
 
-                        updateOrders.setRefreshing(false);
                         recyclerView.setVisibility(VISIBLE);
 
                         int total = response.body().getTotal();
@@ -133,17 +139,29 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
                         }
                     } catch (Exception e) {
                         Log.e(LOGTAG, "Failed to get orders", e);
+                        showAlert(context.getString(R.string.failed_to_get_orders), e.toString());
                     }
                 } else{
                     Log.e(LOGTAG, "Order response body is null");
+                    showAlert(context.getString(R.string.failed_to_get_orders), context.getString(R.string.orders_null));
                 }
             }
 
             @Override
             public void onFailure(Call<OrderResponse> call, Throwable throwable) {
-                Log.e(LOGTAG, "Failed to get orders", throwable);
+                updateOrders.setRefreshing(false);
+                Log.e(LOGTAG, "Failed to get orders: " + throwable.getMessage());
+                showAlert(context.getString(R.string.failed_to_get_orders), throwable.getMessage());
             }
         });
+    }
+
+    private void showAlert(String title, String message) {
+        new AlertDialog.Builder(MapView.getMapView().getContext())
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton(context.getString(R.string.ok), (dialogInterface, i) -> {})
+                .create().show();
     }
 
     @Override

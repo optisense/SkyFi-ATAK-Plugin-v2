@@ -19,4 +19,6 @@
     <string name="next_page">Next Page</string>
     <string name="previous_page">Previous Page</string>
     <string name="provider">"Provider: "</string>
+    <string name="failed_to_get_orders">Failed to get orders</string>
+    <string name="orders_null">Order response body is empty. Check your API Key and try again.</string>
 </resources>
