@@ -6,7 +6,7 @@ import java.util.Date;
 public class Order {
     private String id;
     private String orderType;
-    private int orderCost;
+    private float orderCost;
     private String ownerId;
     private String status;
     private float aoiSqkm;
@@ -22,15 +22,15 @@ public class Order {
     private String productType;
     private String resolution;
     private boolean priorityItem;
-    private int maxCloudCoveragePercent;
-    private int maxOffNadirAngle;
+    private float maxCloudCoveragePercent;
+    private float maxOffNadirAngle;
     private String requiredProvider;
     private String[] sarProductTypes;
     private String sarPolarisation;
-    private int sarGrazingAngleMin;
-    private int sarGrazingAngleMax;
-    private int sarAzimuthAngleMin;
-    private int sarAzimuthAngleMax;
+    private float sarGrazingAngleMin;
+    private float sarGrazingAngleMax;
+    private float sarAzimuthAngleMin;
+    private float sarAzimuthAngleMax;
     private int sarNumberOfLooks;
     private String geocodeLocation;
     private String orderLabel;
@@ -131,27 +131,27 @@ public class Order {
         this.id = id;
     }
 
-    public int getMaxCloudCoveragePercent() {
+    public float getMaxCloudCoveragePercent() {
         return maxCloudCoveragePercent;
     }
 
-    public void setMaxCloudCoveragePercent(int maxCloudCoveragePercent) {
+    public void setMaxCloudCoveragePercent(float maxCloudCoveragePercent) {
         this.maxCloudCoveragePercent = maxCloudCoveragePercent;
     }
 
-    public int getMaxOffNadirAngle() {
+    public float getMaxOffNadirAngle() {
         return maxOffNadirAngle;
     }
 
-    public void setMaxOffNadirAngle(int maxOffNadirAngle) {
+    public void setMaxOffNadirAngle(float maxOffNadirAngle) {
         this.maxOffNadirAngle = maxOffNadirAngle;
     }
 
-    public int getOrderCost() {
+    public float getOrderCost() {
         return orderCost;
     }
 
-    public void setOrderCost(int orderCost) {
+    public void setOrderCost(float orderCost) {
         this.orderCost = orderCost;
     }
 
@@ -203,35 +203,35 @@ public class Order {
         this.resolution = resolution;
     }
 
-    public int getSarAzimuthAngleMax() {
+    public float getSarAzimuthAngleMax() {
         return sarAzimuthAngleMax;
     }
 
-    public void setSarAzimuthAngleMax(int sarAzimuthAngleMax) {
+    public void setSarAzimuthAngleMax(float sarAzimuthAngleMax) {
         this.sarAzimuthAngleMax = sarAzimuthAngleMax;
     }
 
-    public int getSarAzimuthAngleMin() {
+    public float getSarAzimuthAngleMin() {
         return sarAzimuthAngleMin;
     }
 
-    public void setSarAzimuthAngleMin(int sarAzimuthAngleMin) {
+    public void setSarAzimuthAngleMin(float sarAzimuthAngleMin) {
         this.sarAzimuthAngleMin = sarAzimuthAngleMin;
     }
 
-    public int getSarGrazingAngleMax() {
+    public float getSarGrazingAngleMax() {
         return sarGrazingAngleMax;
     }
 
-    public void setSarGrazingAngleMax(int sarGrazingAngleMax) {
+    public void setSarGrazingAngleMax(float sarGrazingAngleMax) {
         this.sarGrazingAngleMax = sarGrazingAngleMax;
     }
 
-    public int getSarGrazingAngleMin() {
+    public float getSarGrazingAngleMin() {
         return sarGrazingAngleMin;
     }
 
-    public void setSarGrazingAngleMin(int sarGrazingAngleMin) {
+    public void setSarGrazingAngleMin(float sarGrazingAngleMin) {
         this.sarGrazingAngleMin = sarGrazingAngleMin;
     }
 

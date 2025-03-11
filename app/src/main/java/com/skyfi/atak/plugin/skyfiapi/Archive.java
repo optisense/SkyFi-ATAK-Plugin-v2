@@ -13,17 +13,17 @@ public class Archive {
     private float cloudCoveragePercent;
     private float offNadirAngle;
     private String footprint;
-    private int minSqKm;
-    private int maxSqKm;
-    private int priceForOneSquareKm;
-    private int priceFullScene;
+    private float minSqKm;
+    private float maxSqKm;
+    private float priceForOneSquareKm;
+    private float priceFullScene;
     private boolean openData;
     private float totalAreaSquareKm;
-    private int deliveryTimeHours;
+    private float deliveryTimeHours;
     private float gsd;
     private String titlesUrl;
-    private int overlapRatio;
-    private int overlapSqkm;
+    private float overlapRatio;
+    private float overlapSqkm;
 
     public String getArchiveId() {
         return archiveId;
@@ -57,11 +57,11 @@ public class Archive {
         this.constellation = constellation;
     }
 
-    public int getDeliveryTimeHours() {
+    public float getDeliveryTimeHours() {
         return deliveryTimeHours;
     }
 
-    public void setDeliveryTimeHours(int deliveryTimeHours) {
+    public void setDeliveryTimeHours(float deliveryTimeHours) {
         this.deliveryTimeHours = deliveryTimeHours;
     }
 
@@ -81,19 +81,19 @@ public class Archive {
         this.gsd = gsd;
     }
 
-    public int getMaxSqKm() {
+    public float getMaxSqKm() {
         return maxSqKm;
     }
 
-    public void setMaxSqKm(int maxSqKm) {
+    public void setMaxSqKm(float maxSqKm) {
         this.maxSqKm = maxSqKm;
     }
 
-    public int getMinSqKm() {
+    public float getMinSqKm() {
         return minSqKm;
     }
 
-    public void setMinSqKm(int minSqKm) {
+    public void setMinSqKm(float minSqKm) {
         this.minSqKm = minSqKm;
     }
 
@@ -113,19 +113,19 @@ public class Archive {
         this.openData = openData;
     }
 
-    public int getOverlapRatio() {
+    public float getOverlapRatio() {
         return overlapRatio;
     }
 
-    public void setOverlapRatio(int overlapRatio) {
+    public void setOverlapRatio(float overlapRatio) {
         this.overlapRatio = overlapRatio;
     }
 
-    public int getOverlapSqkm() {
+    public float getOverlapSqkm() {
         return overlapSqkm;
     }
 
-    public void setOverlapSqkm(int overlapSqkm) {
+    public void setOverlapSqkm(float overlapSqkm) {
         this.overlapSqkm = overlapSqkm;
     }
 
@@ -137,19 +137,19 @@ public class Archive {
         this.platformResolution = platformResolution;
     }
 
-    public int getPriceForOneSquareKm() {
+    public float getPriceForOneSquareKm() {
         return priceForOneSquareKm;
     }
 
-    public void setPriceForOneSquareKm(int priceForOneSquareKm) {
+    public void setPriceForOneSquareKm(float priceForOneSquareKm) {
         this.priceForOneSquareKm = priceForOneSquareKm;
     }
 
-    public int getPriceFullScene() {
+    public float getPriceFullScene() {
         return priceFullScene;
     }
 
-    public void setPriceFullScene(int priceFullScene) {
+    public void setPriceFullScene(float priceFullScene) {
         this.priceFullScene = priceFullScene;
     }
 

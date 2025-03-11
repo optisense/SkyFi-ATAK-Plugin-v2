@@ -258,9 +258,16 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
             intent.putExtra("uri", mobacUri);
             AtakBroadcast.getInstance().sendBroadcast(intent);
 
+            Intent selectLayer = new Intent();
+            selectLayer.setAction(ACTION_SELECT_LAYER);
+            selectLayer.putExtra(EXTRA_LAYER_NAME, "SkyFi " + order.getOrderName());
+            selectLayer.putExtra(EXTRA_SELECTION, "SkyFi " + order.getOrderName());
+            AtakBroadcast.getInstance().sendBroadcast(selectLayer);
+            Log.d(LOGTAG, "selected " + "SkyFi " + order.getOrderName());
+
             // Wait one second before selecting the new map
             // Otherwise there is a race condition when selecting the new map occurs before the import has completed
-            Handler handler = new Handler();
+            /*Handler handler = new Handler();
             handler.postDelayed(() -> {
                 Intent selectLayer = new Intent();
                 selectLayer.setAction(ACTION_SELECT_LAYER);
@@ -268,7 +275,7 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
                 selectLayer.putExtra(EXTRA_SELECTION, "SkyFi " + order.getOrderName());
                 AtakBroadcast.getInstance().sendBroadcast(selectLayer);
                 Log.d(LOGTAG, "selected " + "SkyFi " + order.getOrderName());
-            }, 5000);
+            }, 5000);*/
 
             // Get the order's vertices and move the map to fit the imagery
             WKTReader wktReader = new WKTReader();
