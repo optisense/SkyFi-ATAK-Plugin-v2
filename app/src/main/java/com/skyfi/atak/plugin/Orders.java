@@ -6,6 +6,7 @@ import android.content.Intent;
 
 import com.atakmap.android.ipc.AtakBroadcast;
 import com.atakmap.android.layers.LayersMapComponent;
+import com.atakmap.android.maps.Polyline;
 import com.atakmap.android.util.ATAKUtilities;
 import com.atakmap.coremap.io.IOProviderFactory;
 import com.atakmap.coremap.log.Log;
@@ -35,6 +36,7 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -258,16 +260,9 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
             intent.putExtra("uri", mobacUri);
             AtakBroadcast.getInstance().sendBroadcast(intent);
 
-            Intent selectLayer = new Intent();
-            selectLayer.setAction(ACTION_SELECT_LAYER);
-            selectLayer.putExtra(EXTRA_LAYER_NAME, "SkyFi " + order.getOrderName());
-            selectLayer.putExtra(EXTRA_SELECTION, "SkyFi " + order.getOrderName());
-            AtakBroadcast.getInstance().sendBroadcast(selectLayer);
-            Log.d(LOGTAG, "selected " + "SkyFi " + order.getOrderName());
-
             // Wait one second before selecting the new map
             // Otherwise there is a race condition when selecting the new map occurs before the import has completed
-            /*Handler handler = new Handler();
+            Handler handler = new Handler();
             handler.postDelayed(() -> {
                 Intent selectLayer = new Intent();
                 selectLayer.setAction(ACTION_SELECT_LAYER);
@@ -275,18 +270,23 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
                 selectLayer.putExtra(EXTRA_SELECTION, "SkyFi " + order.getOrderName());
                 AtakBroadcast.getInstance().sendBroadcast(selectLayer);
                 Log.d(LOGTAG, "selected " + "SkyFi " + order.getOrderName());
-            }, 5000);*/
+            }, 5000);
 
             // Get the order's vertices and move the map to fit the imagery
             WKTReader wktReader = new WKTReader();
             Geometry aoi = wktReader.read(order.getAoi());
 
             List<GeoPoint> geoPoints = new ArrayList<>();
+
             for (Coordinate coordinate : aoi.getCoordinates()) {
                 geoPoints.add(new GeoPoint(coordinate.getY(), coordinate.getX()));
             }
 
             GeoPoint[] points = geoPoints.toArray(new GeoPoint[geoPoints.size()]);
+            Polyline polyline = new Polyline(UUID.randomUUID().toString());
+            polyline.setPoints(points);
+            polyline.setStrokeColor(R.color.white);
+            MapView.getMapView().getRootGroup().addItem(polyline);
 
             ATAKUtilities.scaleToFit(MapView.getMapView(), points, 1000, 1000);
         } catch (Exception e) {

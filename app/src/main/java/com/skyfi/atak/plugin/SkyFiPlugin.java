@@ -2,11 +2,9 @@ package com.skyfi.atak.plugin;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Looper;
 
-import com.atakmap.android.importexport.ImportExportMapComponent;
 import com.atakmap.coremap.log.Log;
 import android.view.View;
 
