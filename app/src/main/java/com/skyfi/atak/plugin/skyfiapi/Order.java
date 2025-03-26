@@ -3,6 +3,8 @@ package com.skyfi.atak.plugin.skyfiapi;
 import java.util.Arrays;
 import java.util.Date;
 
+import androidx.annotation.NonNull;
+
 public class Order {
     private String id;
     private String orderType;
@@ -36,7 +38,9 @@ public class Order {
     private String orderLabel;
     private String orderCode;
     private Archive archive;
+    private String label;
 
+    @NonNull
     @Override
     public String toString() {
         return "Order{" +
@@ -337,5 +341,13 @@ public class Order {
 
     public void setArchive(Archive archive) {
         this.archive = archive;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
     }
 }

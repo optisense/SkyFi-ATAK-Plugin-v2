@@ -21,4 +21,12 @@
     <string name="provider">"Provider: "</string>
     <string name="failed_to_get_orders">Failed to get orders</string>
     <string name="orders_null">Order response body is empty. Check your API Key and try again.</string>
+    <string name="new_order">New Order</string>
+    <string name="new_order_message">Would you like to place a tasking or archive order?</string>
+    <string name="tasking_order">Tasking Order</string>
+    <string name="archive_order">Archive Order</string>
+    <string name="cancel">Cancel</string>
+    <string name="from">From</string>
+    <string name="from_summary">Must be at least 36 hours in the future</string>
+    <string name="to">To</string>
 </resources>

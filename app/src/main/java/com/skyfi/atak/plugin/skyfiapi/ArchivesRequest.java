@@ -1,13 +1,11 @@
 package com.skyfi.atak.plugin.skyfiapi;
 
-import java.util.Date;
-
 public class ArchivesRequest {
     private String aoi;
-    private Date fromDate;
-    private Date toDate;
-    private int maxCloudCoveragePercent;
-    private int maxOffNadirAngle;
+    private String fromDate;
+    private String toDate;
+    private float maxCloudCoveragePercent;
+    private float maxOffNadirAngle;
     private String[] resolutions;
     private String[] productTypes;
     private String[] providers;
@@ -24,27 +22,27 @@ public class ArchivesRequest {
         this.aoi = aoi;
     }
 
-    public Date getFromDate() {
+    public String getFromDate() {
         return fromDate;
     }
 
-    public void setFromDate(Date fromDate) {
+    public void setFromDate(String fromDate) {
         this.fromDate = fromDate;
     }
 
-    public int getMaxCloudCoveragePercent() {
+    public float getMaxCloudCoveragePercent() {
         return maxCloudCoveragePercent;
     }
 
-    public void setMaxCloudCoveragePercent(int maxCloudCoveragePercent) {
+    public void setMaxCloudCoveragePercent(float maxCloudCoveragePercent) {
         this.maxCloudCoveragePercent = maxCloudCoveragePercent;
     }
 
-    public int getMaxOffNadirAngle() {
+    public float getMaxOffNadirAngle() {
         return maxOffNadirAngle;
     }
 
-    public void setMaxOffNadirAngle(int maxOffNadirAngle) {
+    public void setMaxOffNadirAngle(float maxOffNadirAngle) {
         this.maxOffNadirAngle = maxOffNadirAngle;
     }
 
@@ -104,11 +102,11 @@ public class ArchivesRequest {
         this.resolutions = resolutions;
     }
 
-    public Date getToDate() {
+    public String getToDate() {
         return toDate;
     }
 
-    public void setToDate(Date toDate) {
+    public void setToDate(String toDate) {
         this.toDate = toDate;
     }
 }

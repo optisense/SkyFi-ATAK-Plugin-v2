@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.atakmap.android.util.Cont;
 import com.skyfi.atak.plugin.skyfiapi.Order;
 
 import java.util.List;

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Looper;
 
+import com.atakmap.android.ipc.DocumentedExtra;
 import com.atakmap.coremap.log.Log;
 import android.view.View;
 
@@ -108,15 +109,30 @@ public class SkyFiPlugin extends DropDownMapComponent implements IPlugin, MainRe
         AtakBroadcast.DocumentedIntentFilter documentedIntentFilter = new AtakBroadcast.DocumentedIntentFilter();
         documentedIntentFilter.addAction(Orders.ACTION);
         registerDropDownReceiver(new Orders(MapView.getMapView(), pluginContext), documentedIntentFilter);
+
+        AtakBroadcast.DocumentedIntentFilter newOrderIntentFilter = new AtakBroadcast.DocumentedIntentFilter();
+        newOrderIntentFilter.addAction(NewOrderFragment.ACTION);
+        registerDropDownReceiver(new NewOrderFragment(MapView.getMapView(), pluginContext, ""), newOrderIntentFilter);
+
+        AtakBroadcast.DocumentedIntentFilter archiveSearchFilter = new AtakBroadcast.DocumentedIntentFilter();
+        archiveSearchFilter.addAction(ArchiveSearch.ACTION);
+        registerDropDownReceiver(new ArchiveSearch(MapView.getMapView(), pluginContext, ""), archiveSearchFilter);
+
+        OrderUtility orderUtility = new OrderUtility(MapView.getMapView(), pluginContext);
+        AtakBroadcast.DocumentedIntentFilter filter = new AtakBroadcast.DocumentedIntentFilter();
+        filter.addAction("com.atakmap.android.cot_utility.receivers.cotMenu",
+                "this intent launches the cot send utility",
+                new DocumentedExtra[] {
+                        new DocumentedExtra("targetUID",
+                                "the map item identifier used to populate the drop down")
+                });
+        registerDropDownReceiver(orderUtility, filter);
     }
 
     @Override
     public void onCreate(Context context, Intent intent, MapView mapView) {
         super.onCreate(context, intent, mapView);
         this.mapView = mapView;
-        Log.d(LOGTAG, "onCreate");
-        Orders orders = new Orders(this.mapView, pluginContext);
-        registerReceiverUsingPluginContext(pluginContext, "orders", orders, Orders.ACTION);
     }
 
     @Override
@@ -178,9 +194,9 @@ public class SkyFiPlugin extends DropDownMapComponent implements IPlugin, MainRe
         AtakBroadcast.DocumentedIntentFilter mainIntentFilter = new AtakBroadcast.DocumentedIntentFilter();
         mainIntentFilter.addAction(actionName);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            mainView.getContext().registerReceiver(new Orders(mapView, pluginContext), mainIntentFilter, RECEIVER_NOT_EXPORTED);
+            mainView.getContext().registerReceiver(rec, mainIntentFilter, RECEIVER_NOT_EXPORTED);
         } else {
-            mainView.getContext().registerReceiver(new Orders(mapView, pluginContext), mainIntentFilter);
+            mainView.getContext().registerReceiver(rec, mainIntentFilter);
         }
     }
 
