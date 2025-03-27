@@ -101,31 +101,37 @@
                 <CheckBox
                     android:id="@+id/resolution_low"
                     android:text="@string/low"
+                    android:checked="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
                 <CheckBox
                     android:id="@+id/resolution_medium"
                     android:text="@string/medium"
+                    android:checked="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
                 <CheckBox
                     android:id="@+id/resolution_high"
                     android:text="@string/high"
+                    android:checked="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
                 <CheckBox
                     android:id="@+id/resolution_very_high"
                     android:text="@string/very_high"
+                    android:checked="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
                 <CheckBox
                     android:id="@+id/resolution_super_high"
                     android:text="@string/super_high"
+                    android:checked="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
                 <CheckBox
                     android:id="@+id/resolution_ultra_high"
                     android:text="@string/ultra_high"
+                    android:checked="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
             </LinearLayout>
@@ -150,36 +156,43 @@
                 <CheckBox
                     android:id="@+id/product_type_day"
                     android:text="@string/day"
+                    android:checked="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
                 <CheckBox
                     android:id="@+id/product_type_night"
                     android:text="@string/night"
+                    android:checked="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
                 <CheckBox
                     android:id="@+id/product_type_video"
                     android:text="@string/video"
+                    android:checked="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
                 <CheckBox
                     android:id="@+id/product_type_sar"
                     android:text="@string/sar"
+                    android:checked="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
                 <CheckBox
                     android:id="@+id/product_type_hyperspectral"
                     android:text="@string/hyperspectral"
+                    android:checked="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
                 <CheckBox
                     android:id="@+id/product_type_multispectral"
                     android:text="@string/multispectral"
+                    android:checked="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
                 <CheckBox
                     android:id="@+id/product_type_stereo"
                     android:text="@string/stereo"
+                    android:checked="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
             </LinearLayout>
@@ -204,61 +217,73 @@
                 <CheckBox
                     android:id="@+id/provider_siwei"
                     android:text="@string/siwei"
+                    android:checked="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
                 <CheckBox
                     android:id="@+id/provider_satellogic"
                     android:text="@string/satellogic"
+                    android:checked="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
                 <CheckBox
                     android:id="@+id/provider_umbra"
                     android:text="@string/umbra"
+                    android:checked="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
                 <CheckBox
                     android:id="@+id/provider_tailwind"
                     android:text="@string/tailwind"
+                    android:checked="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
                 <CheckBox
                     android:id="@+id/provider_geosat"
                     android:text="@string/geosat"
+                    android:checked="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
                 <CheckBox
                     android:id="@+id/provider_sentinel2"
                     android:text="@string/sentinel2"
+                    android:checked="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
                 <CheckBox
                     android:id="@+id/provider_sentinel2_creodias"
                     android:text="@string/sentinel2_creodias"
+                    android:checked="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
                 <CheckBox
                     android:id="@+id/provider_planet"
                     android:text="@string/planet"
+                    android:checked="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
                 <CheckBox
                     android:id="@+id/provider_impro"
                     android:text="@string/impro"
+                    android:checked="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
                 <CheckBox
                     android:id="@+id/provider_urban_sky"
                     android:text="@string/urban_sky"
+                    android:checked="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
                 <CheckBox
                     android:id="@+id/provider_nsl"
                     android:text="@string/nsl"
+                    android:checked="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
                 <CheckBox
                     android:id="@+id/provider_vexcel"
                     android:text="@string/vexcel"
+                    android:checked="true"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
             </LinearLayout>
