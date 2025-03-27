@@ -64,4 +64,7 @@
     <string name="max_off_nadir_error">Max Off Nadir Angle must be between 0-50</string>
     <string name="min_overlap_ratio_error">Minimum Overlap Ratio must be a decimal between 0-1</string>
     <string name="search">Search</string>
+    <string name="skyfi_archives">SkyFi / Archives</string>
+    <string name="cloud_coverage">Cloud Coverage: %.2f%%</string>
+    <string name="price_per_sqkm">Price Per KM²: $%.2f</string>
 </resources>

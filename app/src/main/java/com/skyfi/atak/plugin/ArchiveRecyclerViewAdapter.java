@@ -31,7 +31,7 @@ public class ArchiveRecyclerViewAdapter extends RecyclerView.Adapter<ArchiveRecy
     @NonNull
     @Override
     public ArchiveRecyclerViewAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.archive_order_row, parent, false);
+        View view = mInflater.inflate(R.layout.archive_row, parent, false);
         return new ArchiveRecyclerViewAdapter.ViewHolder(view);
     }
 

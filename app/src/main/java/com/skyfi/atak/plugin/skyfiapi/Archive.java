@@ -226,7 +226,7 @@ public class Archive {
         this.totalAreaSquareKm = totalAreaSquareKm;
     }
 
-    public Object getThumbnailUrls() {
+    public HashMap<String, String> getThumbnailUrls() {
         return thumbnailUrls;
     }
 

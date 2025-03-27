@@ -118,6 +118,10 @@ public class SkyFiPlugin extends DropDownMapComponent implements IPlugin, MainRe
         archiveSearchFilter.addAction(ArchiveSearch.ACTION);
         registerDropDownReceiver(new ArchiveSearch(MapView.getMapView(), pluginContext, ""), archiveSearchFilter);
 
+        AtakBroadcast.DocumentedIntentFilter archivesBrowserFilter = new AtakBroadcast.DocumentedIntentFilter();
+        archivesBrowserFilter.addAction(ArchivesBrowser.ACTION);
+        registerDropDownReceiver(new ArchivesBrowser(MapView.getMapView(), pluginContext), archivesBrowserFilter);
+
         OrderUtility orderUtility = new OrderUtility(MapView.getMapView(), pluginContext);
         AtakBroadcast.DocumentedIntentFilter filter = new AtakBroadcast.DocumentedIntentFilter();
         filter.addAction("com.atakmap.android.cot_utility.receivers.cotMenu",
@@ -187,17 +191,6 @@ public class SkyFiPlugin extends DropDownMapComponent implements IPlugin, MainRe
         mainRecyclerViewAdapter = new MainRecyclerViewAdapter(pluginContext, options);
         mainRecyclerViewAdapter.setClickListener(this);
         recyclerView.setAdapter(mainRecyclerViewAdapter);
-    }
-
-    private void registerReceiverUsingPluginContext(Context pluginContext, String name, DropDownReceiver rec, String actionName) {
-        Log.d(LOGTAG, "Registering " + name + " receiver with intent filter");
-        AtakBroadcast.DocumentedIntentFilter mainIntentFilter = new AtakBroadcast.DocumentedIntentFilter();
-        mainIntentFilter.addAction(actionName);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            mainView.getContext().registerReceiver(rec, mainIntentFilter, RECEIVER_NOT_EXPORTED);
-        } else {
-            mainView.getContext().registerReceiver(rec, mainIntentFilter);
-        }
     }
 
     @Override

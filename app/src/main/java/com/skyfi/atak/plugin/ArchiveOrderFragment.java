@@ -29,8 +29,8 @@ public class ArchiveOrderFragment extends DropDownReceiver implements DropDown.O
         this.context = context;
         this.aoi = aoi;
 
-        mainView = PluginLayoutInflater.inflate(context, R.layout.archive_order, null);
-        /*recyclerView = mainView.findViewById(R.id.main_recycler_view);
+        /*mainView = PluginLayoutInflater.inflate(context, R.layout.archive_order, null);
+        recyclerView = mainView.findViewById(R.id.main_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         archiveRecyclerViewAdapter = new MainRecyclerViewAdapter(context, options);
         archiveRecyclerViewAdapter.setClickListener(this);

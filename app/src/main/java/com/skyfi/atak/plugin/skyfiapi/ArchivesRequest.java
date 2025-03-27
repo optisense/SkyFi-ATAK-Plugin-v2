@@ -1,20 +1,42 @@
 package com.skyfi.atak.plugin.skyfiapi;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class ArchivesRequest {
+import androidx.annotation.NonNull;
+
+public class ArchivesRequest implements Serializable {
     private String aoi;
     private String fromDate;
     private String toDate;
-    private float maxCloudCoveragePercent;
-    private float maxOffNadirAngle;
+    private Float maxCloudCoveragePercent;
+    private Float maxOffNadirAngle;
     private ArrayList<String> resolutions = new ArrayList<>();
     private ArrayList<String> productTypes = new ArrayList<>();
     private ArrayList<String> providers = new ArrayList<>();
-    private boolean openData;
-    private float minOverlapRatio;
+    private Boolean openData;
+    private Float minOverlapRatio;
     private int pageNumber;
     private int pageSize = 10;
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "ArchivesRequest{" +
+                "aoi='" + aoi + '\'' +
+                ", fromDate='" + fromDate + '\'' +
+                ", toDate='" + toDate + '\'' +
+                ", maxCloudCoveragePercent=" + maxCloudCoveragePercent +
+                ", maxOffNadirAngle=" + maxOffNadirAngle +
+                ", resolutions=" + resolutions +
+                ", productTypes=" + productTypes +
+                ", providers=" + providers +
+                ", openData=" + openData +
+                ", minOverlapRatio=" + minOverlapRatio +
+                ", pageNumber=" + pageNumber +
+                ", pageSize=" + pageSize +
+                '}';
+    }
 
     public String getAoi() {
         return aoi;
@@ -32,35 +54,35 @@ public class ArchivesRequest {
         this.fromDate = fromDate;
     }
 
-    public float getMaxCloudCoveragePercent() {
+    public Float getMaxCloudCoveragePercent() {
         return maxCloudCoveragePercent;
     }
 
-    public void setMaxCloudCoveragePercent(float maxCloudCoveragePercent) {
+    public void setMaxCloudCoveragePercent(Float maxCloudCoveragePercent) {
         this.maxCloudCoveragePercent = maxCloudCoveragePercent;
     }
 
-    public float getMaxOffNadirAngle() {
+    public Float getMaxOffNadirAngle() {
         return maxOffNadirAngle;
     }
 
-    public void setMaxOffNadirAngle(float maxOffNadirAngle) {
+    public void setMaxOffNadirAngle(Float maxOffNadirAngle) {
         this.maxOffNadirAngle = maxOffNadirAngle;
     }
 
-    public float getMinOverlapRatio() {
+    public Float getMinOverlapRatio() {
         return minOverlapRatio;
     }
 
-    public void setMinOverlapRatio(float minOverlapRatio) {
+    public void setMinOverlapRatio(Float minOverlapRatio) {
         this.minOverlapRatio = minOverlapRatio;
     }
 
-    public boolean isOpenData() {
+    public Boolean isOpenData() {
         return openData;
     }
 
-    public void setOpenData(boolean openData) {
+    public void setOpenData(Boolean openData) {
         this.openData = openData;
     }
 

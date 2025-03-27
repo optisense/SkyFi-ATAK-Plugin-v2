@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.icu.util.Calendar;
-import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -18,16 +17,11 @@ import android.widget.Toast;
 import com.atak.plugins.impl.PluginLayoutInflater;
 import com.atakmap.android.dropdown.DropDown;
 import com.atakmap.android.dropdown.DropDownReceiver;
+import com.atakmap.android.ipc.AtakBroadcast;
 import com.atakmap.android.maps.MapView;
 import com.atakmap.coremap.log.Log;
-import com.skyfi.atak.plugin.skyfiapi.ArchiveResponse;
 import com.skyfi.atak.plugin.skyfiapi.ArchivesRequest;
 import com.skyfi.atak.plugin.skyfiapi.SkyFiAPI;
-
-import androidx.annotation.NonNull;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class ArchiveSearch extends DropDownReceiver implements DropDown.OnStateListener, View.OnClickListener {
     private static final String LOGTAG = "ArchiveSearch";
@@ -188,7 +182,8 @@ public class ArchiveSearch extends DropDownReceiver implements DropDown.OnStateL
                     if (value >= 0 && value <= 100)
                         request.setMaxCloudCoveragePercent(value);
                     else
-                        Toast.makeText(context, R.string.max_cloud_coverage_error, Toast.LENGTH_LONG).show();
+                        maxCloudCoverage.setError(context.getString(R.string.max_cloud_coverage_error));
+                        //Toast.makeText(context, R.string.max_cloud_coverage_error, Toast.LENGTH_LONG).show();
                 } catch (Exception e) {
                     Toast.makeText(context, R.string.max_cloud_coverage_error, Toast.LENGTH_LONG).show();
                 }
@@ -243,36 +238,6 @@ public class ArchiveSearch extends DropDownReceiver implements DropDown.OnStateL
         });
     }
 
-    private void searchArchives() {
-        apiClient = new APIClient().getApiClient();
-        apiClient.searchArchives(request).enqueue(new Callback<ArchiveResponse>() {
-            @Override
-            public void onResponse(@NonNull Call<ArchiveResponse> call, @NonNull Response<ArchiveResponse> response) {
-                if (response.body() != null) {
-                    try {
-                        Log.d(LOGTAG, response.body().toString());
-                    } catch (Exception e) {
-                        Log.e(LOGTAG, "Failed to search archives", e);
-                    }
-                }
-                else {
-                    Log.e(LOGTAG, "Archive search response is null: " + response.code() + " - " + response.message());
-                    try {
-                        Log.d(LOGTAG, call.request().body().toString());
-                        Log.e(LOGTAG, response.errorBody().string());
-                    } catch (Exception e) {
-                        Log.e(LOGTAG, "Failed to fail", e);
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<ArchiveResponse> call, @NonNull Throwable throwable) {
-                Log.e(LOGTAG, "Failed to search archives", throwable);
-            }
-        });
-    }
-
     @Override
     public void onDropDownSelectionRemoved() {
 
@@ -303,17 +268,10 @@ public class ArchiveSearch extends DropDownReceiver implements DropDown.OnStateL
         if (intent.getAction() == null) return;
 
         if (intent.getAction().equals(ACTION)) {
-
-            for (String extra : intent.getExtras().keySet()) {
-                Log.d(LOGTAG, "Extra: " + extra);
-            }
             String aoi = intent.getStringExtra("aoi");
             request.setAoi(aoi);
-            Log.d(LOGTAG, "Got AOI: " + aoi);
 
-            if (aoi != null)
-                Log.d(LOGTAG, aoi);
-            else
+            if (aoi == null)
                 Log.e(LOGTAG, "aoi null");
 
             int orientation = context.getResources().getConfiguration().orientation;
@@ -407,6 +365,8 @@ public class ArchiveSearch extends DropDownReceiver implements DropDown.OnStateL
             else
                 request.removeResolution(context.getString(R.string.ultra_high));
         }
+
+        // Product Types
         else if (view.getId() == R.id.product_type_day) {
             if (day.isChecked())
                 request.addProductType(context.getString(R.string.day));
@@ -447,8 +407,10 @@ public class ArchiveSearch extends DropDownReceiver implements DropDown.OnStateL
             if (stereo.isChecked())
                 request.addProductType(context.getString(R.string.stereo));
             else
-                request.removeProductType(  context.getString(R.string.stereo));
+                request.removeProductType(context.getString(R.string.stereo));
         }
+
+        // Providers
         else if (view.getId() == R.id.provider_siwei) {
             if (siwei.isChecked())
                 request.addProvider(context.getString(R.string.siwei));
@@ -515,7 +477,7 @@ public class ArchiveSearch extends DropDownReceiver implements DropDown.OnStateL
             else
                 request.removeProvider(context.getString(R.string.nsl));
         }
-        else if (view.getId() == R.id.provider_vexcel   ) {
+        else if (view.getId() == R.id.provider_vexcel) {
             if (vexcel.isChecked())
                 request.addProvider(context.getString(R.string.vexcel));
             else
@@ -525,7 +487,11 @@ public class ArchiveSearch extends DropDownReceiver implements DropDown.OnStateL
             request.setOpenData(openData.isChecked());
         }
         else if (view.getId() == R.id.search_button) {
-            searchArchives();
+            Log.d(LOGTAG, request.toString());
+            Intent intent = new Intent();
+            intent.putExtra("request", request);
+            intent.setAction(ArchivesBrowser.ACTION);
+            AtakBroadcast.getInstance().sendBroadcast(intent);;
         }
     }
 }

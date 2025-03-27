@@ -91,7 +91,7 @@ public class OrderUtility extends DropDownReceiver implements MapEventDispatcher
         ArrayList<Coordinate> coordinates = new ArrayList<>();
         Coordinate firstCoord = null;
         for (GeoPoint point : points) {
-            Coordinate coordinate = new Coordinate(point.getLatitude(), point.getLongitude());
+            Coordinate coordinate = new Coordinate(point.getLongitude(), point.getLatitude());
             coordinates.add(coordinate);
             if (firstCoord == null)
                 firstCoord = coordinate;

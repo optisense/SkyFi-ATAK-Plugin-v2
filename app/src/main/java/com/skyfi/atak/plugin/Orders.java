@@ -260,7 +260,7 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
             intent.putExtra("uri", mobacUri);
             AtakBroadcast.getInstance().sendBroadcast(intent);
 
-            // Wait one second before selecting the new map
+            // Wait five seconds before selecting the new map
             // Otherwise there is a race condition when selecting the new map occurs before the import has completed
             Handler handler = new Handler();
             handler.postDelayed(() -> {
