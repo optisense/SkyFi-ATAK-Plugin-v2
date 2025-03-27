@@ -1,6 +1,9 @@
 package com.skyfi.atak.plugin.skyfiapi;
 
 import java.util.Date;
+import java.util.HashMap;
+
+import androidx.annotation.NonNull;
 
 public class Archive {
     private String archiveId;
@@ -24,6 +27,36 @@ public class Archive {
     private String titlesUrl;
     private float overlapRatio;
     private float overlapSqkm;
+    private HashMap<String, String> thumbnailUrls;
+
+    @NonNull
+    @Override
+    public String toString() {
+        return "Archive{" +
+                "archiveId='" + archiveId + '\'' +
+                ", provider='" + provider + '\'' +
+                ", constellation='" + constellation + '\'' +
+                ", productType='" + productType + '\'' +
+                ", platformResolution=" + platformResolution +
+                ", resolution='" + resolution + '\'' +
+                ", captureTimestamp=" + captureTimestamp +
+                ", cloudCoveragePercent=" + cloudCoveragePercent +
+                ", offNadirAngle=" + offNadirAngle +
+                ", footprint='" + footprint + '\'' +
+                ", minSqKm=" + minSqKm +
+                ", maxSqKm=" + maxSqKm +
+                ", priceForOneSquareKm=" + priceForOneSquareKm +
+                ", priceFullScene=" + priceFullScene +
+                ", openData=" + openData +
+                ", totalAreaSquareKm=" + totalAreaSquareKm +
+                ", deliveryTimeHours=" + deliveryTimeHours +
+                ", gsd=" + gsd +
+                ", titlesUrl='" + titlesUrl + '\'' +
+                ", overlapRatio=" + overlapRatio +
+                ", overlapSqkm=" + overlapSqkm +
+                ", thumbnailUrls=" + thumbnailUrls +
+                '}';
+    }
 
     public String getArchiveId() {
         return archiveId;
@@ -191,5 +224,13 @@ public class Archive {
 
     public void setTotalAreaSquareKm(float totalAreaSquareKm) {
         this.totalAreaSquareKm = totalAreaSquareKm;
+    }
+
+    public Object getThumbnailUrls() {
+        return thumbnailUrls;
+    }
+
+    public void setThumbnailUrls(HashMap<String, String> thumbnailUrls) {
+        this.thumbnailUrls = thumbnailUrls;
     }
 }
