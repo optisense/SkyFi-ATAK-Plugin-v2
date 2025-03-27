@@ -82,10 +82,8 @@ public class NewOrderFragment extends DropDownReceiver implements DropDown.OnSta
 
         if (intent.getAction().equals(ACTION)) {
 
-            String aoi = intent.getStringExtra("aoi");
-            if (aoi != null)
-                Log.d(LOGTAG, aoi);
-            else
+            aoi = intent.getStringExtra("aoi");
+            if (aoi == null)
                 Log.e(LOGTAG, "aoi null");
 
             int orientation = context.getResources().getConfiguration().orientation;
@@ -99,13 +97,11 @@ public class NewOrderFragment extends DropDownReceiver implements DropDown.OnSta
 
     @Override
     public void onItemClick(View view, int position) {
-        Log.d(LOGTAG, "clicked: " + position);
         switch (position) {
             case 0:
                 break;
 
             case 1:
-                Log.d(LOGTAG, "Launching archive search");
                 Intent intent = new Intent();
                 intent.setAction(ArchiveSearch.ACTION);
                 intent.putExtra("aoi", aoi);

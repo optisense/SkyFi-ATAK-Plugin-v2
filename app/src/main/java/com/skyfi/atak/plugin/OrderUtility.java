@@ -1,10 +1,8 @@
 package com.skyfi.atak.plugin;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
 
 import com.atakmap.android.drawing.mapItems.DrawingRectangle;
 import com.atakmap.android.drawing.mapItems.DrawingShape;
@@ -30,7 +28,6 @@ import org.locationtech.jts.io.WKTWriter;
 
 import java.util.ArrayList;
 
-import static android.content.Context.RECEIVER_NOT_EXPORTED;
 import static android.content.DialogInterface.BUTTON_NEGATIVE;
 import static android.content.DialogInterface.BUTTON_NEUTRAL;
 import static android.content.DialogInterface.BUTTON_POSITIVE;
@@ -79,8 +76,6 @@ public class OrderUtility extends DropDownReceiver implements MapEventDispatcher
                     newOrderIntent.setAction(NewOrderFragment.ACTION);
                     newOrderIntent.putExtra("aoi", aoi);
                     AtakBroadcast.getInstance().sendBroadcast(newOrderIntent);
-
-                    Log.d(LOGTAG, "Association");
                 }
                 else {
                     Log.d(LOGTAG, "Unknown " + mapItem.getClass() + " " + mapItem.getType());

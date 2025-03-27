@@ -1,18 +1,20 @@
 package com.skyfi.atak.plugin.skyfiapi;
 
+import java.util.ArrayList;
+
 public class ArchivesRequest {
     private String aoi;
     private String fromDate;
     private String toDate;
     private float maxCloudCoveragePercent;
     private float maxOffNadirAngle;
-    private String[] resolutions;
-    private String[] productTypes;
-    private String[] providers;
+    private ArrayList<String> resolutions = new ArrayList<>();
+    private ArrayList<String> productTypes = new ArrayList<>();
+    private ArrayList<String> providers = new ArrayList<>();
     private boolean openData;
     private float minOverlapRatio;
     private int pageNumber;
-    private int pageSize;
+    private int pageSize = 10;
 
     public String getAoi() {
         return aoi;
@@ -78,27 +80,51 @@ public class ArchivesRequest {
         this.pageSize = pageSize;
     }
 
-    public String[] getProductTypes() {
+    public ArrayList<String> getProductTypes() {
         return productTypes;
     }
 
-    public void setProductTypes(String[] productTypes) {
+    public void addProductType(String productType) {
+        productTypes.add(productType);
+    }
+
+    public void removeProductType(String productType) {
+        productTypes.remove(productType);
+    }
+
+    public void setProductTypes(ArrayList<String> productTypes) {
         this.productTypes = productTypes;
     }
 
-    public String[] getProviders() {
+    public ArrayList<String> getProviders() {
         return providers;
     }
 
-    public void setProviders(String[] providers) {
+    public void addProvider(String provider) {
+        providers.add(provider);
+    }
+
+    public void removeProvider(String provider) {
+        providers.remove(provider);;
+    }
+
+    public void setProviders(ArrayList<String> providers) {
         this.providers = providers;
     }
 
-    public String[] getResolutions() {
+    public ArrayList<String> getResolutions() {
         return resolutions;
     }
 
-    public void setResolutions(String[] resolutions) {
+    public void addResolution(String resolution) {
+        resolutions.add(resolution);
+    }
+
+    public void removeResolution(String resolution) {
+        resolutions.remove(resolution);
+    }
+
+    public void setResolutions(ArrayList<String> resolutions) {
         this.resolutions = resolutions;
     }
 
