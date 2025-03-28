@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
+import com.skyfi.atak.plugin.Constants;
 
 public class ArchivesRequest implements Serializable {
     private String aoi;
@@ -18,6 +19,36 @@ public class ArchivesRequest implements Serializable {
     private Float minOverlapRatio;
     private int pageNumber;
     private int pageSize = 10;
+
+    public ArchivesRequest() {
+        resolutions.add(Constants.LOW);
+        resolutions.add(Constants.MEDIUM);
+        resolutions.add(Constants.HIGH);
+        resolutions.add(Constants.VERY_HIGH);
+        resolutions.add(Constants.SUPER_HIGH);
+        resolutions.add(Constants.ULTRA_HIGH);
+
+        productTypes.add(Constants.DAY);
+        productTypes.add(Constants.NIGHT);
+        productTypes.add(Constants.VIDEO);
+        productTypes.add(Constants.SAR);
+        productTypes.add(Constants.HYPERSPECTRAL);
+        productTypes.add(Constants.MULTISPECTRAL);
+        productTypes.add(Constants.STEREO);
+
+        providers.add(Constants.SIWEI);
+        providers.add(Constants.SATELLOGIC);
+        providers.add(Constants.UMBRA);
+        providers.add(Constants.TAILWIND);
+        providers.add(Constants.GEOSAT);
+        providers.add(Constants.SENTINEL2);
+        providers.add(Constants.SENTINEL2_CREODIAS);
+        providers.add(Constants.PLANET);
+        providers.add(Constants.IMPRO);
+        providers.add(Constants.URBAN_SKY);
+        providers.add(Constants.NSL);
+        providers.add(Constants.VEXCEL);
+    }
 
     @NonNull
     @Override

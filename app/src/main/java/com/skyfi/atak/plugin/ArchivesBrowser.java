@@ -43,7 +43,8 @@ public class ArchivesBrowser extends DropDownReceiver implements DropDown.OnStat
     private SkyFiAPI apiClient;
     private final RecyclerView recyclerView;
     private Context context;
-    private int pageNumber = 0;
+    // Start the pageNumber at -1 since we don't know the total results and the first page is a GET and the subsequent pages are a POST
+    private int pageNumber = -1;
     private int pageSize = 10;
     private ArrayList<String> pageHashes = new ArrayList<>();
     private ArchivesRequest request = new ArchivesRequest();
@@ -69,20 +70,29 @@ public class ArchivesBrowser extends DropDownReceiver implements DropDown.OnStat
         previousButton = mainView.findViewById(R.id.previous_button);
 
         nextButton.setOnClickListener(view -> {
-            Log.d(LOGTAG, "page: " + pageNumber + " hashes: " + pageHashes.size() + " " + pageHashes);
             if (!pageHashes.isEmpty() && pageNumber < pageHashes.size() - 1)
                 pageNumber++;
             postArchives();
         });
 
         previousButton.setOnClickListener(view -> {
-            if (pageNumber > 0)
+            if (pageNumber > 0) {
+                postArchives();
                 pageNumber--;
-            postArchives();
+            }
+            else if (pageNumber == 0) {
+                pageNumber--;
+                getArchives();
+            }
         });
 
         refreshPage = mainView.findViewById(R.id.pull_to_refresh);
-        refreshPage.setOnRefreshListener(this::postArchives);
+        refreshPage.setOnRefreshListener(() -> {
+            if (pageHashes.isEmpty() || pageNumber == -1)
+                getArchives();
+            else
+                postArchives();
+        });
     }
 
     private void getArchives() {
@@ -102,6 +112,10 @@ public class ArchivesBrowser extends DropDownReceiver implements DropDown.OnStat
     }
 
     private void postArchives() {
+        // Don't update if there's only one page of results
+        if (pageHashes.isEmpty())
+            return;
+
         apiClient = new APIClient().getApiClient();
         apiClient.searchArchivesNextPage(pageHashes.get(pageNumber)).enqueue(new Callback<ArchiveResponse>() {
             @Override
@@ -134,13 +148,14 @@ public class ArchivesBrowser extends DropDownReceiver implements DropDown.OnStat
                     }
                 }
                 catch (Exception e) {
-                    Log.d(LOGTAG, "Failed to parse hash", e);
+                    Log.e(LOGTAG, "Failed to parse page hash", e);
                 }
 
                 archives.clear();
                 archives.addAll(archiveResponse.getArchives());
 
-                if (pageNumber == 0) {
+                if (pageNumber == -1 && archiveResponse.getNextPage() != null) {
+                    // First page
                     nextButton.setVisibility(VISIBLE);
                     previousButton.setVisibility(GONE);
                 }
@@ -148,7 +163,13 @@ public class ArchivesBrowser extends DropDownReceiver implements DropDown.OnStat
                     nextButton.setVisibility(VISIBLE);
                     previousButton.setVisibility(VISIBLE);
                 }
+                else if (pageHashes.isEmpty()) {
+                    // Only one page of results
+                    nextButton.setVisibility(GONE);
+                    previousButton.setVisibility(GONE);
+                }
                 else {
+                    // Last page
                     nextButton.setVisibility(GONE);
                     previousButton.setVisibility(VISIBLE);
                 }
@@ -211,7 +232,7 @@ public class ArchivesBrowser extends DropDownReceiver implements DropDown.OnStat
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        pageNumber = 0;
+        pageNumber = -1;
         pageHashes.clear();
         request = new ArchivesRequest();
 
@@ -250,7 +271,6 @@ public class ArchivesBrowser extends DropDownReceiver implements DropDown.OnStat
         ArchiveOrder order = new ArchiveOrder();
         order.setArchiveId(archive.getArchiveId());
         order.setAoi(aoi);
-        Log.d(LOGTAG, order.toString());
 
         apiClient = new APIClient().getApiClient();
         apiClient.archiveOrder(order).enqueue(new Callback<ArchiveResponse>() {
