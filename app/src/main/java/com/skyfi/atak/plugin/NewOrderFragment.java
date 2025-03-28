@@ -21,9 +21,7 @@ public class NewOrderFragment extends DropDownReceiver implements DropDown.OnSta
     private final static String LOGTAG = "NewOrderFragment";
     public final static String ACTION = "com.skyfi.new_order";
 
-    private MapView mapView;
     private View mainView;
-    private Context context;
     private final RecyclerView recyclerView;
     private String aoi;
     private MainRecyclerViewAdapter mainRecyclerViewAdapter;
@@ -31,8 +29,6 @@ public class NewOrderFragment extends DropDownReceiver implements DropDown.OnSta
     protected NewOrderFragment(MapView mapView, Context context, String aoi) {
         super(mapView);
 
-        this.mapView = mapView;
-        this.context = context;
         this.aoi = aoi;
 
         ArrayList<String> options = new ArrayList<>();
@@ -97,12 +93,15 @@ public class NewOrderFragment extends DropDownReceiver implements DropDown.OnSta
 
     @Override
     public void onItemClick(View view, int position) {
+        Intent intent = new Intent();
         switch (position) {
             case 0:
+                intent.setAction(TaskingOrderFragment.ACTION);
+                intent.putExtra("aoi", aoi);
+                AtakBroadcast.getInstance().sendBroadcast(intent);
                 break;
 
             case 1:
-                Intent intent = new Intent();
                 intent.setAction(ArchiveSearch.ACTION);
                 intent.putExtra("aoi", aoi);
                 AtakBroadcast.getInstance().sendBroadcast(intent);

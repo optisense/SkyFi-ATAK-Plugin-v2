@@ -1,23 +1,41 @@
 package com.skyfi.atak.plugin.skyfiapi;
 
 public class TaskingOrder {
-    String aio; // required
-    boolean priorityItem;
+    String aoi; // required
+    boolean priorityItem = false;
     String productType; // required
     String resolution; // required
-    int maxCloudCoveragePercent;
-    int maxOffNadirAngle;
+    String requiredProvider; // Ironically not required
+    Float maxCloudCoveragePercent;
+    Float maxOffNadirAngle;
     String windowStart; // required
     String windowEnd; // required
     String deliveryDriver;
     DeliveryParams deliveryParams;
 
-    public String getAio() {
-        return aio;
+    @Override
+    public String toString() {
+        return "TaskingOrder{" +
+                "aoi='" + aoi + '\'' +
+                ", priorityItem=" + priorityItem +
+                ", productType='" + productType + '\'' +
+                ", resolution='" + resolution + '\'' +
+                ", requiredProvider='" + requiredProvider + '\'' +
+                ", maxCloudCoveragePercent=" + maxCloudCoveragePercent +
+                ", maxOffNadirAngle=" + maxOffNadirAngle +
+                ", windowStart='" + windowStart + '\'' +
+                ", windowEnd='" + windowEnd + '\'' +
+                ", deliveryDriver='" + deliveryDriver + '\'' +
+                ", deliveryParams=" + deliveryParams +
+                '}';
     }
 
-    public void setAio(String aio) {
-        this.aio = aio;
+    public String getAoi() {
+        return aoi;
+    }
+
+    public void setAoi(String aoi) {
+        this.aoi = aoi;
     }
 
     public String getDeliveryDriver() {
@@ -36,19 +54,19 @@ public class TaskingOrder {
         this.deliveryParams = deliveryParams;
     }
 
-    public int getMaxCloudCoveragePercent() {
+    public Float getMaxCloudCoveragePercent() {
         return maxCloudCoveragePercent;
     }
 
-    public void setMaxCloudCoveragePercent(int maxCloudCoveragePercent) {
+    public void setMaxCloudCoveragePercent(Float maxCloudCoveragePercent) {
         this.maxCloudCoveragePercent = maxCloudCoveragePercent;
     }
 
-    public int getMaxOffNadirAngle() {
+    public Float getMaxOffNadirAngle() {
         return maxOffNadirAngle;
     }
 
-    public void setMaxOffNadirAngle(int maxOffNadirAngle) {
+    public void setMaxOffNadirAngle(Float maxOffNadirAngle) {
         this.maxOffNadirAngle = maxOffNadirAngle;
     }
 
@@ -90,5 +108,13 @@ public class TaskingOrder {
 
     public void setWindowStart(String windowStart) {
         this.windowStart = windowStart;
+    }
+
+    public String getRequiredProvider() {
+        return requiredProvider;
+    }
+
+    public void setRequiredProvider(String requiredProvider) {
+        this.requiredProvider = requiredProvider;
     }
 }

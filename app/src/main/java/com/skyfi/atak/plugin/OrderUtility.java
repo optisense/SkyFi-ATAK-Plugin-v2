@@ -28,11 +28,7 @@ import org.locationtech.jts.io.WKTWriter;
 
 import java.util.ArrayList;
 
-import static android.content.DialogInterface.BUTTON_NEGATIVE;
-import static android.content.DialogInterface.BUTTON_NEUTRAL;
-import static android.content.DialogInterface.BUTTON_POSITIVE;
-
-public class OrderUtility extends DropDownReceiver implements MapEventDispatcher.MapEventDispatchListener, DialogInterface.OnClickListener {
+public class OrderUtility extends DropDownReceiver implements MapEventDispatcher.MapEventDispatchListener {
     private static final String LOGTAG = "OrderUtility";
 
     MapView mapView;
@@ -150,21 +146,6 @@ public class OrderUtility extends DropDownReceiver implements MapEventDispatcher
         }
         else {
             Log.d(LOGTAG,mapEvent.getItem().getClass() + " " + mapEvent.getItem().getTitle() + " " + mapEvent.getItem().getType());
-        }
-    }
-
-    @Override
-    public void onClick(DialogInterface dialogInterface, int i) {
-        switch (i) {
-            case BUTTON_NEGATIVE:
-                dialogInterface.dismiss();
-                break;
-
-            case BUTTON_NEUTRAL:
-                break;
-
-            case BUTTON_POSITIVE:
-                break;
         }
     }
 }

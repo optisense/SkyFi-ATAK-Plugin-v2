@@ -12,7 +12,6 @@ import android.view.View;
 import com.atak.plugins.impl.PluginContextProvider;
 import com.atak.plugins.impl.PluginLayoutInflater;
 import com.atakmap.android.dropdown.DropDownMapComponent;
-import com.atakmap.android.dropdown.DropDownReceiver;
 import com.atakmap.android.ipc.AtakBroadcast;
 import com.atakmap.android.maps.MapView;
 import com.atakmap.app.preferences.ToolsPreferenceFragment;
@@ -119,6 +118,10 @@ public class SkyFiPlugin extends DropDownMapComponent implements IPlugin, MainRe
         AtakBroadcast.DocumentedIntentFilter archivesBrowserFilter = new AtakBroadcast.DocumentedIntentFilter();
         archivesBrowserFilter.addAction(ArchivesBrowser.ACTION);
         registerDropDownReceiver(new ArchivesBrowser(MapView.getMapView(), pluginContext), archivesBrowserFilter);
+
+        AtakBroadcast.DocumentedIntentFilter taskingOrderFilter = new AtakBroadcast.DocumentedIntentFilter();
+        taskingOrderFilter.addAction(TaskingOrderFragment.ACTION);
+        registerDropDownReceiver(new TaskingOrderFragment(MapView.getMapView(), pluginContext), taskingOrderFilter);
 
         OrderUtility orderUtility = new OrderUtility(MapView.getMapView(), pluginContext);
         AtakBroadcast.DocumentedIntentFilter filter = new AtakBroadcast.DocumentedIntentFilter();

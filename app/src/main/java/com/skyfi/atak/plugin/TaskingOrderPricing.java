@@ -34,11 +34,12 @@ public class TaskingOrderPricing extends DropDownReceiver implements DropDown.On
     private final static String LOGTAG = "SkyFiTaskingPricing";
     private View mainView;
     private ArrayList<Archive> archives = new ArrayList<>();
-    private final ArchivesBrowserRecyclerViewAdapter recyclerViewAdapter;
+    //private final ArchivesBrowserRecyclerViewAdapter recyclerViewAdapter;
     private SkyFiAPI apiClient;
-    private final RecyclerView recyclerView;
+    //private final RecyclerView recyclerView;
     private Context context;
     private String aoi;
+    private double area;
     private TaskingOrder taskingOrder = new TaskingOrder();
     private PricingQuery pricingQuery = new PricingQuery("");
     private PricingResponse pricingResponse;
@@ -49,9 +50,9 @@ public class TaskingOrderPricing extends DropDownReceiver implements DropDown.On
 
         this.context = context;
 
-        mainView = PluginLayoutInflater.inflate(context, R.layout.tasking_order_pricing, null);
+        mainView = PluginLayoutInflater.inflate(context, R.layout.tasking_order, null);
 
-        recyclerView = mainView.findViewById(R.id.tasking_order_recycler_view);
+        /*recyclerView = mainView.findViewById(R.id.tasking_order_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerViewAdapter = new ArchivesBrowserRecyclerViewAdapter(context, archives);
         recyclerViewAdapter.setClickListener(this);
@@ -59,7 +60,7 @@ public class TaskingOrderPricing extends DropDownReceiver implements DropDown.On
 
         refreshPage = mainView.findViewById(R.id.pull_to_refresh);
         refreshPage.setOnRefreshListener(() -> {
-        });
+        });*/
     }
 
     @Override
@@ -136,6 +137,7 @@ public class TaskingOrderPricing extends DropDownReceiver implements DropDown.On
             }
 
             aoi = intent.getStringExtra("aoi");
+            area = intent.getDoubleExtra("area", 0);
             pricingQuery.setAoi(aoi);
             getPricing();
         }

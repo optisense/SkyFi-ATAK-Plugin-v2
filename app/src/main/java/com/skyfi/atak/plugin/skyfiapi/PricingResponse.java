@@ -6,8 +6,9 @@ import java.util.HashMap;
 import androidx.annotation.NonNull;
 
 public class PricingResponse {
-    HashMap<String, ProductType> productTypes;
+    ArrayList<ProductType> productTypes;
 
+    @NonNull
     @Override
     public String toString() {
         return "PricingResponse{" +
@@ -15,11 +16,11 @@ public class PricingResponse {
                 '}';
     }
 
-    public HashMap<String, ProductType> getProductTypes() {
+    public ArrayList<ProductType> getProductTypes() {
         return productTypes;
     }
 
-    public void setProductTypes(HashMap<String, ProductType> productTypes) {
+    public void setProductTypes(ArrayList<ProductType> productTypes) {
         this.productTypes = productTypes;
     }
 
@@ -42,6 +43,14 @@ public class PricingResponse {
 
         public void setProductType(String productType) {
             this.productType = productType;
+        }
+
+        public ArrayList<Resolution> getResolutions() {
+            return resolutions;
+        }
+
+        public void setResolutions(ArrayList<Resolution> resolutions) {
+            this.resolutions = resolutions;
         }
 
         public class Resolution {

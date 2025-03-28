@@ -76,4 +76,6 @@
     <string name="skyfi_tasking_order">SkyFi / Tasking Order</string>
     <string name="priority">Prioritize</string>
     <string name="priority_extra_cost">+$%.2f</string>
+    <string name="total_price">Total Price: $%.2f</string>
+    <string name="get_pricing_failed">Failed to get pricing</string>
 </resources>

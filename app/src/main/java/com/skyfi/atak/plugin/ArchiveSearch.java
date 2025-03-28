@@ -268,6 +268,7 @@ public class ArchiveSearch extends DropDownReceiver implements DropDown.OnStateL
         if (intent.getAction() == null) return;
 
         if (intent.getAction().equals(ACTION)) {
+            request = new ArchivesRequest();
             String aoi = intent.getStringExtra("aoi");
             request.setAoi(aoi);
 
