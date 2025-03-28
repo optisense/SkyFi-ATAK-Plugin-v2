@@ -329,7 +329,7 @@ public class Order {
 
     // Order name is its user created label if there is one, otherwise use the geocoded location
     public String getOrderName() {
-        if (orderLabel != null && !orderLabel.isEmpty())
+        if (orderLabel != null && !orderLabel.isEmpty() && !orderLabel.equals("Platform Order"))
             return orderLabel;
         else
             return geocodeLocation + " - " + orderCode;
