@@ -72,4 +72,8 @@
     <string name="order_placed">Order Placed Successfully</string>
     <string name="order_failed">Failed to place order: %s</string>
     <string name="error_placing_order">Error Placing Order</string>
+    <string name="skyfi_tasking_pricing">SkyFi / Tasking Order Pricing</string>
+    <string name="skyfi_tasking_order">SkyFi / Tasking Order</string>
+    <string name="priority">Prioritize</string>
+    <string name="priority_extra_cost">+$%.2f</string>
 </resources>

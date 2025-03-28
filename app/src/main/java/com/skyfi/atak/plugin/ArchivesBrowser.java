@@ -45,7 +45,6 @@ public class ArchivesBrowser extends DropDownReceiver implements DropDown.OnStat
     private Context context;
     // Start the pageNumber at -1 since we don't know the total results and the first page is a GET and the subsequent pages are a POST
     private int pageNumber = -1;
-    private int pageSize = 10;
     private ArrayList<String> pageHashes = new ArrayList<>();
     private ArchivesRequest request = new ArchivesRequest();
     private String aoi;

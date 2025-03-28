@@ -33,4 +33,7 @@ public interface SkyFiAPI {
 
     @GET("/platform-api/archives")
     Call<ArchiveResponse> searchArchivesNextPage(@Query("page") String pageHash);
+
+    @POST("/platform-api/pricing")
+    Call<PricingResponse> getTaskingPricing(@Body PricingQuery pricingQuery);
 }
