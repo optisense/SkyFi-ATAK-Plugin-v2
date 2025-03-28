@@ -9,7 +9,7 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
@@ -60,6 +60,7 @@
 
             <EditText
                 android:id="@+id/max_cloud_coverage"
+                android:inputType="numberDecimal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
@@ -78,6 +79,7 @@
 
             <EditText
                 android:id="@+id/max_off_nadir"
+                android:inputType="numberDecimal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
@@ -321,6 +323,7 @@
 
             <EditText
                 android:id="@+id/min_overlap_ratio"
+                android:inputType="numberDecimal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
