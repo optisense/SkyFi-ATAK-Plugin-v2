@@ -7,8 +7,8 @@ public class ArchiveOrder {
     String aoi; // required
     String deliveryDriver;
     DeliveryParams deliveryParams;
-    String label;
-    String orderLabel;
+    String label = null;
+    String orderLabel = null;
     Object metadata;
     String webhookUrl;
 

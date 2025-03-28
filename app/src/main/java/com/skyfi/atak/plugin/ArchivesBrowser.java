@@ -14,9 +14,12 @@ import com.atakmap.android.dropdown.DropDownReceiver;
 import com.atakmap.android.maps.MapView;
 import com.atakmap.coremap.log.Log;
 import com.skyfi.atak.plugin.skyfiapi.Archive;
+import com.skyfi.atak.plugin.skyfiapi.ArchiveOrder;
 import com.skyfi.atak.plugin.skyfiapi.ArchiveResponse;
 import com.skyfi.atak.plugin.skyfiapi.ArchivesRequest;
 import com.skyfi.atak.plugin.skyfiapi.SkyFiAPI;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -44,6 +47,7 @@ public class ArchivesBrowser extends DropDownReceiver implements DropDown.OnStat
     private int pageSize = 10;
     private ArrayList<String> pageHashes = new ArrayList<>();
     private ArchivesRequest request = new ArchivesRequest();
+    private String aoi;
 
     Button nextButton;
     Button previousButton;
@@ -65,13 +69,16 @@ public class ArchivesBrowser extends DropDownReceiver implements DropDown.OnStat
         previousButton = mainView.findViewById(R.id.previous_button);
 
         nextButton.setOnClickListener(view -> {
+            Log.d(LOGTAG, "page: " + pageNumber + " hashes: " + pageHashes.size() + " " + pageHashes);
+            if (!pageHashes.isEmpty() && pageNumber < pageHashes.size() - 1)
+                pageNumber++;
             postArchives();
-            pageNumber++;
         });
 
         previousButton.setOnClickListener(view -> {
+            if (pageNumber > 0)
+                pageNumber--;
             postArchives();
-            pageNumber--;
         });
 
         refreshPage = mainView.findViewById(R.id.pull_to_refresh);
@@ -114,12 +121,13 @@ public class ArchivesBrowser extends DropDownReceiver implements DropDown.OnStat
         if (response.body() != null) {
             try {
                 ArchiveResponse archiveResponse = response.body();
-                String hash = null;
+                aoi = archiveResponse.getRequest().getAoi();
+
                 try {
                     if (archiveResponse.getNextPage() != null) {
                         String url = "https://app.skyfi.com" + archiveResponse.getNextPage();
                         Uri uri = Uri.parse(url);
-                        hash = uri.getQueryParameter("page");
+                        String hash = uri.getQueryParameter("page");
                         if (!pageHashes.contains(hash)) {
                             pageHashes.add(hash);
                         }
@@ -157,9 +165,11 @@ public class ArchivesBrowser extends DropDownReceiver implements DropDown.OnStat
             int responseCode = response.code();
             Log.e(LOGTAG, "Archive search response is null: " + responseCode);
             try {
+                JSONObject errorJson = new JSONObject(response.errorBody().string());
+                String message = errorJson.getJSONArray("detail").getJSONObject(0).getString("msg");
                 Log.d(LOGTAG, call.request().body().toString());
-                Log.e(LOGTAG, response.errorBody().string());
-                showError("Error searching archives", "Response Code: " + responseCode);
+                Log.e(LOGTAG, message);
+                showError("Error searching archives", message);
             } catch (Exception e) {
                 Log.e(LOGTAG, "Failed to fail", e);
             }
@@ -201,6 +211,10 @@ public class ArchivesBrowser extends DropDownReceiver implements DropDown.OnStat
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        pageNumber = 0;
+        pageHashes.clear();
+        request = new ArchivesRequest();
+
         if (intent.getAction() == null) return;
 
         if (intent.getAction().equals(ACTION)) {
@@ -221,6 +235,64 @@ public class ArchivesBrowser extends DropDownReceiver implements DropDown.OnStat
     @Override
     public void onItemClick(View view, int position) {
         Archive archive = archives.get(position);
-        Log.d(LOGTAG, archive.toString());
+
+        new AlertDialog.Builder(MapView.getMapView().getContext())
+            .setTitle(context.getString(R.string.place_order))
+            .setMessage(context.getString(R.string.are_you_sure))
+            .setPositiveButton(context.getString(R.string.ok), (dialogInterface, i) -> placeOrder(archive))
+            .setNegativeButton(context.getString(R.string.cancel), null)
+                .create()
+                .show();
+    }
+
+    private void placeOrder(Archive archive) {
+        refreshPage.setRefreshing(true);
+        ArchiveOrder order = new ArchiveOrder();
+        order.setArchiveId(archive.getArchiveId());
+        order.setAoi(aoi);
+        Log.d(LOGTAG, order.toString());
+
+        apiClient = new APIClient().getApiClient();
+        apiClient.archiveOrder(order).enqueue(new Callback<ArchiveResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<ArchiveResponse> call, @NonNull Response<ArchiveResponse> response) {
+                refreshPage.setRefreshing(false);
+                if (response.code() == 201) {
+                    new AlertDialog.Builder(MapView.getMapView().getContext())
+                            .setTitle(context.getString(R.string.place_order))
+                            .setMessage(context.getString(R.string.order_placed))
+                            .setPositiveButton(context.getString(R.string.ok), null)
+                            .create()
+                            .show();
+                }
+                else {
+                    try {
+                        JSONObject errorJson = new JSONObject(response.errorBody().string());
+                        String message = errorJson.getJSONArray("detail").getJSONObject(0).getString("msg");
+                        Log.e(LOGTAG, "Failed to place order: " + message);
+                        new AlertDialog.Builder(MapView.getMapView().getContext())
+                                .setTitle(context.getString(R.string.error_placing_order))
+                                .setMessage(message)
+                                .setPositiveButton(context.getString(R.string.ok), null)
+                                .create()
+                                .show();
+                    } catch (Exception e) {
+                        Log.e(LOGTAG, "Failed to fail", e);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ArchiveResponse> call, @NonNull Throwable throwable) {
+                refreshPage.setRefreshing(false);
+                Log.e(LOGTAG, "Failed to place order", throwable);
+                new AlertDialog.Builder(MapView.getMapView().getContext())
+                        .setTitle(context.getString(R.string.error_placing_order))
+                        .setMessage(throwable.getMessage())
+                        .setPositiveButton(context.getString(R.string.ok), null)
+                        .create()
+                        .show();
+            }
+        });
     }
 }

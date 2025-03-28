@@ -59,7 +59,6 @@ public class ArchivesBrowserRecyclerViewAdapter extends RecyclerView.Adapter<Arc
             Handler handler = new Handler(Looper.getMainLooper());
             Thread thread = new Thread(() -> {
                 try {
-                    Log.d(LOGTAG, "in thread");
                     Map.Entry<String, String> entry = archive.getThumbnailUrls().entrySet().iterator().next();
                     String key = entry.getKey();
                     String value = entry.getValue();
@@ -122,9 +121,7 @@ public class ArchivesBrowserRecyclerViewAdapter extends RecyclerView.Adapter<Arc
             if (mClickListener != null) {
                 mClickListener.onItemClick(view, getAdapterPosition());
                 selectedPosition = getAdapterPosition();
-                notifyDataSetChanged();
             }
-
         }
     }
 
