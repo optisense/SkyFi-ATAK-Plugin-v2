@@ -598,12 +598,46 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
 
     }
 
+    private void resetForm() {
+        getPricing();
+        taskingOrder = new TaskingOrder();
+        from.setText("");
+        to.setText("");
+        maxCloudCoverage.setText("");
+        maxOffNadirAngle.setText("");
+        day.setChecked(false);
+        sar.setChecked(false);
+        stereo.setChecked(false);
+        high.setChecked(false);
+        high.setEnabled(true);
+        veryHigh.setChecked(false);
+        veryHigh.setEnabled(true);
+        superHigh.setChecked(false);
+        superHigh.setEnabled(true);
+        ultraHigh.setChecked(false);
+        ultraHigh.setEnabled(true);
+        siwei.setChecked(false);
+        siwei.setEnabled(true);
+        satellogic.setChecked(false);
+        satellogic.setEnabled(true);
+        umbra.setChecked(false);
+        umbra.setEnabled(true);
+        geosat.setChecked(false);
+        geosat.setEnabled(true);
+        planet.setChecked(false);
+        planet.setEnabled(true);
+        impro.setChecked(false);
+        impro.setEnabled(true);
+        prioritize.setChecked(false);
+    }
+
     @Override
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction() == null) return;
 
         if (intent.getAction().equals(ACTION)) {
-            taskingOrder = new com.skyfi.atak.plugin.skyfiapi.TaskingOrder();
+            resetForm();
+
             String aoi = intent.getStringExtra("aoi");
             area = intent.getDoubleExtra("area", 0);
             Log.d(LOGTAG, "Got area " + area);
@@ -612,7 +646,6 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
             if (aoi == null)
                 Log.e(LOGTAG, "aoi null");
 
-            getPricing();
             priorityPrice.setText(String.format(this.context.getString(R.string.priority_extra_cost), 0f));
             totalPrice.setText(String.format(this.context.getString(R.string.total_price), 0f));
 
