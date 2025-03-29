@@ -22,6 +22,7 @@ import com.atakmap.android.dropdown.DropDown;
 import com.atakmap.android.dropdown.DropDownReceiver;
 import com.atakmap.android.maps.MapView;
 import com.atakmap.coremap.log.Log;
+import com.skyfi.atak.plugin.skyfiapi.Order;
 import com.skyfi.atak.plugin.skyfiapi.PricingQuery;
 import com.skyfi.atak.plugin.skyfiapi.PricingResponse;
 import com.skyfi.atak.plugin.skyfiapi.SkyFiAPI;
@@ -234,7 +235,7 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
                     dayString = String.valueOf(day);
 
                 to.setText(year + "-" + monthString + "-" + dayString);
-                taskingOrder.setWindowStart(year + "-" + monthString + "-" + dayString + "T00:00:00+00:00");
+                taskingOrder.setWindowEnd(year + "-" + monthString + "-" + dayString + "T00:00:00+00:00");
             }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
             datePickerDialog.show();
         }
@@ -438,6 +439,35 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
 
     private void placeOrder() {
         apiClient = new APIClient().getApiClient();
+        apiClient.taskingOrder(taskingOrder).enqueue(new Callback<Order>() {
+            @Override
+            public void onResponse(@NonNull Call<Order> call, @NonNull Response<Order> response) {
+                if (response.isSuccessful()) {
+                    showError(context.getString(R.string.tasking_order), context.getString(R.string.order_placed));
+                }
+                else {
+                    int responseCode = response.code();
+                    Log.e(LOGTAG, "Tasking order failed: " + responseCode);
+                    try {
+                        String errorString = response.errorBody().string();
+                        Log.d(LOGTAG, "error is " + errorString);
+                        JSONObject errorJson = new JSONObject(errorString);
+                        String message = errorJson.getJSONArray("detail").getJSONObject(0).getString("msg");
+                        Log.d(LOGTAG, call.request().body().toString());
+                        Log.e(LOGTAG, message);
+                        showError("Order Error", message);
+                    } catch (Exception e) {
+                        Log.e(LOGTAG, "Failed to fail", e);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<Order> call, @NonNull Throwable throwable) {
+                Log.e(LOGTAG, "Failed to place tasking order", throwable);
+                showError(context.getString(R.string.tasking_order), throwable.getMessage());
+            }
+        });
     }
 
     private void getPricing() {
@@ -452,7 +482,9 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
                 else {
                     Log.e(LOGTAG, "Failed to get pricing");
                     try {
-                        JSONObject errorJson = new JSONObject(response.errorBody().string());
+                        String errorString = response.errorBody().string();
+                        Log.w(LOGTAG, "error is " + errorString);
+                        JSONObject errorJson = new JSONObject(errorString);
                         String message = errorJson.getJSONArray("detail").getJSONObject(0).getString("msg");
                         Log.d(LOGTAG, call.request().body().toString());
                         Log.e(LOGTAG, message);
@@ -475,7 +507,8 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
         new AlertDialog.Builder(MapView.getMapView().getContext())
                 .setTitle(title)
                 .setMessage(message)
-                .setPositiveButton(R.string.ok, null)
+                .setPositiveButton(context.getString(R.string.ok), null)
+                .create()
                 .show();
     }
 
