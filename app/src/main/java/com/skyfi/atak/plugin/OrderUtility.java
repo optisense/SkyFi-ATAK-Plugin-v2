@@ -59,19 +59,23 @@ public class OrderUtility extends DropDownReceiver implements MapEventDispatcher
                     SimpleRectangle rectangle = (SimpleRectangle) mapItem;
                     aoi = getWkt(rectangle.getPoints());
 
-                    Intent newOrderIntent = new Intent();
-                    newOrderIntent.setAction(NewOrderFragment.ACTION);
-                    newOrderIntent.putExtra("aoi", aoi);
-                    AtakBroadcast.getInstance().sendBroadcast(newOrderIntent);
+                    if (aoi != null) {
+                        Intent newOrderIntent = new Intent();
+                        newOrderIntent.setAction(NewOrderFragment.ACTION);
+                        newOrderIntent.putExtra("aoi", aoi);
+                        AtakBroadcast.getInstance().sendBroadcast(newOrderIntent);
+                    }
                 }
                 else if (mapItem instanceof Association && mapItem.getType().equals("rectangle_line")) {
                     Association association = (Association) mapItem;
                     aoi = getWkt(association.getPoints());
 
-                    Intent newOrderIntent = new Intent();
-                    newOrderIntent.setAction(NewOrderFragment.ACTION);
-                    newOrderIntent.putExtra("aoi", aoi);
-                    AtakBroadcast.getInstance().sendBroadcast(newOrderIntent);
+                    if (aoi != null) {
+                        Intent newOrderIntent = new Intent();
+                        newOrderIntent.setAction(NewOrderFragment.ACTION);
+                        newOrderIntent.putExtra("aoi", aoi);
+                        AtakBroadcast.getInstance().sendBroadcast(newOrderIntent);
+                    }
                 }
                 else {
                     Log.d(LOGTAG, "Unknown " + mapItem.getClass() + " " + mapItem.getType());
@@ -96,10 +100,16 @@ public class OrderUtility extends DropDownReceiver implements MapEventDispatcher
         // Make sure the polygon is closed
         coordinates.add(firstCoord);
 
-        GeometryFactory factory = new GeometryFactory(new PrecisionModel(10000.0));
-        Polygon polygon = factory.createPolygon(coordinates.toArray(new Coordinate[coordinates.size()]));
-        WKTWriter wktWriter = new WKTWriter();
-        return wktWriter.write(polygon);
+        try {
+            GeometryFactory factory = new GeometryFactory(new PrecisionModel(10000.0));
+            Polygon polygon = factory.createPolygon(coordinates.toArray(new Coordinate[coordinates.size()]));
+            WKTWriter wktWriter = new WKTWriter();
+            return wktWriter.write(polygon);
+        } catch (IllegalArgumentException e) {
+            Log.e(LOGTAG, "Failed to convert to WKT", e);
+        }
+
+        return null;
     }
 
     private String getMenu() {

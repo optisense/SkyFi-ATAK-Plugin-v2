@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -99,6 +100,8 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
 
         totalPrice = mainView.findViewById(R.id.total_price);
 
+
+        // Resolutions
         high = mainView.findViewById(R.id.resolution_high);
         high.setOnClickListener(this);
 
@@ -111,6 +114,7 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
         ultraHigh = mainView.findViewById(R.id.resolution_ultra_high);
         ultraHigh.setOnClickListener(this);
 
+        // Product Types
         day = mainView.findViewById(R.id.product_type_day);
         day.setOnClickListener(this);
 
@@ -120,6 +124,7 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
         stereo = mainView.findViewById(R.id.product_type_stereo);
         stereo.setOnClickListener(this);
 
+        // Providers
         siwei = mainView.findViewById(R.id.provider_siwei);
         siwei.setOnClickListener(this);
 
@@ -233,35 +238,157 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
             }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
             datePickerDialog.show();
         }
-        else if (view.getId() == R.id.resolution_high) {
-            if (high.isChecked())
-                taskingOrder.setResolution(context.getString(R.string.high));
-        }
-        else if (view.getId() == R.id.resolution_very_high) {
-            if (veryHigh.isChecked())
-                taskingOrder.setResolution(context.getString(R.string.very_high));
-        }
-        else if (view.getId() == R.id.resolution_super_high) {
-            if (superHigh.isChecked())
-                taskingOrder.setResolution(context.getString(R.string.super_high));
-        }
-        else if (view.getId() == R.id.resolution_ultra_high) {
-            if (ultraHigh.isChecked())
-                taskingOrder.setResolution(context.getString(R.string.ultra_high));
-        }
 
         // Product Types
         else if (view.getId() == R.id.product_type_day) {
-            if (day.isChecked())
+            if (day.isChecked()) {
                 taskingOrder.setProductType(context.getString(R.string.day));
+                high.setEnabled(true);
+                veryHigh.setEnabled(true);
+                superHigh.setEnabled(true);
+                ultraHigh.setEnabled(false);
+
+                if (high.isChecked()) {
+
+                }
+                else if (veryHigh.isChecked()) {
+                    umbra.setEnabled(false);
+                    satellogic.setEnabled(false);
+                    geosat.setEnabled(false);
+                    siwei.setEnabled(true);
+                    impro.setEnabled(true);
+                    planet.setEnabled(true);
+                }
+                else if (superHigh.isChecked()) {
+                    umbra.setEnabled(false);
+                    satellogic.setEnabled(false);
+                    geosat.setEnabled(false);
+                    siwei.setEnabled(true);
+                    impro.setEnabled(false);
+                    planet.setEnabled(false);
+                }
+            }
         }
         else if (view.getId() == R.id.product_type_sar) {
-            if (sar.isChecked())
+            if (sar.isChecked()) {
                 taskingOrder.setProductType(context.getString(R.string.sar));
+                high.setEnabled(true);
+                veryHigh.setEnabled(true);
+                superHigh.setEnabled(true);
+                ultraHigh.setEnabled(true);
+
+                umbra.setEnabled(true);
+                satellogic.setEnabled(false);
+                geosat.setEnabled(false);
+                siwei.setEnabled(false);
+                impro.setEnabled(false);
+                planet.setEnabled(false);
+            }
         }
         else if (view.getId() == R.id.product_type_stereo) {
-            if (stereo.isChecked())
+            if (stereo.isChecked()) {
                 taskingOrder.setProductType(context.getString(R.string.stereo));
+                high.setEnabled(false);
+                veryHigh.setEnabled(true);
+                superHigh.setEnabled(true);
+                ultraHigh.setEnabled(false);
+
+                if (veryHigh.isChecked()) {
+                    umbra.setEnabled(false);
+                    satellogic.setEnabled(false);
+                    geosat.setEnabled(false);
+                    siwei.setEnabled(true);
+                    impro.setEnabled(true);
+                    planet.setEnabled(false);
+                }
+                else if (superHigh.isChecked()) {
+                    umbra.setEnabled(false);
+                    satellogic.setEnabled(false);
+                    geosat.setEnabled(false);
+                    siwei.setEnabled(true);
+                    impro.setEnabled(false);
+                    planet.setEnabled(false);
+                }
+            }
+        }
+
+        else if (view.getId() == R.id.resolution_high) {
+            if (high.isChecked()) {
+                taskingOrder.setResolution(context.getString(R.string.high));
+
+                if (day.isChecked()) {
+                    umbra.setEnabled(false);
+                    satellogic.setEnabled(true);
+                    geosat.setEnabled(true);
+                    siwei.setEnabled(false);
+                    impro.setEnabled(false);
+                    planet.setEnabled(false);
+                }
+            }
+        }
+        else if (view.getId() == R.id.resolution_very_high) {
+            if (veryHigh.isChecked()) {
+                taskingOrder.setResolution(context.getString(R.string.very_high));
+
+                if (day.isChecked()) {
+                    umbra.setEnabled(false);
+                    satellogic.setEnabled(false);
+                    geosat.setEnabled(false);
+                    siwei.setEnabled(true);
+                    impro.setEnabled(true);
+                    planet.setEnabled(true);
+                }
+                else if (stereo.isChecked()) {
+                    umbra.setEnabled(false);
+                    satellogic.setEnabled(false);
+                    geosat.setEnabled(false);
+                    siwei.setEnabled(true);
+                    impro.setEnabled(true);
+                    planet.setEnabled(false);
+                }
+            }
+        }
+        else if (view.getId() == R.id.resolution_super_high) {
+            if (superHigh.isChecked()) {
+                taskingOrder.setResolution(context.getString(R.string.super_high));
+
+                if (sar.isChecked()) {
+                    umbra.setEnabled(true);
+                    satellogic.setEnabled(false);
+                    geosat.setEnabled(false);
+                    siwei.setEnabled(false);
+                    impro.setEnabled(false);
+                    planet.setEnabled(false);
+                }
+                else if (stereo.isChecked()) {
+                    umbra.setEnabled(false);
+                    satellogic.setEnabled(false);
+                    geosat.setEnabled(false);
+                    siwei.setEnabled(true);
+                    impro.setEnabled(false);
+                    planet.setEnabled(false);
+                }
+                else if (day.isChecked()) {
+                    umbra.setEnabled(false);
+                    satellogic.setEnabled(false);
+                    geosat.setEnabled(false);
+                    siwei.setEnabled(true);
+                    impro.setEnabled(false);
+                    planet.setEnabled(false);
+                }
+            }
+        }
+        else if (view.getId() == R.id.resolution_ultra_high) {
+            if (ultraHigh.isChecked()) {
+                taskingOrder.setResolution(context.getString(R.string.ultra_high));
+
+                umbra.setEnabled(true);
+                satellogic.setEnabled(false);
+                geosat.setEnabled(false);
+                siwei.setEnabled(false);
+                impro.setEnabled(false);
+                planet.setEnabled(false);
+            }
         }
 
         // Providers
@@ -354,7 +481,6 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
 
     private void updateTotalPrice() {
         if (taskingOrder.getProductType() == null || taskingOrder.getResolution() == null || taskingOrder.getAoi() == null) {
-            Log.d(LOGTAG, "Not updating price");
             return;
         }
 
@@ -373,16 +499,14 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
                             Geometry geometry = reader.read(taskingOrder.getAoi());
                             double area = calculatePolygonArea(geometry.getCoordinates());
 
-                            Log.d(LOGTAG, "Area is " + area + " ppsqkm is " + pricing.getTaskingPriceOneSqkm() + " prioritypricy " + pricing.getPriorityTaskingPriceOneSqkm());
-
-                            float total = (float) area * pricing.getTaskingPriceOneSqkm();
+                            double total = area * pricing.getTaskingPriceOneSqkm();
                             if (prioritize.isChecked()) {
                                 total += area * pricing.getPriorityTaskingPriceOneSqkm();
                             }
 
                             totalPrice.setText(String.format(context.getString(R.string.total_price), total));
 
-                            priorityPrice.setText(String.format(context.getString(R.string.priority_extra_cost), (float) area * pricing.getPriorityTaskingPriceOneSqkm()));
+                            priorityPrice.setText(String.format(context.getString(R.string.priority_extra_cost), area * pricing.getPriorityTaskingPriceOneSqkm()));
                             break;
                         }
                         catch (Exception e) {
@@ -395,12 +519,10 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
                 }
                 break;
             }
-            Log.d(LOGTAG, "Not a valid selection");
         }
     }
 
-    public static double calculatePolygonArea(Coordinate[] coordinates)
-    {
+    public static double calculatePolygonArea(Coordinate[] coordinates) {
         double area = 0;
 
         if (coordinates.length > 2) {

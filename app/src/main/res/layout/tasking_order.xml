@@ -101,49 +101,6 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/resolution_label"
-                    android:text="@string/resolution"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-                <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <RadioGroup
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" >
-                        <RadioButton
-                            android:id="@+id/resolution_high"
-                            android:text="@string/high"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
-                        <RadioButton
-                            android:id="@+id/resolution_very_high"
-                            android:text="@string/very_high"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
-                        <RadioButton
-                            android:id="@+id/resolution_super_high"
-                            android:text="@string/super_high"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
-                        <RadioButton
-                            android:id="@+id/resolution_ultra_high"
-                            android:text="@string/ultra_high"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
-                    </RadioGroup>
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
                     android:id="@+id/product_types_label"
                     android:text="@string/product_types"
                     android:layout_width="wrap_content"
@@ -184,6 +141,48 @@
                 android:layout_height="wrap_content">
 
                 <TextView
+                    android:id="@+id/resolution_label"
+                    android:text="@string/resolution"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <RadioGroup
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" >
+                        <RadioButton
+                            android:id="@+id/resolution_high"
+                            android:text="@string/high"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+                        <RadioButton
+                            android:id="@+id/resolution_very_high"
+                            android:text="@string/very_high"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+                        <RadioButton
+                            android:id="@+id/resolution_super_high"
+                            android:text="@string/super_high"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+                        <RadioButton
+                            android:id="@+id/resolution_ultra_high"
+                            android:text="@string/ultra_high"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+                    </RadioGroup>
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
                     android:id="@+id/providers_label"
                     android:text="@string/providers"
                     android:layout_width="wrap_content"
@@ -194,6 +193,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                     <RadioGroup
+                        android:id="@+id/provider_radio_group"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent" >
                         <RadioButton
