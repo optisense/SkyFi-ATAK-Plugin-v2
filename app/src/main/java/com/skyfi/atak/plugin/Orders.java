@@ -283,10 +283,6 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
             }
 
             GeoPoint[] points = geoPoints.toArray(new GeoPoint[geoPoints.size()]);
-            Polyline polyline = new Polyline(UUID.randomUUID().toString());
-            polyline.setPoints(points);
-            polyline.setStrokeColor(R.color.white);
-            MapView.getMapView().getRootGroup().addItem(polyline);
 
             ATAKUtilities.scaleToFit(MapView.getMapView(), points, 1000, 1000);
         } catch (Exception e) {

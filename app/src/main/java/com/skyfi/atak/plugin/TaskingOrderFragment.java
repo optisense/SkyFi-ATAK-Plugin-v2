@@ -161,7 +161,6 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
                         taskingOrder.setMaxCloudCoveragePercent(value);
                     }
                 } catch (Exception e) {
-                    Log.d(LOGTAG, "WTF? " + charSequence, e);
                     showError(context.getString(R.string.error), context.getString(R.string.max_cloud_coverage_error));
                 }
             }
@@ -183,7 +182,6 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
                         taskingOrder.setMaxOffNadirAngle(value);
                     }
                 } catch (Exception e) {
-                    Log.d(LOGTAG, "WTF2? " + charSequence, e);
                     showError(context.getString(R.string.max_off_nadir_error), e.getMessage());
                 }
             }
