@@ -13,9 +13,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.atak.plugins.impl.PluginLayoutInflater;
 import com.atakmap.android.dropdown.DropDown;
@@ -32,6 +30,11 @@ import org.json.JSONObject;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.io.WKTReader;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalUnit;
+import java.util.Date;
 
 import androidx.annotation.NonNull;
 import retrofit2.Call;
@@ -155,14 +158,13 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int count, int after) {
                 try {
-                    float value = Float.parseFloat(charSequence.toString());
-                    if (value >= 0 && value <= 100)
+                    if (charSequence != null && !charSequence.toString().isEmpty()) {
+                        float value = Float.parseFloat(charSequence.toString());
                         taskingOrder.setMaxCloudCoveragePercent(value);
-                    else
-                        maxCloudCoverage.setError(context.getString(R.string.max_cloud_coverage_error));
-                    //Toast.makeText(context, R.string.max_cloud_coverage_error, Toast.LENGTH_LONG).show();
+                    }
                 } catch (Exception e) {
-                    Toast.makeText(context, R.string.max_cloud_coverage_error, Toast.LENGTH_LONG).show();
+                    Log.d(LOGTAG, "WTF? " + charSequence, e);
+                    showError(context.getString(R.string.error), context.getString(R.string.max_cloud_coverage_error));
                 }
             }
 
@@ -178,13 +180,13 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int count, int after) {
                 try {
-                    float value = Float.parseFloat(charSequence.toString());
-                    if (value >= 0 && value <= 50)
+                    if (charSequence != null && !charSequence.toString().isEmpty()) {
+                        float value = Float.parseFloat(charSequence.toString());
                         taskingOrder.setMaxOffNadirAngle(value);
-                    else
-                        Toast.makeText(context, R.string.max_off_nadir_error, Toast.LENGTH_LONG).show();
+                    }
                 } catch (Exception e) {
-                    Toast.makeText(context, R.string.max_off_nadir_error, Toast.LENGTH_LONG).show();
+                    Log.d(LOGTAG, "WTF2? " + charSequence, e);
+                    showError(context.getString(R.string.max_off_nadir_error), e.getMessage());
                 }
             }
 
@@ -438,6 +440,44 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
     }
 
     private void placeOrder() {
+        if (taskingOrder.getMaxCloudCoveragePercent() != null && (taskingOrder.getMaxCloudCoveragePercent() < 0 || taskingOrder.getMaxCloudCoveragePercent() > 100)) {
+            showError(context.getString(R.string.order_error), context.getString(R.string.max_cloud_coverage_error));
+            return;
+        }
+
+        if (taskingOrder.getMaxOffNadirAngle() != null && (taskingOrder.getMaxOffNadirAngle() < 0 || taskingOrder.getMaxOffNadirAngle() > 50)) {
+            showError(context.getString(R.string.order_error), context.getString(R.string.max_off_nadir_error));
+            return;
+        }
+
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'00:00:00+00:00");
+            LocalDate windowsStartDate = LocalDate.parse(taskingOrder.getWindowStart(), formatter);
+            Calendar windowStart = Calendar.getInstance();
+            windowStart.set(windowsStartDate.getYear(), windowsStartDate.getMonthValue(), windowsStartDate.getDayOfMonth());
+
+            Calendar nowPlus36Hours = Calendar.getInstance();
+            nowPlus36Hours.add(Calendar.HOUR, 36);
+
+            if (taskingOrder.getWindowStart() == null || windowStart.before(nowPlus36Hours)) {
+                showError(context.getString(R.string.order_error), context.getString(R.string.window_start_error));
+                return;
+            }
+
+            LocalDate windowsEndDate = LocalDate.parse(taskingOrder.getWindowEnd(), formatter);
+            Calendar windowEnd = Calendar.getInstance();
+            windowEnd.set(windowsEndDate.getYear(), windowsEndDate.getMonthValue(), windowsEndDate.getDayOfMonth());
+
+            if (taskingOrder.getWindowEnd() == null || windowEnd.before(windowStart)) {
+                showError(context.getString(R.string.order_error), context.getString(R.string.window_end_error));
+                return;
+            }
+        } catch (Exception e) {
+            Log.d(LOGTAG, "Invalid window start: " + taskingOrder.getWindowStart(), e);
+            showError(context.getString(R.string.order_error), e.getMessage());
+            return;
+        }
+
         apiClient = new APIClient().getApiClient();
         apiClient.taskingOrder(taskingOrder).enqueue(new Callback<Order>() {
             @Override
@@ -450,12 +490,12 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
                     Log.e(LOGTAG, "Tasking order failed: " + responseCode);
                     try {
                         String errorString = response.errorBody().string();
-                        Log.d(LOGTAG, "error is " + errorString);
+                        Log.d(LOGTAG, "Order error: " + errorString);
                         JSONObject errorJson = new JSONObject(errorString);
                         String message = errorJson.getJSONArray("detail").getJSONObject(0).getString("msg");
                         Log.d(LOGTAG, call.request().body().toString());
                         Log.e(LOGTAG, message);
-                        showError("Order Error", message);
+                        showError(context.getString(R.string.order_error), message);
                     } catch (Exception e) {
                         Log.e(LOGTAG, "Failed to fail", e);
                     }

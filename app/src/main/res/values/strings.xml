@@ -26,9 +26,9 @@
     <string name="tasking_order">Tasking Order</string>
     <string name="archive_order">Archive Order</string>
     <string name="cancel">Cancel</string>
-    <string name="from">From</string>
+    <string name="from">Starting Window</string>
     <string name="from_summary">Must be at least 36 hours in the future</string>
-    <string name="to">To</string>
+    <string name="to">Ending Window</string>
     <string name="max_cloud_coverage">Max Cloud Coverage Percent</string>
     <string name="max_off_nadir_angle">Max Off Nadir Angle</string>
     <string name="low">LOW</string>
@@ -85,4 +85,7 @@
     <string name="error">Error</string>
     <string name="no_gps">Make sure you have a GPS lock before placing an order from your location</string>
     <string name="new_order_my_location">New Order From My Location</string>
+    <string name="order_error">Order Error</string>
+    <string name="window_start_error">The start window is required and must be at least 36 hours in the future</string>
+    <string name="window_end_error">The ending window is required and should be after the start window</string>
 </resources>
