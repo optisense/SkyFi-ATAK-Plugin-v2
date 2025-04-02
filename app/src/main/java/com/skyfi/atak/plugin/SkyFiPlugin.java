@@ -1,13 +1,17 @@
 package com.skyfi.atak.plugin;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Looper;
 
 import com.atakmap.android.ipc.DocumentedExtra;
 import com.atakmap.coremap.log.Log;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
 import com.atak.plugins.impl.PluginContextProvider;
 import com.atak.plugins.impl.PluginLayoutInflater;
@@ -18,10 +22,19 @@ import com.atakmap.app.preferences.ToolsPreferenceFragment;
 import com.skyfi.atak.plugin.skyfiapi.Pong;
 import com.skyfi.atak.plugin.skyfiapi.SkyFiAPI;
 
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.geom.PrecisionModel;
+import org.locationtech.jts.io.WKTWriter;
+
 import java.util.ArrayList;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import gov.tak.api.engine.map.coords.GeoCalculations;
+import gov.tak.api.engine.map.coords.GeoPoint;
+import gov.tak.api.engine.map.coords.IGeoPoint;
 import gov.tak.api.plugin.IPlugin;
 import gov.tak.api.plugin.IServiceController;
 import gov.tak.api.ui.IHostUIService;
@@ -46,6 +59,7 @@ public class SkyFiPlugin extends DropDownMapComponent implements IPlugin, MainRe
     View mainView;
     MainRecyclerViewAdapter mainRecyclerViewAdapter;
     private MapView mapView;
+    private TextView radiusTextView;
 
     public SkyFiPlugin() {}
 
@@ -185,7 +199,8 @@ public class SkyFiPlugin extends DropDownMapComponent implements IPlugin, MainRe
 
         ArrayList<String> options = new ArrayList<>();
         options.add(pluginContext.getString(R.string.view_orders));
-        //options.add(pluginContext.getString(R.string.settings));
+        options.add(pluginContext.getString(R.string.new_order_my_location));
+        options.add(pluginContext.getString(R.string.set_api_key));
 
         RecyclerView recyclerView = mainView.findViewById(R.id.main_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(pluginContext));
@@ -198,11 +213,137 @@ public class SkyFiPlugin extends DropDownMapComponent implements IPlugin, MainRe
     public void onItemClick(View view, int position) {
         switch (position) {
             case 0:
-                Log.d(LOGTAG, "Launching orders");
+                // Orders
                 Intent intent = new Intent();
                 intent.setAction(Orders.ACTION);
                 AtakBroadcast.getInstance().sendBroadcast(intent);
                 break;
+            case 1:
+                // New order from my location
+                try {
+                    SeekBar seekBar = new SeekBar(MapView.getMapView().getContext());
+                    // The max area for any tasking order is 2000KM^2 so don't let the user set a radius above 22KM which would be an area of 1936KM^2
+                    seekBar.setMax(22);
+                    seekBar.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, .7f));
+
+                    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                            LinearLayout.LayoutParams.MATCH_PARENT,
+                            LinearLayout.LayoutParams.MATCH_PARENT);
+                    lp.setLayoutDirection(LinearLayout.HORIZONTAL);
+
+                    LinearLayout linearLayout = new LinearLayout(MapView.getMapView().getContext());
+                    linearLayout.setLayoutParams(lp);
+
+                    seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                        @Override
+                        public void onProgressChanged(SeekBar seekBar, int progress, boolean b) {
+                            radiusTextView.setText(progress + "KM");
+                        }
+
+                        @Override
+                        public void onStartTrackingTouch(SeekBar seekBar) {
+
+                        }
+
+                        @Override
+                        public void onStopTrackingTouch(SeekBar seekBar) {
+
+                        }
+                    });
+
+                    linearLayout.addView(seekBar);
+
+                    radiusTextView = new TextView(MapView.getMapView().getContext());
+                    radiusTextView.setText("0KM");
+
+                    linearLayout.addView(radiusTextView);
+
+                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(MapView.getMapView().getContext());
+                    alertDialog.setTitle(pluginContext.getString(R.string.archive_order));
+                    alertDialog.setMessage(pluginContext.getString(R.string.set_radius));
+                    alertDialog.setPositiveButton(pluginContext.getString(R.string.ok), (dialogInterface, i) -> {
+                        String aoi = squareWkt(seekBar.getProgress());
+                        if (aoi != null) {
+                            Log.d(LOGTAG, "AOI is " + aoi);
+                            Intent newOrderIntent = new Intent();
+                            newOrderIntent.setAction(NewOrderFragment.ACTION);
+                            newOrderIntent.putExtra("aoi", aoi);
+                            AtakBroadcast.getInstance().sendBroadcast(newOrderIntent);
+                        }
+                    });
+                    alertDialog.setNegativeButton(pluginContext.getString(R.string.cancel), null);
+
+                    alertDialog.setView(linearLayout);
+
+                    alertDialog.create().show();
+                } catch (Exception e) {
+                    Log.e(LOGTAG, "Failed", e);
+                }
+                break;
+            case 2:
+                // Set API key
+                Preferences prefs = new Preferences();
+
+                AlertDialog.Builder apiKeyAlertDialog = new AlertDialog.Builder(MapView.getMapView().getContext());
+                apiKeyAlertDialog.setTitle(pluginContext.getString(R.string.api_key));
+
+                EditText editText = new EditText(MapView.getMapView().getContext());
+                editText.setText(prefs.getApiKey());
+                LinearLayout.LayoutParams apiKeyLayoutParams = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.MATCH_PARENT);
+                editText.setLayoutParams(apiKeyLayoutParams);
+                apiKeyAlertDialog.setView(editText);
+                apiKeyAlertDialog.setPositiveButton(pluginContext.getString(R.string.ok), (dialogInterface, i) -> prefs.setApiKey(editText.getText().toString()));
+                apiKeyAlertDialog.create().show();
+                break;
         }
+    }
+
+    private String squareWkt(double distance) {
+        try {
+            double lat = MapView.getMapView().getSelfMarker().getPoint().getLatitude();
+            double lon = MapView.getMapView().getSelfMarker().getPoint().getLongitude();
+
+            distance = distance * 1000;
+
+            if (lat == 0) {
+                new AlertDialog.Builder(MapView.getMapView().getContext())
+                        .setTitle(pluginContext.getString(R.string.error))
+                        .setMessage(pluginContext.getString(R.string.no_gps))
+                        .setPositiveButton(pluginContext.getString(R.string.ok), null)
+                        .create()
+                        .show();
+                return null;
+            }
+
+            ArrayList<Coordinate> coordinates = new ArrayList<>();
+
+            // Get the four corners of the square
+            GeoPoint selfMarker = new GeoPoint(lat, lon);
+            IGeoPoint corner1 = GeoCalculations.pointAtDistance(selfMarker, 45, distance);
+            coordinates.add(new Coordinate(corner1.getLongitude(), corner1.getLatitude()));
+
+            IGeoPoint corner2 = GeoCalculations.pointAtDistance(selfMarker, 135, distance);
+            coordinates.add(new Coordinate(corner2.getLongitude(), corner2.getLatitude()));
+
+            IGeoPoint corner3 = GeoCalculations.pointAtDistance(selfMarker, 225, distance);
+            coordinates.add(new Coordinate(corner3.getLongitude(), corner3.getLatitude()));
+
+            IGeoPoint corner4 = GeoCalculations.pointAtDistance(selfMarker, 315, distance);
+            coordinates.add(new Coordinate(corner4.getLongitude(), corner4.getLatitude()));
+
+            // Add the first corner again to close the square
+            coordinates.add(new Coordinate(corner1.getLongitude(), corner1.getLatitude()));
+
+            GeometryFactory factory = new GeometryFactory(new PrecisionModel(10000000.0));
+            Polygon polygon = factory.createPolygon(coordinates.toArray(new Coordinate[coordinates.size()]));
+            WKTWriter wktWriter = new WKTWriter();
+            return wktWriter.write(polygon);
+        } catch (Exception e) {
+            Log.e(LOGTAG, "Failed to make square WKT", e);
+        }
+
+        return null;
     }
 }

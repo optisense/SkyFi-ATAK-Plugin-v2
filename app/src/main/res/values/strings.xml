@@ -78,4 +78,11 @@
     <string name="priority_extra_cost">+$%.2f</string>
     <string name="total_price">Total Price: $%.2f</string>
     <string name="get_pricing_failed">Failed to get pricing</string>
+    <string name="new_archive_order_my_location">New Archive Order From My Location</string>
+    <string name="new_tasking_order_my_location">New Tasking Order From My Location</string>
+    <string name="set_api_key">Set API Key</string>
+    <string name="set_radius">Set the radius in kilometers</string>
+    <string name="error">Error</string>
+    <string name="no_gps">Make sure you have a GPS lock before placing an order from your location</string>
+    <string name="new_order_my_location">New Order From My Location</string>
 </resources>
