@@ -33,8 +33,6 @@ import org.locationtech.jts.io.WKTReader;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalUnit;
-import java.util.Date;
 
 import androidx.annotation.NonNull;
 import retrofit2.Call;
@@ -451,6 +449,11 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
         }
 
         try {
+            if (taskingOrder.getWindowStart() == null || taskingOrder.getWindowStart().isEmpty()) {
+                showError(context.getString(R.string.order_error), context.getString(R.string.window_start_error));
+                return;
+            }
+
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'00:00:00+00:00");
             LocalDate windowsStartDate = LocalDate.parse(taskingOrder.getWindowStart(), formatter);
             Calendar windowStart = Calendar.getInstance();
@@ -459,8 +462,13 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
             Calendar nowPlus36Hours = Calendar.getInstance();
             nowPlus36Hours.add(Calendar.HOUR, 36);
 
-            if (taskingOrder.getWindowStart() == null || windowStart.before(nowPlus36Hours)) {
+            if (windowStart.before(nowPlus36Hours)) {
                 showError(context.getString(R.string.order_error), context.getString(R.string.window_start_error));
+                return;
+            }
+
+            if (taskingOrder.getWindowEnd() == null || taskingOrder.getWindowEnd().isEmpty()) {
+                showError(context.getString(R.string.order_error), context.getString(R.string.window_end_error));
                 return;
             }
 
@@ -468,13 +476,13 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
             Calendar windowEnd = Calendar.getInstance();
             windowEnd.set(windowsEndDate.getYear(), windowsEndDate.getMonthValue(), windowsEndDate.getDayOfMonth());
 
-            if (taskingOrder.getWindowEnd() == null || windowEnd.before(windowStart)) {
+            if (windowEnd.before(windowStart)) {
                 showError(context.getString(R.string.order_error), context.getString(R.string.window_end_error));
                 return;
             }
         } catch (Exception e) {
             Log.d(LOGTAG, "Invalid window start: " + taskingOrder.getWindowStart(), e);
-            showError(context.getString(R.string.order_error), e.getMessage());
+            showError(context.getString(R.string.order_error), context.getString(R.string.window_start_error));
             return;
         }
 
@@ -564,7 +572,6 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
                 for (PricingResponse.ProductType.Resolution resolution : productType.getResolutions()) {
 
                     if (resolution.getResolution().equals(taskingOrder.getResolution())) {
-
                         try {
                             PricingResponse.ProductType.Pricing pricing = resolution.getPricing();
 
@@ -573,7 +580,11 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
                             double area = calculatePolygonArea(geometry.getCoordinates());
 
                             double total = area * pricing.getTaskingPriceOneSqkm();
-                            if (prioritize.isChecked()) {
+                            if (!pricing.getPriorityEnabled()) {
+                                prioritize.setChecked(false);
+                                pricing.setPriorityEnabled(false);
+                            }
+                            else if (prioritize.isChecked()) {
                                 total += area * pricing.getPriorityTaskingPriceOneSqkm();
                             }
 
