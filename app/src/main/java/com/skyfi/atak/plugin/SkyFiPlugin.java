@@ -227,8 +227,9 @@ public class SkyFiPlugin extends DropDownMapComponent implements IPlugin, MainRe
                 // New order from my location
                 try {
                     SeekBar seekBar = new SeekBar(MapView.getMapView().getContext());
-                    // The max area for any tasking order is 2000KM^2 so don't let the user set a radius above 22KM which would be an area of 1936KM^2
-                    seekBar.setMax(22);
+                    // The max area for any tasking order is 2000KM^2 so don't let the user set a diameter above 45KM which would be an area of 2025^2
+                    seekBar.setMin(5);
+                    seekBar.setMax(45);
                     seekBar.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, .7f));
 
                     LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
@@ -265,7 +266,7 @@ public class SkyFiPlugin extends DropDownMapComponent implements IPlugin, MainRe
 
                     AlertDialog.Builder alertDialog = new AlertDialog.Builder(MapView.getMapView().getContext());
                     alertDialog.setTitle(pluginContext.getString(R.string.archive_order));
-                    alertDialog.setMessage(pluginContext.getString(R.string.set_radius));
+                    alertDialog.setMessage(pluginContext.getString(R.string.set_diameter));
                     alertDialog.setPositiveButton(pluginContext.getString(R.string.ok), (dialogInterface, i) -> {
                         String aoi = squareWkt(seekBar.getProgress());
                         if (aoi != null) {
@@ -303,7 +304,6 @@ public class SkyFiPlugin extends DropDownMapComponent implements IPlugin, MainRe
                 apiKeyAlertDialog.create().show();
                 break;
             case 3:
-                Log.d(LOGTAG, "PROFILE CLICKED");
                 Intent profileIntent = new Intent();
                 profileIntent.setAction(Profile.ACTION);
                 AtakBroadcast.getInstance().sendBroadcast(profileIntent);
@@ -311,12 +311,15 @@ public class SkyFiPlugin extends DropDownMapComponent implements IPlugin, MainRe
         }
     }
 
-    private String squareWkt(double distance) {
+    private String squareWkt(double diameter) {
         try {
             double lat = MapView.getMapView().getSelfMarker().getPoint().getLatitude();
             double lon = MapView.getMapView().getSelfMarker().getPoint().getLongitude();
 
-            distance = distance * 1000;
+            // Convert to meters
+            diameter = diameter * 1000;
+            // Convert to radius
+            double radius = diameter/2;
 
             if (lat == 0) {
                 new AlertDialog.Builder(MapView.getMapView().getContext())
@@ -332,16 +335,16 @@ public class SkyFiPlugin extends DropDownMapComponent implements IPlugin, MainRe
 
             // Get the four corners of the square
             GeoPoint selfMarker = new GeoPoint(lat, lon);
-            IGeoPoint corner1 = GeoCalculations.pointAtDistance(selfMarker, 45, distance);
+            IGeoPoint corner1 = GeoCalculations.pointAtDistance(selfMarker, 45, radius);
             coordinates.add(new Coordinate(corner1.getLongitude(), corner1.getLatitude()));
 
-            IGeoPoint corner2 = GeoCalculations.pointAtDistance(selfMarker, 135, distance);
+            IGeoPoint corner2 = GeoCalculations.pointAtDistance(selfMarker, 135, radius);
             coordinates.add(new Coordinate(corner2.getLongitude(), corner2.getLatitude()));
 
-            IGeoPoint corner3 = GeoCalculations.pointAtDistance(selfMarker, 225, distance);
+            IGeoPoint corner3 = GeoCalculations.pointAtDistance(selfMarker, 225, radius);
             coordinates.add(new Coordinate(corner3.getLongitude(), corner3.getLatitude()));
 
-            IGeoPoint corner4 = GeoCalculations.pointAtDistance(selfMarker, 315, distance);
+            IGeoPoint corner4 = GeoCalculations.pointAtDistance(selfMarker, 315, radius);
             coordinates.add(new Coordinate(corner4.getLongitude(), corner4.getLatitude()));
 
             // Add the first corner again to close the square
