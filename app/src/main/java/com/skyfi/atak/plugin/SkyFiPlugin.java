@@ -137,6 +137,10 @@ public class SkyFiPlugin extends DropDownMapComponent implements IPlugin, MainRe
         taskingOrderFilter.addAction(TaskingOrderFragment.ACTION);
         registerDropDownReceiver(new TaskingOrderFragment(MapView.getMapView(), pluginContext), taskingOrderFilter);
 
+        AtakBroadcast.DocumentedIntentFilter profileFilter = new AtakBroadcast.DocumentedIntentFilter();
+        profileFilter.addAction(Profile.ACTION);
+        registerDropDownReceiver(new Profile(MapView.getMapView(), pluginContext), profileFilter);
+
         OrderUtility orderUtility = new OrderUtility(MapView.getMapView(), pluginContext);
         AtakBroadcast.DocumentedIntentFilter filter = new AtakBroadcast.DocumentedIntentFilter();
         filter.addAction("com.atakmap.android.cot_utility.receivers.cotMenu",
@@ -201,6 +205,7 @@ public class SkyFiPlugin extends DropDownMapComponent implements IPlugin, MainRe
         options.add(pluginContext.getString(R.string.view_orders));
         options.add(pluginContext.getString(R.string.new_order_my_location));
         options.add(pluginContext.getString(R.string.set_api_key));
+        options.add(pluginContext.getString(R.string.my_profile));
 
         RecyclerView recyclerView = mainView.findViewById(R.id.main_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(pluginContext));
@@ -296,6 +301,12 @@ public class SkyFiPlugin extends DropDownMapComponent implements IPlugin, MainRe
                 apiKeyAlertDialog.setView(editText);
                 apiKeyAlertDialog.setPositiveButton(pluginContext.getString(R.string.ok), (dialogInterface, i) -> prefs.setApiKey(editText.getText().toString()));
                 apiKeyAlertDialog.create().show();
+                break;
+            case 3:
+                Log.d(LOGTAG, "PROFILE CLICKED");
+                Intent profileIntent = new Intent();
+                profileIntent.setAction(Profile.ACTION);
+                AtakBroadcast.getInstance().sendBroadcast(profileIntent);
                 break;
         }
     }

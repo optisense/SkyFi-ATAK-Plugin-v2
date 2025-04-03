@@ -36,4 +36,7 @@ public interface SkyFiAPI {
 
     @POST("/platform-api/pricing")
     Call<PricingResponse> getTaskingPricing(@Body PricingQuery pricingQuery);
+
+    @GET("/platform-api/auth/whoami")
+    Call<MyProfile> getProfile();
 }

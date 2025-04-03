@@ -88,4 +88,15 @@
     <string name="order_error">Order Error</string>
     <string name="window_start_error">The start window is required and must be at least 36 hours in the future</string>
     <string name="window_end_error">The ending window is required and should be after the start window</string>
+    <string name="my_profile_header">SkyFi / My Profile</string>
+    <string name="name">Name: %s %s</string>
+    <string name="email">Email: %s</string>
+    <string name="budget_usage">Budget Usage: $%d</string>
+    <string name="total_budget">Total Budget: $%d</string>
+    <string name="budget_remaining">Budget Remaining: $%d</string>
+    <string name="cc_on_file">Credit Card On File: %s</string>
+    <string name="my_profile">My Profile</string>
+    <string name="profile_error">Error retrieving profile, check you API key and try again</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
 </resources>
