@@ -112,8 +112,9 @@
                     android:layout_height="wrap_content">
 
                     <RadioGroup
+                        android:id="@+id/product_types"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" >
+                        android:layout_height="match_parent">
 
                         <RadioButton
                             android:id="@+id/product_type_day"
@@ -151,6 +152,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                     <RadioGroup
+                        android:id="@+id/resolutions"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent" >
                         <RadioButton
@@ -193,7 +195,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                     <RadioGroup
-                        android:id="@+id/provider_radio_group"
+                        android:id="@+id/providers"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent" >
                         <RadioButton
@@ -266,11 +268,24 @@
 
         </LinearLayout>
 
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
         <Button
             android:text="@string/place_order"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/place_order_button" />
+
+        <Button
+            android:text="@string/reset_form"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/reset_button" />
+
+    </LinearLayout>/
 
     </LinearLayout>
 </ScrollView>

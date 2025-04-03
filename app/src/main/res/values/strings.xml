@@ -100,4 +100,5 @@
     <string name="no">No</string>
     <string name="yes">Yes</string>
     <string name="set_diameter">Set diameter in kilometers</string>
+    <string name="reset_form">Reset Form</string>
 </resources>

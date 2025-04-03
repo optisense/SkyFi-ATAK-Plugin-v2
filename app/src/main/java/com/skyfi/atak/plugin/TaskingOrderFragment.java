@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.atak.plugins.impl.PluginLayoutInflater;
@@ -56,22 +57,26 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
     private final EditText maxCloudCoverage;
     private final EditText maxOffNadirAngle;
     private final Button placeOrderButton;
+    private final Button resetFormButton;
     private final CheckBox prioritize;
     private final TextView priorityPrice;
     private final TextView totalPrice;
 
     // Resolutions
+    private final RadioGroup resolutions;
     private final RadioButton high;
     private final RadioButton veryHigh;
     private final RadioButton superHigh;
     private final RadioButton ultraHigh;
 
     // Product Types
+    private final RadioGroup productTypes;
     private final RadioButton day;
     private final RadioButton sar;
     private final RadioButton stereo;
 
     // Providers
+    private final RadioGroup providers;
     private final RadioButton siwei;
     private final RadioButton satellogic;
     private final RadioButton umbra;
@@ -104,6 +109,8 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
 
 
         // Resolutions
+        resolutions = mainView.findViewById(R.id.resolutions);
+
         high = mainView.findViewById(R.id.resolution_high);
         high.setOnClickListener(this);
 
@@ -117,6 +124,8 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
         ultraHigh.setOnClickListener(this);
 
         // Product Types
+        productTypes = mainView.findViewById(R.id.product_types);
+
         day = mainView.findViewById(R.id.product_type_day);
         day.setOnClickListener(this);
 
@@ -127,6 +136,8 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
         stereo.setOnClickListener(this);
 
         // Providers
+        providers = mainView.findViewById(R.id.providers);
+
         siwei = mainView.findViewById(R.id.provider_siwei);
         siwei.setOnClickListener(this);
 
@@ -147,6 +158,9 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
 
         placeOrderButton = mainView.findViewById(R.id.place_order_button);
         placeOrderButton.setOnClickListener(this);
+
+        resetFormButton = mainView.findViewById(R.id.reset_button);
+        resetFormButton.setOnClickListener(this);
 
         maxCloudCoverage = mainView.findViewById(R.id.max_cloud_coverage);
         maxCloudCoverage.addTextChangedListener(new TextWatcher() {
@@ -247,25 +261,8 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
                 superHigh.setEnabled(true);
                 ultraHigh.setEnabled(false);
 
-                if (high.isChecked()) {
-
-                }
-                else if (veryHigh.isChecked()) {
-                    umbra.setEnabled(false);
-                    satellogic.setEnabled(false);
-                    geosat.setEnabled(false);
-                    siwei.setEnabled(true);
-                    impro.setEnabled(true);
-                    planet.setEnabled(true);
-                }
-                else if (superHigh.isChecked()) {
-                    umbra.setEnabled(false);
-                    satellogic.setEnabled(false);
-                    geosat.setEnabled(false);
-                    siwei.setEnabled(true);
-                    impro.setEnabled(false);
-                    planet.setEnabled(false);
-                }
+                resetProviders();
+                resolutions.clearCheck();
             }
         }
         else if (view.getId() == R.id.product_type_sar) {
@@ -292,26 +289,15 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
                 superHigh.setEnabled(true);
                 ultraHigh.setEnabled(false);
 
-                if (veryHigh.isChecked()) {
-                    umbra.setEnabled(false);
-                    satellogic.setEnabled(false);
-                    geosat.setEnabled(false);
-                    siwei.setEnabled(true);
-                    impro.setEnabled(true);
-                    planet.setEnabled(false);
-                }
-                else if (superHigh.isChecked()) {
-                    umbra.setEnabled(false);
-                    satellogic.setEnabled(false);
-                    geosat.setEnabled(false);
-                    siwei.setEnabled(true);
-                    impro.setEnabled(false);
-                    planet.setEnabled(false);
-                }
+                resolutions.clearCheck();
+                resetProviders();
             }
         }
 
+        // Resolutions
         else if (view.getId() == R.id.resolution_high) {
+            Log.d(LOGTAG, "high " + high.isChecked());
+
             if (high.isChecked()) {
                 taskingOrder.setResolution(context.getString(R.string.high));
 
@@ -319,6 +305,22 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
                     umbra.setEnabled(false);
                     satellogic.setEnabled(true);
                     geosat.setEnabled(true);
+                    siwei.setEnabled(false);
+                    impro.setEnabled(false);
+                    planet.setEnabled(false);
+                }
+                else if (sar.isChecked()) {
+                    umbra.setEnabled(true);
+                    satellogic.setEnabled(false);
+                    geosat.setEnabled(false);
+                    siwei.setEnabled(false);
+                    impro.setEnabled(false);
+                    planet.setEnabled(false);
+                }
+                else if (stereo.isChecked()) {
+                    umbra.setEnabled(false);
+                    satellogic.setEnabled(false);
+                    geosat.setEnabled(false);
                     siwei.setEnabled(false);
                     impro.setEnabled(false);
                     planet.setEnabled(false);
@@ -336,6 +338,14 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
                     siwei.setEnabled(true);
                     impro.setEnabled(true);
                     planet.setEnabled(true);
+                }
+                else if (sar.isChecked()) {
+                    umbra.setEnabled(true);
+                    satellogic.setEnabled(false);
+                    geosat.setEnabled(false);
+                    siwei.setEnabled(false);
+                    impro.setEnabled(false);
+                    planet.setEnabled(false);
                 }
                 else if (stereo.isChecked()) {
                     umbra.setEnabled(false);
@@ -431,8 +441,21 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
                     .create()
                     .show();
         }
+        else if (view.getId() == R.id.reset_button) {
+            resetForm();
+        }
 
         updateTotalPrice();
+    }
+
+    private void resetProviders() {
+        providers.clearCheck();
+        umbra.setEnabled(true);
+        satellogic.setEnabled(true);
+        geosat.setEnabled(true);
+        siwei.setEnabled(true);
+        impro.setEnabled(true);
+        planet.setEnabled(true);
     }
 
     private void placeOrder() {
@@ -678,6 +701,10 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
         impro.setChecked(false);
         impro.setEnabled(true);
         prioritize.setChecked(false);
+
+        productTypes.clearCheck();
+        resolutions.clearCheck();
+        providers.clearCheck();
     }
 
     @Override
