@@ -260,7 +260,7 @@ public class SkyFiPlugin extends DropDownMapComponent implements IPlugin, MainRe
                     linearLayout.addView(seekBar);
 
                     radiusTextView = new TextView(MapView.getMapView().getContext());
-                    radiusTextView.setText("0KM");
+                    radiusTextView.setText("5KM");
 
                     linearLayout.addView(radiusTextView);
 
@@ -333,22 +333,27 @@ public class SkyFiPlugin extends DropDownMapComponent implements IPlugin, MainRe
 
             ArrayList<Coordinate> coordinates = new ArrayList<>();
 
-            // Get the four corners of the square
+            // Get the four corners of the square which fits inside the circle defined by the user's diameter input
             GeoPoint selfMarker = new GeoPoint(lat, lon);
-            IGeoPoint corner1 = GeoCalculations.pointAtDistance(selfMarker, 45, radius);
-            coordinates.add(new Coordinate(corner1.getLongitude(), corner1.getLatitude()));
+            IGeoPoint north = GeoCalculations.pointAtDistance(selfMarker, 0, radius);
+            IGeoPoint east = GeoCalculations.pointAtDistance(selfMarker, 90, radius);
+            IGeoPoint south = GeoCalculations.pointAtDistance(selfMarker, 180, radius);
+            IGeoPoint west = GeoCalculations.pointAtDistance(selfMarker, 270, radius);
 
-            IGeoPoint corner2 = GeoCalculations.pointAtDistance(selfMarker, 135, radius);
-            coordinates.add(new Coordinate(corner2.getLongitude(), corner2.getLatitude()));
+            // Expand the square so the circle is now with in the square rather than the square being inside the circle.
+            // This ensures that if the user inputs a diameter of 5km, the sides of the square will actually be 5km,
+            // rather than the distance from the north east corner to the south west corner is 5km
+            Coordinate northEast = new Coordinate(east.getLongitude(), north.getLatitude());
+            Coordinate southEast = new Coordinate(east.getLongitude(), south.getLatitude());
+            Coordinate southWest = new Coordinate(west.getLongitude(), south.getLatitude());
+            Coordinate northWest = new Coordinate(west.getLongitude(), north.getLatitude());
 
-            IGeoPoint corner3 = GeoCalculations.pointAtDistance(selfMarker, 225, radius);
-            coordinates.add(new Coordinate(corner3.getLongitude(), corner3.getLatitude()));
-
-            IGeoPoint corner4 = GeoCalculations.pointAtDistance(selfMarker, 315, radius);
-            coordinates.add(new Coordinate(corner4.getLongitude(), corner4.getLatitude()));
-
+            coordinates.add(northEast);
+            coordinates.add(southEast);
+            coordinates.add(southWest);
+            coordinates.add(northWest);
             // Add the first corner again to close the square
-            coordinates.add(new Coordinate(corner1.getLongitude(), corner1.getLatitude()));
+            coordinates.add(northEast);
 
             GeometryFactory factory = new GeometryFactory(new PrecisionModel(10000000.0));
             Polygon polygon = factory.createPolygon(coordinates.toArray(new Coordinate[coordinates.size()]));
