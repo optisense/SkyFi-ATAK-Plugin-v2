@@ -133,18 +133,15 @@ public class OrderUtility extends DropDownReceiver implements MapEventDispatcher
 
         // Rectangle and polygon
         if (mapEvent.getItem() instanceof SimpleRectangle || mapEvent.getItem() instanceof Rectangle || mapEvent.getItem() instanceof DrawingRectangle || mapEvent.getItem() instanceof DrawingShape) {
-            Log.d(LOGTAG, "here");
             mapEvent.getItem().setMetaString("menu", getMenu());
         }
         // Polygon
         else if (mapEvent.getItem() instanceof Marker && mapEvent.getItem().getType().equals("shape_marker")) {
             mapEvent.getItem().setMetaString("menu", getMenu());
-            Log.d(LOGTAG, "shape_marker");
         }
         // Polygon
         else if (mapEvent.getItem() instanceof Marker && mapEvent.getItem().getType().equals("b-m-p-w")) {
             mapEvent.getItem().setMetaString("menu", getMenu());
-            Log.d(LOGTAG, "bmpw");
         }
         // Rectangle
         else if (mapEvent.getItem() instanceof Marker && rectangle.contains(mapEvent.getItem().getType())) {

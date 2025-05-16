@@ -85,7 +85,7 @@ public class SkyFiPlugin extends DropDownMapComponent implements IPlugin, MainRe
         toolbarItem = new ToolbarItem.Builder(
                 pluginContext.getString(R.string.app_name),
                 MarshalManager.marshal(
-                        pluginContext.getResources().getDrawable(R.drawable.ic_launcher),
+                        pluginContext.getResources().getDrawable(R.drawable.icon_transparent),
                         android.graphics.drawable.Drawable.class,
                         gov.tak.api.commons.graphics.Bitmap.class))
                 .setListener(new ToolbarItemAdapter() {
@@ -101,7 +101,7 @@ public class SkyFiPlugin extends DropDownMapComponent implements IPlugin, MainRe
                         pluginContext.getString(R.string.preferences_title),
                         pluginContext.getString(R.string.preferences_summary),
                         pluginContext.getString(R.string.preferences_title),
-                        pluginContext.getResources().getDrawable(R.drawable.ic_launcher),
+                        pluginContext.getResources().getDrawable(R.drawable.icon_transparent),
                         new PreferencesFragment(pluginContext)));
 
         apiClient = new APIClient().getApiClient();

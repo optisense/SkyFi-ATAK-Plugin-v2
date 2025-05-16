@@ -492,7 +492,7 @@ public class ArchiveSearch extends DropDownReceiver implements DropDown.OnStateL
             Intent intent = new Intent();
             intent.putExtra("request", request);
             intent.setAction(ArchivesBrowser.ACTION);
-            AtakBroadcast.getInstance().sendBroadcast(intent);;
+            AtakBroadcast.getInstance().sendBroadcast(intent);
         }
     }
 }
