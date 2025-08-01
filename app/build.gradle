@@ -155,6 +155,9 @@ android {
             keyAlias "wintec_mapping"
             keyPassword "tnttnt"
         }
+        unsigned {
+            // No signing config - for TAK.gov submission
+        }
     }
 
     buildTypes {
@@ -166,6 +169,12 @@ android {
             minifyEnabled true
             proguardFiles 'proguard-gradle.txt', 'proguard-gradle-repackage.txt'
             signingConfig signingConfigs.debug  // Use debug signing for now
+            matchingFallbacks = ['odk']
+        }
+        unsigned {
+            minifyEnabled true
+            proguardFiles 'proguard-gradle.txt', 'proguard-gradle-repackage.txt'
+            signingConfig null  // No signing for TAK.gov submission
             matchingFallbacks = ['odk']
         }
     }
