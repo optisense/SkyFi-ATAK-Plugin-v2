@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/skyfi_dark">
+    
+    <!-- SkyFi Toolbar -->
+    <com.skyfi.atak.plugin.views.SkyFiToolbar
+        android:id="@+id/skyfi_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+        
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+            
+            <!-- SkyFi Card Example -->
+            <com.skyfi.atak.plugin.views.SkyFiCard
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true">
+                
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Active Tasking Order"
+                    android:textSize="18sp"
+                    android:textColor="@color/skyfi_dark"
+                    android:textStyle="bold" />
+                
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="Order ID: SKY-2024-001"
+                    android:textSize="14sp"
+                    android:textColor="@color/skyfi_gray" />
+                
+                <com.skyfi.atak.plugin.views.StatusBadge
+                    android:id="@+id/order_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp" />
+                
+                <ProgressBar
+                    android:layout_width="match_parent"
+                    android:layout_height="8dp"
+                    android:layout_marginTop="12dp"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:progressDrawable="@drawable/skyfi_progress_horizontal"
+                    android:max="100"
+                    android:progress="75" />
+                
+            </com.skyfi.atak.plugin.views.SkyFiCard>
+            
+            <!-- Input Field Example -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Area of Interest"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+            
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:hint="Enter coordinates or draw on map"
+                android:background="@drawable/skyfi_input_background"
+                android:textColor="@color/skyfi_dark"
+                android:textColorHint="@color/skyfi_gray" />
+            
+            <!-- Chip Selection Example -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Select Image Type"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+            
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:scrollbars="none">
+                
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Optical"
+                        android:textColor="@color/skyfi_gray"
+                        android:background="@drawable/skyfi_chip_background"
+                        android:layout_marginEnd="8dp" />
+                    
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Infrared"
+                        android:textColor="@color/skyfi_gray"
+                        android:background="@drawable/skyfi_chip_background"
+                        android:layout_marginEnd="8dp" />
+                    
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Multispectral"
+                        android:textColor="@color/skyfi_gray"
+                        android:background="@drawable/skyfi_chip_background"
+                        android:layout_marginEnd="8dp" />
+                    
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="SAR"
+                        android:textColor="@color/skyfi_gray"
+                        android:background="@drawable/skyfi_chip_background" />
+                    
+                </LinearLayout>
+            </HorizontalScrollView>
+            
+            <!-- Button Examples -->
+            <com.skyfi.atak.plugin.views.SkyFiButton
+                android:id="@+id/submit_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:text="Submit Tasking Order" />
+            
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="Quick Order"
+                android:textColor="@color/white"
+                android:gravity="center"
+                android:background="@drawable/skyfi_button_accent"
+                android:clickable="true"
+                android:focusable="true" />
+            
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="View Archive"
+                android:textColor="@color/skyfi_primary"
+                android:gravity="center"
+                android:background="@drawable/skyfi_button_outline"
+                android:clickable="true"
+                android:focusable="true" />
+            
+            <!-- Status Indicators Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:orientation="horizontal"
+                android:gravity="center">
+                
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/skyfi_status_success"
+                    android:layout_margin="8dp" />
+                
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/skyfi_status_warning"
+                    android:layout_margin="8dp" />
+                
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/skyfi_status_error"
+                    android:layout_margin="8dp" />
+                
+                <ProgressBar
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_margin="8dp"
+                    android:indeterminateDrawable="@drawable/skyfi_progress_circular" />
+                
+            </LinearLayout>
+            
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

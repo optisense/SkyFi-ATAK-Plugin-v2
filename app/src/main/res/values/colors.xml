@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <!-- SkyFi Brand Colors -->
+    <color name="white">#ffffff</color>
+    <color name="skyfi_primary">#0066FF</color>        <!-- Bright blue for primary actions -->
+    <color name="skyfi_secondary">#00D4FF</color>     <!-- Cyan for secondary elements -->
+    <color name="skyfi_accent">#FF6B35</color>        <!-- Orange accent for CTAs -->
+    <color name="skyfi_dark">#0A1628</color>          <!-- Dark navy for backgrounds -->
+    <color name="skyfi_gray">#2C3E50</color>          <!-- Dark gray for secondary text -->
+    <color name="skyfi_light_gray">#95A5A6</color>    <!-- Light gray for disabled states -->
+    <color name="skyfi_success">#27AE60</color>       <!-- Green for success states -->
+    <color name="skyfi_warning">#F39C12</color>       <!-- Yellow for warnings -->
+    <color name="skyfi_error">#E74C3C</color>         <!-- Red for errors -->
+    
+    <!-- Legacy colors for compatibility -->
+    <color name="darker_gray">#2C3E50</color>
+    <color name="heading_yellow">#00D4FF</color>
+
+</resources>

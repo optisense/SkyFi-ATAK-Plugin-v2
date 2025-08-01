@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SkyFi ATAK Plugin Configuration - TAK Compatible -->
+<!-- if you change this file, make sure to tick the versionCode in AndroidManifest. -->
+<plugin>
+
+    <extension
+        type="gov.tak.api.plugin.IPlugin"
+        impl="com.skyfi.atak.plugin.SkyFiPlugin"
+        singleton="true" />
+
+</plugin>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:bottom="1dp" android:right="1dp" android:left="1dp" android:top="1dp">
+        <shape android:shape="rectangle">
+            <corners android:radius="3dp" />
+            <stroke
+                android:width="1dp"
+                android:color="@color/skyfi_secondary" />
+            <gradient
+                android:startColor="@color/skyfi_dark"
+                android:endColor="@color/skyfi_gray"
+                android:angle="90"/>
+        </shape>
+    </item>
+</layer-list>

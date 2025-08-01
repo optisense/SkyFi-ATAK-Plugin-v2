@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SkyFi Plugin Launch Action -->
+<set>
+    <!-- Launch SkyFi Plugin Main Interface -->
+    <broadcast>
+        <action>com.skyfi.atak.plugin.SHOW_PLUGIN</action>
+        <extras>
+            <string key="pluginName">SkyFi</string>
+            <string key="action">launch_main_interface</string>
+        </extras>
+    </broadcast>
+    
+    <!-- Hide any existing menus to focus on plugin -->
+    <broadcast>
+        <action>com.atakmap.android.maps.HIDE_MENU</action>
+    </broadcast>
+    
+    <!-- Ensure map unfocus for plugin interaction -->
+    <broadcast>
+        <action>com.atakmap.android.maps.UNFOCUS</action>
+    </broadcast>
+</set>

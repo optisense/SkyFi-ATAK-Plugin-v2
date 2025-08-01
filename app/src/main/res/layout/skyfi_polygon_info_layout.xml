@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:cardBackgroundColor="@color/skyfi_dark"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="8dp">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:minWidth="250dp">
+        
+        <!-- Header with status indicator -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            
+            <View
+                android:id="@+id/status_indicator"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:background="@drawable/circle_indicator"
+                android:layout_marginEnd="8dp" />
+            
+            <TextView
+                android:id="@+id/title_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="SkyFi AOI"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+                
+            <ImageView
+                android:id="@+id/close_button"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@android:drawable/ic_menu_close_clear_cancel"
+                android:tint="@color/skyfi_light_gray"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?android:attr/selectableItemBackgroundBorderless" />
+                
+        </LinearLayout>
+        
+        <TextView
+            android:id="@+id/subtitle_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Polygon AOI"
+            android:textColor="@color/skyfi_light_gray"
+            android:textSize="14sp"
+            android:layout_marginTop="4dp"
+            android:layout_marginStart="20dp" />
+        
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/skyfi_gray"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp" />
+        
+        <!-- Info Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            
+            <!-- Area -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
+                
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_area"
+                    android:tint="@color/skyfi_accent"
+                    android:layout_marginEnd="8dp"
+                    android:layout_gravity="center_vertical" />
+                
+                <TextView
+                    android:id="@+id/area_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Area: 125.5 km²"
+                    android:textColor="@color/skyfi_accent"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+                    
+            </LinearLayout>
+            
+            <!-- Coordinates -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp">
+                
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_location"
+                    android:tint="@color/skyfi_secondary"
+                    android:layout_marginEnd="8dp"
+                    android:layout_gravity="center_vertical" />
+                
+                <TextView
+                    android:id="@+id/coordinates_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Center: 34.0522°N, 118.2437°W"
+                    android:textColor="@color/skyfi_secondary"
+                    android:textSize="12sp" />
+                    
+            </LinearLayout>
+            
+            <!-- Status -->
+            <LinearLayout
+                android:id="@+id/status_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="8dp"
+                android:visibility="gone">
+                
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_status"
+                    android:tint="@color/white"
+                    android:layout_marginEnd="8dp"
+                    android:layout_gravity="center_vertical" />
+                
+                <TextView
+                    android:id="@+id/status_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Status: Active"
+                    android:textColor="@color/white"
+                    android:textSize="12sp" />
+                    
+            </LinearLayout>
+            
+            <!-- Timestamp -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_time"
+                    android:tint="@color/skyfi_light_gray"
+                    android:layout_marginEnd="8dp"
+                    android:layout_gravity="center_vertical" />
+                
+                <TextView
+                    android:id="@+id/timestamp_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Created: Nov 15, 14:30"
+                    android:textColor="@color/skyfi_light_gray"
+                    android:textSize="11sp" />
+                    
+            </LinearLayout>
+            
+        </LinearLayout>
+        
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/skyfi_gray"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp" />
+        
+        <!-- Action Buttons -->
+        <LinearLayout
+            android:id="@+id/action_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+            
+            <!-- Task Area Button with primary color -->
+            <com.skyfi.atak.plugin.views.SkyFiButton
+                android:id="@+id/task_button"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:text="Task Area"
+                android:layout_marginEnd="8dp" />
+                
+            <!-- Details Button - using TextView with secondary style -->
+            <TextView
+                android:id="@+id/details_button"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:text="Details"
+                android:gravity="center"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/skyfi_button_secondary"
+                android:textColor="@color/white"
+                android:clickable="true"
+                android:focusable="true" />
+                
+            <!-- Share Button - using TextView with accent style -->
+            <TextView
+                android:id="@+id/share_button"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:text="Share"
+                android:gravity="center"
+                android:background="@drawable/skyfi_button_accent"
+                android:textColor="@color/white"
+                android:clickable="true"
+                android:focusable="true" />
+                
+        </LinearLayout>
+        
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

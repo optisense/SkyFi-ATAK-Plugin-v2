@@ -1,0 +1,191 @@
+apply plugin: 'com.android.application'
+
+// Global variables for the plugin
+ext.PLUGIN_VERSION = "2.0"
+ext.ATAK_VERSION = "5.5.0"
+
+def supportedFlavors = [
+    [ name : 'civ', default: true ],
+]
+
+android {
+    compileSdkVersion 30
+
+    buildFeatures {
+        buildConfig true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    signingConfigs {
+        debug {
+            storeFile file("${System.getProperty('user.home')}/.android/debug.keystore")
+            storePassword "android"
+            keyAlias "androiddebugkey"
+            keyPassword "android"
+        }
+        release {
+            // Unsigned for TAK pipeline
+        }
+    }
+
+    buildTypes {
+        debug {
+            debuggable true
+            matchingFallbacks = ['sdk']
+            signingConfig signingConfigs.debug
+        }
+        release {
+            minifyEnabled true
+            proguardFiles 'proguard-gradle.txt', 'proguard-gradle-repackage.txt'
+            matchingFallbacks = ['odk']
+        }
+    }
+
+    flavorDimensions "application"
+
+    productFlavors {
+        supportedFlavors.each { flav ->
+            "${flav.name}" {
+                dimension "application"
+
+                // retain existing application identifiers for civ and mil
+                if (!flav.name.equals("civ") && !flav.name.equals("mil")) {
+                    applicationIdSuffix = ".${flav.name}"
+                }
+                // resolve CIV dependency if flavor specific dependency is not available
+                matchingFallbacks = ['civ']
+
+                // set the api version information
+                def pluginApiFlavor = flav.name.equals('gov') ? 'CIV' : "${flav.name.toUpperCase()}"
+                manifestPlaceholders = [atakApiVersion: "com.atakmap.app@" + ATAK_VERSION + ".${pluginApiFlavor}"]
+            }
+        }
+        // additional variables associated with all flavors can be set here
+        applicationVariants.all { variant ->
+            variant.resValue "string", "versionName", variant.versionName
+        }
+    }
+
+    packagingOptions {
+        resources {
+            excludes += ['META-INF/INDEX.LIST']
+        }
+        // Extract native libraries from the APK - required for plugin loading
+        jniLibs.useLegacyPackaging true
+    }
+
+    sourceSets {
+        main {
+            // It is strongly encouraged that plugin developers do not modify the archiveBaseName, version code logic and version
+            // name logic to provide for consistency within the community.
+            setProperty("archivesBaseName", "ATAK-Plugin-" + rootProject.name + "-" + PLUGIN_VERSION + "-" + getVersionName() + "-" + ATAK_VERSION)
+            defaultConfig.versionCode = 1
+            defaultConfig.versionName = PLUGIN_VERSION + " (debug) - [" + ATAK_VERSION + "]"
+        }
+
+        // Move the build types to build-types/<type>
+        // For instance, build-types/debug/java, build-types/debug/AndroidManifest.xml, ...
+        // This moves them out of them default location under src/<type>/... which would
+        // conflict with src/ being used by the main source set.
+        // Adding new build types or product flavors should be accompanied
+        // by a similar customization.
+        debug.setRoot('build-types/debug')
+        release.setRoot('build-types/release')
+    }
+
+    defaultConfig {
+        minSdkVersion 24
+        targetSdkVersion 30
+
+        def runTasks = gradle.startParameter.taskNames
+        if(runTasks.toString().contains('bundle')) {
+            ndk {
+                abiFilters "armeabi-v7a", "arm64-v8a"
+            }
+        } else {
+            ndk {
+                abiFilters "armeabi-v7a", "arm64-v8a", "x86"
+            }
+        }
+    }
+    
+    lintOptions {
+        abortOnError true
+        checkReleaseBuilds true
+    }
+}
+
+afterEvaluate {
+    project.file('proguard-gradle-repackage.txt').text = "-repackageclasses atakplugin.${rootProject.getName()}"
+}
+
+// Placeholder functions while we fix the plugin issue
+def getVersionCode() {
+    return 1
+}
+
+def getVersionName() {
+    return "debug"
+}
+
+// modified code to find the current flavor in progress
+def getCommandFlavor() {
+    String  tskReqStr = getGradle().getStartParameter().getTaskRequests().toString()
+
+    java.util.regex.Pattern pattern
+    if( tskReqStr.contains( "assemble" ) )
+        pattern = java.util.regex.Pattern.compile("assemble(\\w+)(Release|Debug)")
+    else if( tskReqStr.contains( "install" ) )
+        pattern = java.util.regex.Pattern.compile("install(\\w+)(Release|Debug)")
+    else
+        pattern = java.util.regex.Pattern.compile("generate(\\w+)(Release|Debug)")
+
+    java.util.regex.Matcher matcher = pattern.matcher(tskReqStr)
+
+    if( matcher.find() ) {
+        return matcher.group(1)
+    } else {
+        return "Civ"
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: '*.jar')
+    compileOnly fileTree(dir: '../libs', include: 'main.jar')
+    implementation("com.squareup.okhttp3:okhttp:4.9.1")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.1")
+    implementation('com.squareup.retrofit2:retrofit:2.9.0')
+    implementation('com.squareup.retrofit2:converter-gson:2.9.0')
+    implementation('androidx.recyclerview:recyclerview:1.2.1')
+    implementation('org.locationtech.jts:jts-core:1.16.1')
+    implementation('androidx.swiperefreshlayout:swiperefreshlayout:1.1.0')
+    implementation('androidx.core:core:1.6.0')
+    implementation('androidx.cardview:cardview:1.0.0')
+    
+    // Test dependencies
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.mockito:mockito-core:3.11.2'
+    testImplementation 'org.mockito:mockito-inline:3.11.2'
+    testImplementation 'org.robolectric:robolectric:4.6.1'
+    testImplementation 'org.json:json:20210307'
+    testImplementation 'androidx.test:core:1.4.0'
+    testImplementation 'com.squareup.okhttp3:mockwebserver:4.9.1'
+}
+
+configurations.all {
+    resolutionStrategy.eachDependency { details ->
+        if (details.requested.group == 'androidx.core') {
+            details.useVersion "1.6.0"
+        }
+        if (details.requested.group == 'androidx.lifecycle') {
+            details.useVersion "2.3.1"
+        }
+        if (details.requested.group == 'androidx.fragment') {
+            details.useVersion "1.3.6"
+        }
+    }
+}

@@ -1,0 +1,577 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/skyfi_dark">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/skyfi_primary"
+        android:elevation="4dp"
+        android:padding="16dp">
+
+        <TextView
+            android:text="Archive Search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
+            <!-- Date Range Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="@color/skyfi_gray"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Date Range"
+                        android:textColor="@color/skyfi_secondary"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="12dp" />
+
+                    <EditText
+                        android:id="@+id/from"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:hint="@string/from"
+                        android:background="@color/skyfi_dark"
+                        android:padding="12dp"
+                        android:focusable="false"
+                        android:textColor="@color/white"
+                        android:textColorHint="@color/skyfi_light_gray" />
+
+                    <EditText
+                        android:id="@+id/to"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/to"
+                        android:background="@color/skyfi_dark"
+                        android:padding="12dp"
+                        android:focusable="false"
+                        android:textColor="@color/white"
+                        android:textColorHint="@color/skyfi_light_gray" />
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+            <!-- Image Parameters Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="@color/skyfi_gray"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Image Parameters"
+                        android:textColor="@color/skyfi_secondary"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="12dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:orientation="horizontal">
+                        
+                        <EditText
+                            android:id="@+id/max_cloud_coverage"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/max_cloud_coverage"
+                            android:background="@color/skyfi_dark"
+                            android:padding="12dp"
+                            android:inputType="numberDecimal"
+                            android:textColor="@color/white"
+                            android:textColorHint="@color/skyfi_light_gray" />
+                            
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="%"
+                            android:textColor="@color/skyfi_light_gray"
+                            android:padding="12dp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        
+                        <EditText
+                            android:id="@+id/max_off_nadir"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/max_off_nadir_angle"
+                            android:background="@color/skyfi_dark"
+                            android:padding="12dp"
+                            android:inputType="numberDecimal"
+                            android:textColor="@color/white"
+                            android:textColorHint="@color/skyfi_light_gray" />
+                            
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="°"
+                            android:textColor="@color/skyfi_light_gray"
+                            android:padding="12dp" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+            <!-- Resolution Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="@color/skyfi_gray"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/resolution"
+                        android:textColor="@color/skyfi_secondary"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="12dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        
+                        <CheckBox
+                            android:id="@+id/resolution_low"
+                            android:text="@string/low"
+                            android:checked="true"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            android:buttonTint="@color/skyfi_accent" />
+                        <CheckBox
+                            android:id="@+id/resolution_medium"
+                            android:text="@string/medium"
+                            android:checked="true"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            android:buttonTint="@color/skyfi_accent" />
+                        <CheckBox
+                            android:id="@+id/resolution_high"
+                            android:text="@string/high"
+                            android:checked="true"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            android:buttonTint="@color/skyfi_accent" />
+                        <CheckBox
+                            android:id="@+id/resolution_very_high"
+                            android:text="@string/very_high"
+                            android:checked="true"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            android:buttonTint="@color/skyfi_accent" />
+                        <CheckBox
+                            android:id="@+id/resolution_super_high"
+                            android:text="@string/super_high"
+                            android:checked="true"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            android:buttonTint="@color/skyfi_accent" />
+                        <CheckBox
+                            android:id="@+id/resolution_ultra_high"
+                            android:text="@string/ultra_high"
+                            android:checked="true"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            android:buttonTint="@color/skyfi_accent" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+            <!-- Product Types Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="@color/skyfi_gray"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/product_types"
+                        android:textColor="@color/skyfi_secondary"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="12dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        
+                        <CheckBox
+                            android:id="@+id/product_type_day"
+                            android:text="@string/day"
+                            android:checked="true"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            android:buttonTint="@color/skyfi_accent" />
+                        <CheckBox
+                            android:id="@+id/product_type_night"
+                            android:text="@string/night"
+                            android:checked="true"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            android:buttonTint="@color/skyfi_accent" />
+                        <CheckBox
+                            android:id="@+id/product_type_video"
+                            android:text="@string/video"
+                            android:checked="true"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            android:buttonTint="@color/skyfi_accent" />
+                        <CheckBox
+                            android:id="@+id/product_type_sar"
+                            android:text="@string/sar"
+                            android:checked="true"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            android:buttonTint="@color/skyfi_accent" />
+                        <CheckBox
+                            android:id="@+id/product_type_hyperspectral"
+                            android:text="@string/hyperspectral"
+                            android:checked="true"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            android:buttonTint="@color/skyfi_accent" />
+                        <CheckBox
+                            android:id="@+id/product_type_multispectral"
+                            android:text="@string/multispectral"
+                            android:checked="true"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            android:buttonTint="@color/skyfi_accent" />
+                        <CheckBox
+                            android:id="@+id/product_type_stereo"
+                            android:text="@string/stereo"
+                            android:checked="true"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/white"
+                            android:buttonTint="@color/skyfi_accent" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+            <!-- Providers Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="@color/skyfi_gray"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/providers"
+                        android:textColor="@color/skyfi_secondary"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="12dp" />
+
+                    <ScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"
+                        android:fillViewport="true">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+                            
+                            <CheckBox
+                                android:id="@+id/provider_siwei"
+                                android:text="@string/siwei"
+                                android:checked="true"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/white"
+                                android:buttonTint="@color/skyfi_accent" />
+                            <CheckBox
+                                android:id="@+id/provider_satellogic"
+                                android:text="@string/satellogic"
+                                android:checked="true"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/white"
+                                android:buttonTint="@color/skyfi_accent" />
+                            <CheckBox
+                                android:id="@+id/provider_umbra"
+                                android:text="@string/umbra"
+                                android:checked="true"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/white"
+                                android:buttonTint="@color/skyfi_accent" />
+                            <CheckBox
+                                android:id="@+id/provider_tailwind"
+                                android:text="@string/tailwind"
+                                android:checked="true"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/white"
+                                android:buttonTint="@color/skyfi_accent" />
+                            <CheckBox
+                                android:id="@+id/provider_geosat"
+                                android:text="@string/geosat"
+                                android:checked="true"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/white"
+                                android:buttonTint="@color/skyfi_accent" />
+                            <CheckBox
+                                android:id="@+id/provider_sentinel2"
+                                android:text="@string/sentinel2"
+                                android:checked="true"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/white"
+                                android:buttonTint="@color/skyfi_accent" />
+                            <CheckBox
+                                android:id="@+id/provider_sentinel2_creodias"
+                                android:text="@string/sentinel2_creodias"
+                                android:checked="true"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/white"
+                                android:buttonTint="@color/skyfi_accent" />
+                            <CheckBox
+                                android:id="@+id/provider_planet"
+                                android:text="@string/planet"
+                                android:checked="true"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/white"
+                                android:buttonTint="@color/skyfi_accent" />
+                            <CheckBox
+                                android:id="@+id/provider_impro"
+                                android:text="@string/impro"
+                                android:checked="true"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/white"
+                                android:buttonTint="@color/skyfi_accent" />
+                            <CheckBox
+                                android:id="@+id/provider_urban_sky"
+                                android:text="@string/urban_sky"
+                                android:checked="true"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/white"
+                                android:buttonTint="@color/skyfi_accent" />
+                            <CheckBox
+                                android:id="@+id/provider_nsl"
+                                android:text="@string/nsl"
+                                android:checked="true"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/white"
+                                android:buttonTint="@color/skyfi_accent" />
+                            <CheckBox
+                                android:id="@+id/provider_vexcel"
+                                android:text="@string/vexcel"
+                                android:checked="true"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/white"
+                                android:buttonTint="@color/skyfi_accent" />
+                        </LinearLayout>
+
+                    </ScrollView>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+            <!-- Additional Options Card -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="@color/skyfi_gray"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Additional Options"
+                        android:textColor="@color/skyfi_secondary"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="12dp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="12dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:text="@string/open_data"
+                            android:textColor="@color/white"
+                            android:textSize="14sp" />
+
+                        <Switch
+                            android:id="@+id/open_data"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        
+                        <EditText
+                            android:id="@+id/min_overlap_ratio"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:hint="@string/min_overlap_ratio"
+                            android:background="@color/skyfi_dark"
+                            android:padding="12dp"
+                            android:inputType="numberDecimal"
+                            android:textColor="@color/white"
+                            android:textColorHint="@color/skyfi_light_gray" />
+                            
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="%"
+                            android:textColor="@color/skyfi_light_gray"
+                            android:padding="12dp" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <!-- Search Button -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:background="@color/skyfi_gray"
+        android:elevation="8dp">
+
+        <Button
+            android:id="@+id/search_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/search"
+            android:background="@color/skyfi_accent"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:drawableStart="@android:drawable/ic_menu_search"
+            android:drawablePadding="8dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp" />
+
+    </LinearLayout>
+
+</LinearLayout>

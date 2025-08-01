@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Pressed state -->
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="135"
+                android:endColor="@color/skyfi_secondary"
+                android:centerColor="@color/skyfi_primary"
+                android:startColor="@color/skyfi_primary"
+                android:type="linear" />
+            <corners android:radius="8dp" />
+            <padding
+                android:bottom="12dp"
+                android:left="24dp"
+                android:right="24dp"
+                android:top="12dp" />
+        </shape>
+    </item>
+    
+    <!-- Disabled state -->
+    <item android:state_enabled="false">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/skyfi_light_gray" />
+            <corners android:radius="8dp" />
+            <padding
+                android:bottom="12dp"
+                android:left="24dp"
+                android:right="24dp"
+                android:top="12dp" />
+        </shape>
+    </item>
+    
+    <!-- Default state -->
+    <item>
+        <layer-list>
+            <!-- Shadow layer -->
+            <item>
+                <shape android:shape="rectangle">
+                    <solid android:color="#1A000000" />
+                    <corners android:radius="8dp" />
+                </shape>
+            </item>
+            <!-- Main button layer -->
+            <item android:bottom="2dp">
+                <shape android:shape="rectangle">
+                    <gradient
+                        android:angle="135"
+                        android:endColor="@color/skyfi_primary"
+                        android:startColor="@color/skyfi_secondary"
+                        android:type="linear" />
+                    <corners android:radius="8dp" />
+                    <padding
+                        android:bottom="12dp"
+                        android:left="24dp"
+                        android:right="24dp"
+                        android:top="12dp" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+</selector>

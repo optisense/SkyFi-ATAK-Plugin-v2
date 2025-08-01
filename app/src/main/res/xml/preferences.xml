@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <com.atakmap.android.gui.PanEditTextPreference
+        android:key="pref_api_key"
+        android:title="@string/api_key" />
+    
+    <com.atakmap.android.gui.PanSliderPreference
+        android:key="pref_default_opacity"
+        android:title="Default Image Overlay Opacity"
+        android:summary="Set the default opacity for SkyFi image overlays (0-100%)"
+        android:defaultValue="100"
+        android:max="100"
+        android:min="20" />
+</PreferenceScreen>

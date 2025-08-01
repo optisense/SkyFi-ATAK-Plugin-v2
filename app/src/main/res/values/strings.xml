@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App -->
+    <string name="app_name">SkyFi</string>
+    <!-- description -->
+    <string name="app_desc">Download and display satellite imagery from SkyFi</string>
+    <string name="api_key">API Key</string>
+    <string name="preferences_title">SkyFi Preferences</string>
+    <string name="preferences_summary">Set your SkyFi API key here</string>
+    <string name="view_orders">View Orders</string>
+    <string name="settings">Settings</string>
+    <string name="km2">KM²: </string>
+    <string name="resolution">Resolution: </string>
+    <string name="status">"Status: "</string>
+    <string name="order_pending">This order is still processing, please check back later.</string>
+    <string name="order_pending_title">Order Pending</string>
+    <string name="ok">OK</string>
+    <string name="skyfi_orders">SkyFi / Orders</string>
+    <string name="next_page">Next Page</string>
+    <string name="previous_page">Previous Page</string>
+    <string name="provider">"Provider: "</string>
+    <string name="failed_to_get_orders">Failed to get orders</string>
+    <string name="orders_null">Order response body is empty. Check your API Key and try again.</string>
+    <string name="new_order">New Order</string>
+    <string name="new_order_message">Would you like to place a tasking or archive order?</string>
+    <string name="tasking_order">Tasking Order</string>
+    <string name="archive_order">Archive Order</string>
+    <string name="cancel">Cancel</string>
+    <string name="from">Starting Window</string>
+    <string name="from_summary">Must be at least 36 hours in the future</string>
+    <string name="to">Ending Window</string>
+    <string name="max_cloud_coverage">Max Cloud Coverage Percent</string>
+    <string name="max_off_nadir_angle">Max Off Nadir Angle</string>
+    <string name="low">LOW</string>
+    <string name="medium">MEDIUM</string>
+    <string name="high">HIGH</string>
+    <string name="very_high">VERY HIGH</string>
+    <string name="super_high">SUPER HIGH</string>
+    <string name="ultra_high">ULTRA HIGH</string>
+    <string name="product_types">Product Types</string>
+    <string name="day">DAY</string>
+    <string name="night">NIGHT</string>
+    <string name="video">VIDEO</string>
+    <string name="sar">SAR</string>
+    <string name="hyperspectral">HYPERSPECTRAL</string>
+    <string name="multispectral">MULTISPECTRAL</string>
+    <string name="stereo">STEREO</string>
+    <string name="providers">Providers</string>
+    <string name="siwei">SIWEI</string>
+    <string name="satellogic">SATELLOGIC</string>
+    <string name="umbra">UMBRA</string>
+    <string name="tailwind">TAILWIND</string>
+    <string name="geosat">GEOSAT</string>
+    <string name="sentinel2">SENTINEL2</string>
+    <string name="sentinel2_creodias">SENTINEL2_CREODIAS</string>
+    <string name="planet">PLANET</string>
+    <string name="impro">IMPRO</string>
+    <string name="urban_sky">URBAN_SKY</string>
+    <string name="nsl">NSL</string>
+    <string name="vexcel">VEXCEL</string>
+    <string name="open_data">Open Data</string>
+    <string name="min_overlap_ratio">Minimum Overlap Ratio</string>
+    <string name="max_cloud_coverage_error">Max Cloud Coverage must be between 0–100</string>
+    <string name="max_off_nadir_error">Max Off Nadir Angle must be between 0–50</string>
+    <string name="min_overlap_ratio_error">Minimum Overlap Ratio must be a decimal between 0–1</string>
+    <string name="search">Search</string>
+    <string name="skyfi_archives">SkyFi / Archives</string>
+    <string name="cloud_coverage">Cloud Coverage: %.2f%%</string>
+    <string name="price_per_sqkm">Price Per KM²: $%.2f</string>
+    <string name="place_order">Place Order</string>
+    <string name="are_you_sure">Are you sure you want to place this order?</string>
+    <string name="order_placed">Order Placed Successfully</string>
+    <string name="order_failed">Failed to place order: %s</string>
+    <string name="error_placing_order">Error Placing Order</string>
+    <string name="skyfi_tasking_pricing">SkyFi / Tasking Order Pricing</string>
+    <string name="skyfi_tasking_order">SkyFi / Tasking Order</string>
+    <string name="priority">Prioritize</string>
+    <string name="priority_extra_cost">+$%.2f</string>
+    <string name="total_price">Total Price: $%.2f</string>
+    <string name="get_pricing_failed">Failed to get pricing</string>
+    <string name="new_archive_order_my_location">New Archive Order From My Location</string>
+    <string name="new_tasking_order_my_location">New Tasking Order From My Location</string>
+    <string name="set_api_key">Set API Key</string>
+    <string name="set_radius">Set the radius in kilometers</string>
+    <string name="error">Error</string>
+    <string name="no_gps">Make sure you have a GPS lock before placing an order from your location</string>
+    <string name="new_order_my_location">New Order From My Location</string>
+    <string name="order_error">Order Error</string>
+    <string name="window_start_error">The start window is required and must be at least 36 hours in the future</string>
+    <string name="window_end_error">The ending window is required and should be after the start window</string>
+    <string name="my_profile_header">SkyFi / My Profile</string>
+    <string name="name" formatted="false">Name: %s %s</string>
+    <string name="email">Email: %s</string>
+    <string name="budget_usage">Budget Usage: $%d</string>
+    <string name="total_budget">Total Budget: $%d</string>
+    <string name="budget_remaining">Budget Remaining: $%d</string>
+    <string name="cc_on_file">Credit Card On File: %s</string>
+    <string name="my_profile">My Profile</string>
+    <string name="profile_error">Error retrieving profile, check you API key and try again</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
+    <string name="set_diameter">Set diameter in kilometers</string>
+    <string name="reset_form">Reset Form</string>
+    
+    <!-- New v2 Features -->
+    <string name="enter_coordinates">Enter Coordinates</string>
+    <string name="coordinate_format">Coordinate Format</string>
+    <string name="aoi_name">AOI Name</string>
+    <string name="rename_aoi">Rename AOI</string>
+    <string name="draw_polygon">Draw Polygon AOI</string>
+    <string name="saved_aois">Saved AOIs</string>
+    <string name="drawing_mode_indicator">Drawing Mode - Tap to Exit</string>
+    <string name="exit_drawing_mode">Exit Drawing Mode?</string>
+    <string name="exit_drawing_mode_message">Do you want to exit polygon drawing mode?</string>
+    <string name="continue_drawing">Continue Drawing</string>
+    <string name="save_polygon_aoi">Save Polygon AOI</string>
+    <string name="save_and_use">Save &amp; Use</string>
+    <string name="use_only">Use Only</string>
+    <string name="discard">Discard</string>
+    <string name="polygon_opacity_title">Polygon Fill Opacity</string>
+    <string name="polygon_opacity_description">Adjust the transparency of polygon fills when drawing AOIs</string>
+    <string name="polygon_opacity_settings">Polygon Opacity Settings</string>
+    <string name="start_drawing">Start Drawing</string>
+    <string name="draw_polygon_instructions">1. The drawing tools will open automatically\n2. Draw your polygon on the map\n3. When finished, the polygon will be automatically processed\n4. Or tap \'Exit Drawing Mode\' to cancel</string>
+    <string name="invalid_polygon">Invalid polygon - need at least 3 points</string>
+    <string name="failed_process_polygon">Failed to process polygon</string>
+    <string name="error_processing_polygon">Error processing polygon</string>
+    <string name="cache_image">Cache Image</string>
+    <string name="cached">Cached</string>
+    <string name="caching">Caching…</string>
+    <string name="cache_failed">Cache Failed</string>
+    <string name="archive_image">Archive</string>
+    <string name="favorite_image">Favorite</string>
+    <string name="opacity">Opacity</string>
+    <string name="view_on_map">View on Map</string>
+    <string name="hide_from_map">Hide from Map</string>
+    <string name="filter_by_aor">Filter by AOR</string>
+    <string name="sort_by">Sort by</string>
+    <string name="sort_date">Date</string>
+    <string name="sort_location">Location</string>
+    <string name="sort_source">Source</string>
+    <string name="assured_tasking">Assured Tasking</string>
+    <string name="assured_tasking_info">Guaranteed imagery capture within window</string>
+    <string name="assured_tasking_pricing_note">Note: Assured tasking guarantees imagery capture within your specified window. Pricing varies by provider and will be confirmed before order placement.</string>
+    <string name="sensor_requirements">Sensor Requirements</string>
+    <string name="minimum_aoi_size">Minimum AOI: %s</string>
+    <string name="aoi_too_small">AOI Too Small</string>
+    <string name="aoi_too_large">AOI Too Large</string>
+    <string name="aoi_size_warning">AOI Size Warning</string>
+    <string name="provider_min_size" formatted="false">%s (min %.0f km²)</string>
+    <string name="aoi_validation_error" formatted="false">The selected AOI (%s) is incompatible with %s</string>
+    <string name="aoi_area_display">Area: %s</string>
+    <string name="providers_compatible" formatted="false">%d of %d providers compatible</string>
+    <string name="draw_area_feedback">Draw at least 3 points</string>
+    <string name="tap_to_add_points">Tap on map to add points</string>
+    <string name="area_too_large_msg">The drawn area (%s) exceeds the maximum allowed size of 2000 km²</string>
+    <string name="area_too_small_msg">The drawn area (%s) is too small for any provider</string>
+    <string name="limited_providers_msg" formatted="false">Limited provider options (%d of %d compatible)</string>
+    <string name="good_compatibility_msg">Good compatibility (%d providers available)</string>
+    <string name="draw_again">Draw Again</string>
+    <string name="coordinate_input_methods">Coordinate Input Methods</string>
+    <string name="pin_drop">Pin Drop</string>
+    <string name="lat_lon">Lat/Lon</string>
+    <string name="mgrs">MGRS</string>
+    <string name="current_location">Current Location</string>
+    <string name="enter_lat_lon">Enter Latitude, Longitude</string>
+    <string name="enter_mgrs">Enter MGRS Coordinates</string>
+    <string name="tap_map_location">Tap on map to select location</string>
+    <string name="cache_size">Cache Size: %s</string>
+    <string name="clear_cache">Clear Cache</string>
+    <string name="image_metadata">Image Metadata</string>
+    <string name="capture_date">Capture Date: %s</string>
+    <string name="captured_by">Captured by: %s</string>
+    <string name="no_images_cached">No images cached</string>
+    
+    <!-- Coordinate Format Arrays -->
+    <string-array name="coord_format_entries">
+        <item>MGRS (Military Grid Reference)</item>
+        <item>Decimal Degrees</item>
+        <item>Degrees Minutes Seconds</item>
+        <item>UTM (Universal Transverse Mercator)</item>
+        <item>GARS (Global Area Reference System)</item>
+    </string-array>
+    
+    <string-array name="coord_format_values">
+        <item>mgrs</item>
+        <item>decimal</item>
+        <item>dms</item>
+        <item>utm</item>
+        <item>gars</item>
+    </string-array>
+    
+    <!-- Datum Arrays -->
+    <string-array name="datum_entries">
+        <item>WGS84 (World Geodetic System 1984)</item>
+        <item>NAD83 (North American Datum 1983)</item>
+        <item>NAD27 (North American Datum 1927)</item>
+    </string-array>
+    
+    <string-array name="datum_values">
+        <item>wgs84</item>
+        <item>nad83</item>
+        <item>nad27</item>
+    </string-array>
+    
+    <!-- Priority Arrays -->
+    <string-array name="priority_entries">
+        <item>Low Priority</item>
+        <item>Medium Priority</item>
+        <item>High Priority</item>
+        <item>Urgent</item>
+    </string-array>
+    
+    <string-array name="priority_values">
+        <item>LOW</item>
+        <item>MEDIUM</item>
+        <item>HIGH</item>
+        <item>URGENT</item>
+    </string-array>
+    
+</resources>

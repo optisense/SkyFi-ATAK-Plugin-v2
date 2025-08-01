@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/card_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginTop="4dp"
+    android:layout_marginBottom="4dp"
+    app:cardBackgroundColor="@color/skyfi_gray"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="2dp"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true">
+
+    <LinearLayout
+        android:id="@+id/linear_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_margin="12dp"
+            app:cardCornerRadius="6dp"
+            app:cardElevation="0dp">
+
+            <ImageView
+                android:id="@+id/thumbnail"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                tools:srcCompat="@drawable/placeholder" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#40000000" />
+
+        </androidx.cardview.widget.CardView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center_vertical"
+            android:paddingEnd="16dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/product_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Product Type"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/resolution"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="Resolution"
+                    android:textColor="@color/skyfi_secondary"
+                    android:textSize="14sp"
+                    android:gravity="end" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/capture_timestamp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1970-01-01"
+                android:textColor="@color/skyfi_light_gray"
+                android:textSize="14sp"
+                android:layout_marginTop="4dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp">
+
+                <TextView
+                    android:id="@+id/provider"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/provider"
+                    android:textColor="@color/skyfi_light_gray"
+                    android:textSize="12sp"
+                    android:drawableStart="@drawable/map_dollar"
+                    android:drawablePadding="4dp"
+                    android:gravity="center_vertical" />
+
+                <TextView
+                    android:id="@+id/cloud_coverage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="@string/cloud_coverage"
+                    android:textColor="@color/skyfi_light_gray"
+                    android:textSize="12sp"
+                    android:drawableStart="@drawable/cloud"
+                    android:drawablePadding="4dp"
+                    android:gravity="center_vertical" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/price_per_sqkm"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:text="@string/price_per_sqkm"
+                    android:textColor="@color/skyfi_accent"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <!-- Cache Status/Button -->
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp">
+
+                    <Button
+                        android:id="@+id/cache_button"
+                        android:layout_width="48dp"
+                        android:layout_height="36dp"
+                        android:background="@color/skyfi_primary"
+                        android:drawableStart="@android:drawable/stat_sys_download"
+                        android:drawableTint="@color/white"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp" />
+
+                    <ProgressBar
+                        android:id="@+id/cache_progress"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_gravity="center"
+                        android:visibility="gone"
+                        style="?android:attr/progressBarStyleSmall" />
+
+                    <ImageView
+                        android:id="@+id/cache_complete"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:src="@android:drawable/stat_sys_download_done"
+                        android:tint="@color/skyfi_success"
+                        android:visibility="gone" />
+
+                </FrameLayout>
+
+                <!-- Favorite Button -->
+                <ImageButton
+                    android:id="@+id/favorite_button"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:src="@android:drawable/btn_star"
+                    android:tint="@color/skyfi_light_gray"
+                    android:scaleType="centerInside"
+                    android:padding="6dp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>
