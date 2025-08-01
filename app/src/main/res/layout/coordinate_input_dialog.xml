@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <RadioGroup
+        android:id="@+id/coordinate_format_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="16dp">
+
+        <RadioButton
+            android:id="@+id/format_lat_lon"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Lat/Lon"
+            android:checked="true" />
+
+        <RadioButton
+            android:id="@+id/format_mgrs"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="MGRS" />
+
+        <RadioButton
+            android:id="@+id/format_current"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Current" />
+
+    </RadioGroup>
+
+    <EditText
+        android:id="@+id/latitude_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Latitude (e.g., 39.7392)"
+        android:inputType="numberDecimal|numberSigned"
+        android:layout_marginBottom="8dp" />
+
+    <EditText
+        android:id="@+id/longitude_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Longitude (e.g., -104.9903)"
+        android:inputType="numberDecimal|numberSigned"
+        android:layout_marginBottom="8dp" />
+
+    <EditText
+        android:id="@+id/mgrs_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="MGRS (e.g., 13SDD1234567890)"
+        android:inputType="textCapCharacters"
+        android:visibility="gone"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:id="@+id/current_location_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Getting current location..."
+        android:textSize="16sp"
+        android:visibility="gone"
+        android:layout_marginBottom="8dp" />
+
+</LinearLayout>
