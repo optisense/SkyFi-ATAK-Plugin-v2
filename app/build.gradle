@@ -35,18 +35,13 @@ buildscript {
     def urlKey = 'takrepo.url'
 
     ext.isDevKitEnabled = { ->
-        def result = getProperty(urlKey, null) != null
-        println "isDevKitEnabled: ${result}"
-        return result
+        return getProperty(urlKey, null) != null
     }
 
     ext.takrepoUrl = getProperty(urlKey, 'https://localhost/')
     ext.takrepoUser = getProperty('takrepo.user', 'invalid')
     ext.takrepoPassword = getProperty('takrepo.password', 'invalid')
     ext.takdevPlugin = getProperty('takdev.plugin', rootDir.absolutePath + "/atak-gradle-takdev.jar")
-    
-    println "takdevPlugin path: ${takdevPlugin}"
-    println "takdevPlugin exists: ${file(takdevPlugin).exists()}"
 
     repositories {
         google()
@@ -114,7 +109,7 @@ def supportedFlavors =
         ]
 
 android {
-    compileSdkVersion 26
+    compileSdkVersion 30
     namespace 'com.skyfi.atak.plugin'
 
     buildFeatures {

@@ -31,23 +31,12 @@ jobs:
         
     - name: Check ATAK gradle plugin
       run: |
-        # Debug: List files in root directory
-        echo "Files in root directory:"
-        ls -la
-        
         # Check if the ATAK gradle plugin exists
         if [ ! -f "atak-gradle-takdev.jar" ]; then
           echo "ERROR: atak-gradle-takdev.jar not found in repository"
           echo "Please commit this file to the repository for CI/CD builds"
           exit 1
-        else
-          echo "Found atak-gradle-takdev.jar"
-          ls -la atak-gradle-takdev.jar
         fi
-        
-        # Debug: Show local.properties content
-        echo "local.properties content:"
-        cat local.properties
         
     - name: Download ATAK keystore
       run: |
