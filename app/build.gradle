@@ -35,13 +35,18 @@ buildscript {
     def urlKey = 'takrepo.url'
 
     ext.isDevKitEnabled = { ->
-        return getProperty(urlKey, null) != null
+        def result = getProperty(urlKey, null) != null
+        println "isDevKitEnabled: ${result}"
+        return result
     }
 
     ext.takrepoUrl = getProperty(urlKey, 'https://localhost/')
     ext.takrepoUser = getProperty('takrepo.user', 'invalid')
     ext.takrepoPassword = getProperty('takrepo.password', 'invalid')
     ext.takdevPlugin = getProperty('takdev.plugin', "${rootDir}/atak-gradle-takdev.jar")
+    
+    println "takdevPlugin path: ${takdevPlugin}"
+    println "takdevPlugin exists: ${file(takdevPlugin).exists()}"
 
     repositories {
         google()
