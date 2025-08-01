@@ -11,7 +11,7 @@ buildscript {
     ext.PLUGIN_VERSION = "2.0"
     ext.ATAK_VERSION = "5.4.0"
 
-    def takdevVersion = '3.+'
+    def takdevVersion = '2.+'
 
     def getValueFromPropertiesFile = { propFile, key ->
         if(!propFile.isFile() || !propFile.canRead())
@@ -236,7 +236,6 @@ android {
     }
 
     defaultConfig {
-        compileSdkVersion 35
         minSdkVersion 26
         targetSdkVersion 34
 
@@ -258,7 +257,7 @@ android {
 }
 
 afterEvaluate {
-    project.file('proguard-gradle-repackage.txt').text = "-repackageclasses atakplugin.${rootProject.getName()}"
+    project.file('proguard-gradle-repackage.txt').text = "-repackageclasses atakplugin.SkyFiATAKPlugin"
 
     try {
         tasks.named("compile" + getCommandFlavor() + "ReleaseKotlin") {
