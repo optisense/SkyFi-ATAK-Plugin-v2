@@ -1,0 +1,149 @@
+name: Build Development Bundle
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'app/**'
+      - 'build.gradle'
+      - '.github/workflows/build-dev-bundle.yml'
+  workflow_dispatch:
+
+jobs:
+  build-bundle:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+      
+    - name: Create local.properties
+      run: |
+        echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
+        echo "takdev.plugin=$PWD/atak-gradle-takdev.jar" >> local.properties
+        
+    - name: Make gradlew executable
+      run: chmod +x gradlew
+      
+    - name: Cache Gradle dependencies
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+          
+    - name: Build plugin debug APK
+      run: ./gradlew assembleCivDebug
+      
+    - name: Create development bundle
+      run: |
+        # Create bundle directory
+        BUNDLE_DIR="ATAK-SkyFi-Dev-Bundle"
+        mkdir -p "$BUNDLE_DIR"
+        
+        # Copy ATAK APK from SDK
+        cp sdk/ATAK-CIV-5.4.0.18-SDK/atak.apk "$BUNDLE_DIR/ATAK-5.4.0-CIV-debug.apk"
+        
+        # Copy plugin APK
+        PLUGIN_APK=$(find app/build/outputs/apk/civ/debug -name "*.apk" -type f | head -1)
+        cp "$PLUGIN_APK" "$BUNDLE_DIR/SkyFi-ATAK-Plugin-v2-debug.apk"
+        
+        # Copy debug keystore
+        cp sdk/ATAK-CIV-5.4.0.18-SDK/android_keystore "$BUNDLE_DIR/"
+        
+        # Create installation script
+        cat > "$BUNDLE_DIR/install.sh" << 'SCRIPT_END'
+        #!/bin/bash
+        echo "Installing ATAK + SkyFi Plugin Development Bundle"
+        adb install -r ATAK-5.4.0-CIV-debug.apk || exit 1
+        adb install -r SkyFi-ATAK-Plugin-v2-debug.apk || exit 1
+        echo "Installation complete!"
+        SCRIPT_END
+        chmod +x "$BUNDLE_DIR/install.sh"
+        
+        # Create README
+        cat > "$BUNDLE_DIR/README.md" << 'README_END'
+        # ATAK + SkyFi Plugin Development Bundle
+        
+        Debug-signed APKs for development and testing.
+        
+        ## Installation
+        1. Enable USB debugging on your Android device
+        2. Connect device to computer
+        3. Run: `./install.sh` (macOS/Linux) or install APKs manually
+        
+        ## Contents
+        - ATAK 5.4.0 CIV (debug signed)
+        - SkyFi Plugin v2 (debug signed)
+        - Matching debug keystore
+        
+        ⚠️ Development use only - not for operational deployment
+        README_END
+        
+        # Create zip
+        zip -r "ATAK-SkyFi-Dev-Bundle-${{ github.run_number }}.zip" "$BUNDLE_DIR"
+        
+        echo "BUNDLE_NAME=ATAK-SkyFi-Dev-Bundle-${{ github.run_number }}.zip" >> $GITHUB_ENV
+        
+    - name: Get APK sizes
+      run: |
+        echo "### Bundle Contents" >> bundle_info.md
+        echo "| File | Size |" >> bundle_info.md
+        echo "|------|------|" >> bundle_info.md
+        find ATAK-SkyFi-Dev-Bundle -name "*.apk" -exec sh -c 'echo "| $(basename "$1") | $(du -h "$1" | cut -f1) |"' _ {} \; >> bundle_info.md
+        echo "" >> bundle_info.md
+        echo "**Total Bundle Size:** $(du -h ${{ env.BUNDLE_NAME }} | cut -f1)" >> bundle_info.md
+        
+    - name: Upload bundle artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ATAK-SkyFi-Dev-Bundle
+        path: ${{ env.BUNDLE_NAME }}
+        retention-days: 30
+        
+    - name: Create Development Release
+      if: github.ref == 'refs/heads/main'
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: dev-bundle-${{ github.run_number }}
+        name: Development Bundle Build ${{ github.run_number }}
+        draft: false
+        prerelease: true
+        files: ${{ env.BUNDLE_NAME }}
+        body_path: bundle_info.md
+        body: |
+          ## ATAK + SkyFi Plugin Development Bundle
+          
+          This bundle contains debug-signed versions for development and testing.
+          
+          ### ⚠️ Important Notes
+          - **Development use only** - not for operational deployment
+          - Both APKs are signed with the same debug certificate
+          - Requires Android 5.0+ with USB debugging enabled
+          
+          ### Installation
+          1. Download and extract the bundle
+          2. Connect Android device with USB debugging enabled
+          3. Run `./install.sh` or install APKs manually:
+             ```bash
+             adb install -r ATAK-5.4.0-CIV-debug.apk
+             adb install -r SkyFi-ATAK-Plugin-v2-debug.apk
+             ```
+          
+          ### What's Included
+          - ATAK 5.4.0.18 CIV (debug signed)
+          - SkyFi Plugin v2 (debug signed)
+          - Installation scripts
+          - Debug keystore for reference
