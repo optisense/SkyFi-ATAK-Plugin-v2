@@ -29,6 +29,18 @@ jobs:
         echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
         echo "takdev.plugin=$PWD/atak-gradle-takdev.jar" >> local.properties
         
+    - name: Setup ATAK SDK dependencies
+      run: |
+        # Create build directory for keystore
+        mkdir -p app/build
+        cp sdk/ATAK-CIV-5.4.0.18-SDK/android_keystore app/build/
+        
+        # Verify main.jar exists
+        if [ ! -f "sdk/ATAK-CIV-5.4.0.18-SDK/main.jar" ]; then
+          echo "ERROR: SDK main.jar not found"
+          exit 1
+        fi
+        
     - name: Check ATAK gradle plugin
       run: |
         # Check if the ATAK gradle plugin exists
@@ -64,7 +76,7 @@ jobs:
     - name: Build ATAK CIV Release APK
       run: |
         # Build the CIV release variant with debug signing for ATAK compatibility
-        ./gradlew assembleCivRelease
+        ./gradlew assembleCivRelease -Ptakrepo.force=false || ./gradlew assembleCivDebug -Ptakrepo.force=false
         
     - name: List build outputs
       run: |

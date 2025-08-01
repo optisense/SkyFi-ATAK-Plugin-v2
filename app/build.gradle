@@ -77,6 +77,9 @@ allprojects {
         maven {
             url "https://jitpack.io"
         }
+        flatDir {
+            dirs "${rootDir}/sdk/ATAK-CIV-5.4.0.18-SDK"
+        }
     }
 }
 
