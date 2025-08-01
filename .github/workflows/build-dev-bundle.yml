@@ -45,7 +45,7 @@ jobs:
           ${{ runner.os }}-gradle-
           
     - name: Build plugin debug APK
-      run: ./gradlew assembleCivDebug
+      run: ./gradlew assembleCivDebug -x javadoc -Ptakrepo.force=false --no-daemon
       
     - name: Create development bundle
       run: |

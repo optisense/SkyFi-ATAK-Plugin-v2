@@ -76,7 +76,7 @@ jobs:
     - name: Build ATAK CIV Release APK
       run: |
         # Build the CIV release variant with debug signing for ATAK compatibility
-        ./gradlew assembleCivRelease -Ptakrepo.force=false || ./gradlew assembleCivDebug -Ptakrepo.force=false
+        ./gradlew assembleCivRelease -x javadoc -Ptakrepo.force=false --no-daemon || ./gradlew assembleCivDebug -x javadoc -Ptakrepo.force=false --no-daemon
         
     - name: List build outputs
       run: |
