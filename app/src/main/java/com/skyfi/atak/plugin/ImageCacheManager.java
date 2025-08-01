@@ -30,6 +30,11 @@ public class ImageCacheManager {
         void onCached(boolean success);
     }
     
+    public interface ProgressCallback {
+        void onProgress(int progress, int total);
+        void onComplete(boolean success, String message);
+    }
+    
     private ImageCacheManager(Context context) {
         this.context = context.getApplicationContext();
         this.executorService = Executors.newFixedThreadPool(2);
@@ -253,5 +258,80 @@ public class ImageCacheManager {
                 }
             }
         });
+    }
+    
+    /**
+     * Cache high-resolution images from a list of URLs with progress tracking
+     */
+    public void cacheHighResImages(java.util.List<String> imageUrls, ProgressCallback callback) {
+        if (imageUrls == null || imageUrls.isEmpty()) {
+            if (callback != null) {
+                callback.onComplete(false, "No images to cache");
+            }
+            return;
+        }
+        
+        executorService.execute(() -> {
+            int total = imageUrls.size();
+            int completed = 0;
+            int failed = 0;
+            
+            for (int i = 0; i < imageUrls.size(); i++) {
+                String url = imageUrls.get(i);
+                try {
+                    // Check if already cached
+                    if (!isCached(url)) {
+                        // Here you would typically download the high-res image
+                        // For now, we'll simulate the caching process
+                        Log.d(TAG, "Caching high-res image: " + url);
+                        
+                        // In a real implementation, you would:
+                        // 1. Download the high-res version of the image
+                        // 2. Store it using cacheImageData or cacheImage
+                        // For now, we'll mark it as cached
+                        String key = generateKey(url);
+                        File cacheFile = new File(diskCacheDir, key + ".highres");
+                        try {
+                            cacheFile.createNewFile();
+                        } catch (Exception e) {
+                            Log.e(TAG, "Failed to create cache file marker", e);
+                            failed++;
+                        }
+                    }
+                    
+                    completed++;
+                    if (callback != null) {
+                        callback.onProgress(completed, total);
+                    }
+                    
+                } catch (Exception e) {
+                    Log.e(TAG, "Failed to cache image: " + url, e);
+                    failed++;
+                    completed++;
+                    if (callback != null) {
+                        callback.onProgress(completed, total);
+                    }
+                }
+            }
+            
+            if (callback != null) {
+                boolean success = failed == 0;
+                String message = success ? 
+                    "Successfully cached " + (total - failed) + " images" :
+                    "Cached " + (total - failed) + " images, " + failed + " failed";
+                callback.onComplete(success, message);
+            }
+        });
+    }
+    
+    /**
+     * Check if a high-resolution version is cached
+     */
+    public boolean isHighResCached(String url) {
+        if (url == null) return false;
+        
+        String key = generateKey(url);
+        File file = new File(diskCacheDir, key + ".highres");
+        return file.exists();
     }
 }

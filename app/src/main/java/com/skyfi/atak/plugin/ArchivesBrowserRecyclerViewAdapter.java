@@ -10,6 +10,7 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -31,11 +32,13 @@ public class ArchivesBrowserRecyclerViewAdapter extends RecyclerView.Adapter<Arc
     private ArchivesBrowserRecyclerViewAdapter.ItemClickListener mClickListener;
     private int selectedPosition = -1;
     private Context context;
+    private ImagePreferencesManager imagePrefsManager;
 
     ArchivesBrowserRecyclerViewAdapter(Context context, ArrayList<Archive> data) {
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
         this.context = context;
+        this.imagePrefsManager = ImagePreferencesManager.getInstance(context);
     }
 
     @NonNull
@@ -84,6 +87,9 @@ public class ArchivesBrowserRecyclerViewAdapter extends RecyclerView.Adapter<Arc
             holder.provider.setText(archive.getProvider());
             holder.cloudCoverage.setText(String.format(context.getString(R.string.cloud_coverage), archive.getCloudCoveragePercent()));
             holder.pricePerSqkm.setText(String.format(context.getString(R.string.price_per_sqkm), archive.getPriceForOneSquareKm()));
+            
+            // Update button states based on preferences
+            updateButtonStates(holder, archive.getArchiveId());
         } catch (Exception e) {
             Log.d(LOGTAG, "Failed", e);
         }
@@ -102,6 +108,8 @@ public class ArchivesBrowserRecyclerViewAdapter extends RecyclerView.Adapter<Arc
         TextView provider;
         TextView cloudCoverage;
         TextView pricePerSqkm;
+        Button archiveButton;
+        Button favoriteButton;
         RecyclerView recyclerView;
 
         ViewHolder(View itemView) {
@@ -113,14 +121,33 @@ public class ArchivesBrowserRecyclerViewAdapter extends RecyclerView.Adapter<Arc
             resolution = itemView.findViewById(R.id.resolution);
             provider = itemView.findViewById(R.id.provider);
             pricePerSqkm = itemView.findViewById(R.id.price_per_sqkm);
+            archiveButton = itemView.findViewById(R.id.archive_button);
+            favoriteButton = itemView.findViewById(R.id.favorite_button);
+            
             itemView.setOnClickListener(this);
+            archiveButton.setOnClickListener(this);
+            favoriteButton.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
-            if (mClickListener != null) {
-                mClickListener.onItemClick(view, getAdapterPosition());
-                selectedPosition = getAdapterPosition();
+            int position = getAdapterPosition();
+            if (position == RecyclerView.NO_POSITION) return;
+            
+            Archive archive = mData.get(position);
+            
+            if (view.getId() == R.id.archive_button) {
+                imagePrefsManager.toggleArchived(archive.getArchiveId());
+                updateButtonStates(this, archive.getArchiveId());
+            } else if (view.getId() == R.id.favorite_button) {
+                imagePrefsManager.toggleFavorite(archive.getArchiveId());
+                updateButtonStates(this, archive.getArchiveId());
+            } else {
+                // Regular item click
+                if (mClickListener != null) {
+                    mClickListener.onItemClick(view, position);
+                    selectedPosition = position;
+                }
             }
         }
     }
@@ -138,6 +165,18 @@ public class ArchivesBrowserRecyclerViewAdapter extends RecyclerView.Adapter<Arc
     // parent activity will implement this method to respond to click events
     public interface ItemClickListener {
         void onItemClick(View view, int position);
+    }
+    
+    private void updateButtonStates(ViewHolder holder, String archiveId) {
+        boolean isArchived = imagePrefsManager.isArchived(archiveId);
+        boolean isFavorite = imagePrefsManager.isFavorite(archiveId);
+        
+        holder.archiveButton.setText(isArchived ? "Unarchive" : context.getString(R.string.archive_image));
+        holder.favoriteButton.setText(isFavorite ? "Unfavorite" : context.getString(R.string.favorite_image));
+        
+        // Change button appearance based on state
+        holder.archiveButton.setAlpha(isArchived ? 0.7f : 1.0f);
+        holder.favoriteButton.setAlpha(isFavorite ? 0.7f : 1.0f);
     }
 
 }

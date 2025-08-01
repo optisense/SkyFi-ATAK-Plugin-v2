@@ -51,7 +51,14 @@ public class ArchivesBrowser extends DropDownReceiver implements DropDown.OnStat
 
     Button nextButton;
     Button previousButton;
+    Button cacheButton;
+    Button filterButton;
+    Button sortButton;
     SwipeRefreshLayout refreshPage;
+    ImageCacheManager cacheManager;
+    AORFilterManager aorFilterManager;
+    private ArrayList<Archive> originalArchives = new ArrayList<>();
+    private String currentSortMode = "date";
 
     protected ArchivesBrowser(MapView mapView, Context context) {
         super(mapView);
@@ -67,11 +74,20 @@ public class ArchivesBrowser extends DropDownReceiver implements DropDown.OnStat
 
         nextButton = mainView.findViewById(R.id.next_button);
         previousButton = mainView.findViewById(R.id.previous_button);
+        cacheButton = mainView.findViewById(R.id.cache_button);
+        filterButton = mainView.findViewById(R.id.filter_button);
+        sortButton = mainView.findViewById(R.id.sort_button);
+        
+        // Initialize managers
+        cacheManager = ImageCacheManager.getInstance(context);
+        aorFilterManager = new AORFilterManager(context);
 
         nextButton.setOnClickListener(view -> {
             if (!pageHashes.isEmpty() && pageNumber < pageHashes.size() - 1)
                 pageNumber++;
             postArchives();
+            // Auto-scroll to top
+            recyclerView.scrollToPosition(0);
         });
 
         previousButton.setOnClickListener(view -> {
@@ -83,6 +99,20 @@ public class ArchivesBrowser extends DropDownReceiver implements DropDown.OnStat
                 pageNumber--;
                 getArchives();
             }
+            // Auto-scroll to top
+            recyclerView.scrollToPosition(0);
+        });
+
+        cacheButton.setOnClickListener(view -> {
+            cacheCurrentImages();
+        });
+        
+        filterButton.setOnClickListener(view -> {
+            showAORFilterDialog();
+        });
+        
+        sortButton.setOnClickListener(view -> {
+            showSortDialog();
         });
 
         refreshPage = mainView.findViewById(R.id.pull_to_refresh);
@@ -150,8 +180,14 @@ public class ArchivesBrowser extends DropDownReceiver implements DropDown.OnStat
                     Log.e(LOGTAG, "Failed to parse page hash", e);
                 }
 
+                // Store original archives before filtering
+                originalArchives.clear();
+                originalArchives.addAll(archiveResponse.getArchives());
+                
+                // Apply AOR filtering
+                List<Archive> filteredArchives = aorFilterManager.filterArchivesByAOR(originalArchives);
                 archives.clear();
-                archives.addAll(archiveResponse.getArchives());
+                archives.addAll(filteredArchives);
 
                 if (pageNumber == -1 && archiveResponse.getNextPage() != null) {
                     // First page
@@ -313,5 +349,164 @@ public class ArchivesBrowser extends DropDownReceiver implements DropDown.OnStat
                         .show();
             }
         });
+    }
+    
+    private void cacheCurrentImages() {
+        if (archives.isEmpty()) {
+            showError(context.getString(R.string.cache_failed), context.getString(R.string.no_images_to_cache));
+            return;
+        }
+        
+        // Extract image URLs from current archives
+        java.util.List<String> imageUrls = new java.util.ArrayList<>();
+        for (Archive archive : archives) {
+            // Get thumbnail URLs from the HashMap
+            if (archive.getThumbnailUrls() != null) {
+                for (String thumbnailUrl : archive.getThumbnailUrls().values()) {
+                    if (thumbnailUrl != null && !thumbnailUrl.isEmpty()) {
+                        imageUrls.add(thumbnailUrl);
+                    }
+                }
+            }
+            // Also add titles URL if available (likely higher resolution)
+            if (archive.getTitlesUrl() != null && !archive.getTitlesUrl().isEmpty()) {
+                imageUrls.add(archive.getTitlesUrl());
+            }
+        }
+        
+        if (imageUrls.isEmpty()) {
+            showError(context.getString(R.string.cache_failed), context.getString(R.string.no_images_to_cache));
+            return;
+        }
+        
+        // Show progress dialog
+        AlertDialog progressDialog = new AlertDialog.Builder(MapView.getMapView().getContext())
+                .setTitle(context.getString(R.string.caching_progress))
+                .setMessage("0 / " + imageUrls.size())
+                .setCancelable(false)
+                .create();
+        progressDialog.show();
+        
+        // Start caching with progress callback
+        cacheManager.cacheHighResImages(imageUrls, new ImageCacheManager.ProgressCallback() {
+            @Override
+            public void onProgress(int progress, int total) {
+                // Update progress dialog on main thread
+                MapView.getMapView().post(() -> {
+                    if (progressDialog.isShowing()) {
+                        progressDialog.setMessage(progress + " / " + total);
+                    }
+                });
+            }
+            
+            @Override
+            public void onComplete(boolean success, String message) {
+                // Show completion on main thread
+                MapView.getMapView().post(() -> {
+                    if (progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                    }
+                    
+                    String title = success ? context.getString(R.string.cache_complete) : context.getString(R.string.cache_failed);
+                    showError(title, message);
+                });
+            }
+        });
+    }
+    
+    private void showAORFilterDialog() {
+        List<String> aorOptions = aorFilterManager.getAvailableAORs();
+        String[] aorArray = aorOptions.toArray(new String[0]);
+        
+        // Convert "all" to a more user-friendly name
+        for (int i = 0; i < aorArray.length; i++) {
+            if ("all".equals(aorArray[i])) {
+                aorArray[i] = context.getString(R.string.all_aors);
+            }
+        }
+        
+        int selectedIndex = Math.max(0, aorOptions.indexOf(aorFilterManager.getSelectedAOR()));
+        
+        new AlertDialog.Builder(MapView.getMapView().getContext())
+                .setTitle(context.getString(R.string.select_aor))
+                .setSingleChoiceItems(aorArray, selectedIndex, (dialog, which) -> {
+                    String selectedAOR = aorOptions.get(which);
+                    aorFilterManager.setSelectedAOR(selectedAOR);
+                    applyCurrentFilter();
+                    dialog.dismiss();
+                })
+                .setNegativeButton(context.getString(R.string.cancel), null)
+                .show();
+    }
+    
+    private void applyCurrentFilter() {
+        if (!originalArchives.isEmpty()) {
+            List<Archive> filteredArchives = aorFilterManager.filterArchivesByAOR(originalArchives);
+            archives.clear();
+            archives.addAll(filteredArchives);
+            
+            synchronized (recyclerViewAdapter) {
+                recyclerViewAdapter.notifyDataSetChanged();
+            }
+            
+            // Update filter button text to show current filter
+            String selectedAOR = aorFilterManager.getSelectedAOR();
+            if ("all".equals(selectedAOR)) {
+                filterButton.setText(context.getString(R.string.aor_filter));
+            } else {
+                filterButton.setText(selectedAOR);
+            }
+        }
+    }
+    
+    private void showSortDialog() {
+        String[] sortOptions = {
+            context.getString(R.string.sort_by_date),
+            context.getString(R.string.sort_by_location),
+            context.getString(R.string.sort_by_source)
+        };
+        
+        String[] sortModes = {"date", "location", "source"};
+        
+        int selectedIndex = 0;
+        for (int i = 0; i < sortModes.length; i++) {
+            if (sortModes[i].equals(currentSortMode)) {
+                selectedIndex = i;
+                break;
+            }
+        }
+        
+        new AlertDialog.Builder(MapView.getMapView().getContext())
+                .setTitle("Sort Images")
+                .setSingleChoiceItems(sortOptions, selectedIndex, (dialog, which) -> {
+                    currentSortMode = sortModes[which];
+                    sortArchives();
+                    sortButton.setText(sortOptions[which]);
+                    dialog.dismiss();
+                })
+                .setNegativeButton(context.getString(R.string.cancel), null)
+                .show();
+    }
+    
+    private void sortArchives() {
+        if (archives.isEmpty()) return;
+        
+        java.util.Collections.sort(archives, (a1, a2) -> {
+            switch (currentSortMode) {
+                case "date":
+                    return a2.getCaptureTimestamp().compareTo(a1.getCaptureTimestamp()); // Newest first
+                case "location":
+                    // Sort by provider as proxy for location/region
+                    return a1.getProvider().compareTo(a2.getProvider());
+                case "source":
+                    return a1.getProvider().compareTo(a2.getProvider());
+                default:
+                    return 0;
+            }
+        });
+        
+        synchronized (recyclerViewAdapter) {
+            recyclerViewAdapter.notifyDataSetChanged();
+        }
     }
 }

@@ -251,6 +251,19 @@
                     android:layout_height="wrap_content" />
 
             </LinearLayout>
+            
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <CheckBox
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/assured_tasking"
+                    android:text="@string/assured_tasking" />
+
+            </LinearLayout>
 
             <LinearLayout
                 android:orientation="horizontal"

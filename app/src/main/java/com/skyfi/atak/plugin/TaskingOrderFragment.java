@@ -59,6 +59,7 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
     private final Button placeOrderButton;
     private final Button resetFormButton;
     private final CheckBox prioritize;
+    private final CheckBox assuredTasking;
     private final TextView priorityPrice;
     private final TextView totalPrice;
 
@@ -102,6 +103,9 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
 
         prioritize = mainView.findViewById(R.id.priority);
         prioritize.setOnClickListener(this);
+        
+        assuredTasking = mainView.findViewById(R.id.assured_tasking);
+        assuredTasking.setOnClickListener(this);
 
         priorityPrice = mainView.findViewById(R.id.priority_price);
 
@@ -429,6 +433,12 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
         else if (view.getId() == R.id.priority) {
             taskingOrder.setPriorityItem(prioritize.isChecked());
             updateTotalPrice();
+        }
+        
+        else if (view.getId() == R.id.assured_tasking) {
+            // Handle assured tasking - this may require additional API fields
+            // For now, just log the selection
+            Log.d(LOGTAG, "Assured tasking: " + assuredTasking.isChecked());
         }
 
         else if (view.getId() == R.id.place_order_button) {

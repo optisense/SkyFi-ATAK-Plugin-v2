@@ -165,7 +165,7 @@ android {
         release {
             minifyEnabled true
             proguardFiles 'proguard-gradle.txt', 'proguard-gradle-repackage.txt'
-            signingConfig signingConfigs.release
+            signingConfig signingConfigs.debug  // Use debug signing for now
             matchingFallbacks = ['odk']
         }
     }
