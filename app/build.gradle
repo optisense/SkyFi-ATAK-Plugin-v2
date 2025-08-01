@@ -109,7 +109,7 @@ def supportedFlavors =
         ]
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 35
     namespace 'com.skyfi.atak.plugin'
 
     buildFeatures {
