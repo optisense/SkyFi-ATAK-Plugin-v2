@@ -37,31 +37,34 @@ public class TaskingOrderTest {
     public void testTaskingOrderCreation() {
         // Test basic tasking order creation
         TaskingOrder order = new TaskingOrder();
-        order.setOrderName("Test Tasking Order");
-        order.setLatitude(40.7128);
-        order.setLongitude(-74.0060);
-        order.setAreaSize(100.0);
+        order.setAoi("{\"type\":\"Polygon\",\"coordinates\":[[[0,0],[1,0],[1,1],[0,1],[0,0]]]}");
+        order.setPriorityItem(true);
+        order.setProductType("optical");
+        order.setResolution("30cm");
+        order.setWindowStart("2024-01-01");
+        order.setWindowEnd("2024-01-31");
         
-        assertEquals("Order name should match", "Test Tasking Order", order.getOrderName());
-        assertEquals("Latitude should match", 40.7128, order.getLatitude(), 0.0001);
-        assertEquals("Longitude should match", -74.0060, order.getLongitude(), 0.0001);
-        assertEquals("Area size should match", 100.0, order.getAreaSize(), 0.1);
+        assertEquals("AOI should match", "{\"type\":\"Polygon\",\"coordinates\":[[[0,0],[1,0],[1,1],[0,1],[0,0]]]}", order.getAoi());
+        assertTrue("Should be priority item", order.isPriorityItem());
+        assertEquals("Product type should match", "optical", order.getProductType());
+        assertEquals("Resolution should match", "30cm", order.getResolution());
     }
     
     @Test
     public void testPindropTasking() {
-        // Test tasking via pindrop
+        // Test tasking via pindrop converted to AOI
         double lat = 35.6762;
         double lon = 139.6503; // Tokyo coordinates
+        String aoiFromPindrop = String.format("{\"type\":\"Point\",\"coordinates\":[%f,%f]}", lon, lat);
         
         TaskingOrder order = new TaskingOrder();
-        order.setLatitude(lat);
-        order.setLongitude(lon);
-        order.setOrderName("Pindrop Order");
+        order.setAoi(aoiFromPindrop);
+        order.setProductType("optical");
+        order.setResolution("50cm");
         
         assertNotNull("Order should not be null", order);
-        assertEquals("Latitude should be set from pindrop", lat, order.getLatitude(), 0.0001);
-        assertEquals("Longitude should be set from pindrop", lon, order.getLongitude(), 0.0001);
+        assertTrue("AOI should contain coordinates", order.getAoi().contains(String.valueOf(lat)));
+        assertTrue("AOI should contain coordinates", order.getAoi().contains(String.valueOf(lon)));
     }
     
     @Test
@@ -80,98 +83,95 @@ public class TaskingOrderTest {
         // Test tasking via current location
         double currentLat = 37.7749;
         double currentLon = -122.4194; // San Francisco
+        String aoiFromLocation = String.format("{\"type\":\"Point\",\"coordinates\":[%f,%f]}", currentLon, currentLat);
         
         TaskingOrder order = new TaskingOrder();
-        order.setLatitude(currentLat);
-        order.setLongitude(currentLon);
-        order.setOrderName("Current Location Order");
+        order.setAoi(aoiFromLocation);
+        order.setProductType("sar");
+        order.setResolution("1m");
         
-        assertEquals("Should use current latitude", currentLat, order.getLatitude(), 0.0001);
-        assertEquals("Should use current longitude", currentLon, order.getLongitude(), 0.0001);
+        assertTrue("AOI should contain current coordinates", order.getAoi().contains(String.valueOf(currentLat)));
+        assertTrue("AOI should contain current coordinates", order.getAoi().contains(String.valueOf(currentLon)));
     }
     
     @Test
-    public void testAssuredTasking() {
-        // Test assured tasking option
+    public void testPriorityTasking() {
+        // Test priority tasking option (similar to assured)
         TaskingOrder order = new TaskingOrder();
-        order.setAssuredTasking(true);
-        order.setOrderName("Assured Tasking Order");
+        order.setPriorityItem(true);
+        order.setProductType("optical");
         
-        assertTrue("Assured tasking should be enabled", order.isAssuredTasking());
+        assertTrue("Priority tasking should be enabled", order.isPriorityItem());
     }
     
     @Test
-    public void testMinimumAOISize() {
-        // Test minimum AOI size enforcement
-        double requestedSize = 50.0;
-        double minimumSize = 100.0;
-        
+    public void testCloudCoverageConstraints() {
+        // Test cloud coverage constraints
         TaskingOrder order = new TaskingOrder();
-        order.setAreaSize(requestedSize);
+        order.setMaxCloudCoveragePercent(20.0f);
+        order.setMaxOffNadirAngle(30.0f);
         
-        // In real implementation, this would enforce minimum
-        double actualSize = Math.max(requestedSize, minimumSize);
-        
-        assertEquals("Size should be at least minimum", minimumSize, actualSize, 0.1);
+        assertEquals("Max cloud coverage should match", 20.0f, order.getMaxCloudCoveragePercent(), 0.1);
+        assertEquals("Max off nadir angle should match", 30.0f, order.getMaxOffNadirAngle(), 0.1);
     }
     
     @Test
-    public void testPricingQuery() {
-        // Test pricing query for tasking order
-        PricingQuery query = new PricingQuery();
-        query.setAreaSize(150.0);
-        query.setLatitude(40.7128);
-        query.setLongitude(-74.0060);
+    public void testDeliveryConfiguration() {
+        // Test delivery configuration
+        TaskingOrder order = new TaskingOrder();
+        order.setDeliveryDriver("s3");
         
-        assertNotNull("Pricing query should not be null", query);
-        assertEquals("Area size should match", 150.0, query.getAreaSize(), 0.1);
+        DeliveryParams params = new DeliveryParams();
+        order.setDeliveryParams(params);
+        
+        assertEquals("Delivery driver should match", "s3", order.getDeliveryDriver());
+        assertNotNull("Delivery params should not be null", order.getDeliveryParams());
     }
     
     @Test
     public void testOrderValidation() {
-        // Test order validation
+        // Test order validation with required fields
         TaskingOrder order = new TaskingOrder();
         
         // Test missing required fields
-        assertNull("Order name should be null initially", order.getOrderName());
+        assertNull("AOI should be null initially", order.getAoi());
+        assertNull("Product type should be null initially", order.getProductType());
         
         // Set required fields
-        order.setOrderName("Valid Order");
-        order.setLatitude(40.7128);
-        order.setLongitude(-74.0060);
-        order.setAreaSize(100.0);
+        order.setAoi("{\"type\":\"Polygon\",\"coordinates\":[[[0,0],[1,0],[1,1],[0,1],[0,0]]]}");
+        order.setProductType("optical");
+        order.setResolution("30cm");
+        order.setWindowStart("2024-01-01");
+        order.setWindowEnd("2024-01-31");
         
         // Verify all required fields are set
-        assertNotNull("Order name should be set", order.getOrderName());
-        assertNotEquals("Latitude should be set", 0.0, order.getLatitude(), 0.0001);
-        assertNotEquals("Longitude should be set", 0.0, order.getLongitude(), 0.0001);
-        assertTrue("Area size should be positive", order.getAreaSize() > 0);
+        assertNotNull("AOI should be set", order.getAoi());
+        assertNotNull("Product type should be set", order.getProductType());
+        assertNotNull("Resolution should be set", order.getResolution());
+        assertNotNull("Window start should be set", order.getWindowStart());
+        assertNotNull("Window end should be set", order.getWindowEnd());
     }
     
     @Test
-    public void testMultipleSensorTypes() {
-        // Test multiple sensor type selection
-        List<String> sensorTypes = Arrays.asList("Optical", "SAR", "Hyperspectral");
-        
+    public void testProviderSelection() {
+        // Test provider selection
         TaskingOrder order = new TaskingOrder();
-        order.setSensorTypes(sensorTypes);
+        order.setRequiredProvider("Maxar");
+        order.setProductType("optical");
         
-        assertNotNull("Sensor types should not be null", order.getSensorTypes());
-        assertEquals("Should have 3 sensor types", 3, order.getSensorTypes().size());
-        assertTrue("Should contain Optical", order.getSensorTypes().contains("Optical"));
+        assertEquals("Provider should match", "Maxar", order.getRequiredProvider());
+        // Note: requiredProvider is ironically not required according to the comment
     }
     
     @Test
-    public void testDeliveryTimeframe() {
-        // Test delivery timeframe options
-        String standardDelivery = "72 hours";
-        String rushDelivery = "24 hours";
-        String priorityDelivery = "6 hours";
-        
+    public void testWindowTimeframe() {
+        // Test window timeframe for tasking
         TaskingOrder order = new TaskingOrder();
-        order.setDeliveryTimeframe(rushDelivery);
+        order.setWindowStart("2024-01-01T00:00:00Z");
+        order.setWindowEnd("2024-01-31T23:59:59Z");
         
-        assertEquals("Delivery timeframe should match", rushDelivery, order.getDeliveryTimeframe());
+        assertEquals("Window start should match", "2024-01-01T00:00:00Z", order.getWindowStart());
+        assertEquals("Window end should match", "2024-01-31T23:59:59Z", order.getWindowEnd());
     }
     
     @Test
