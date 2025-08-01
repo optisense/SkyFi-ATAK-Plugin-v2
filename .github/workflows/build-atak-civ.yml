@@ -27,7 +27,7 @@ jobs:
     - name: Create local.properties
       run: |
         echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
-        echo "takdev.plugin=\${rootDir}/atak-gradle-takdev.jar" >> local.properties
+        echo "takdev.plugin=$PWD/atak-gradle-takdev.jar" >> local.properties
         
     - name: Check ATAK gradle plugin
       run: |
