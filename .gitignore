@@ -90,8 +90,8 @@ lint/tmp/
 # MacOS
 .DS_Store
 
-# Gradle properties - contains local paths
-gradle.properties
+# Gradle properties - uncomment to ignore local settings
+# gradle.properties
 
 # Temporary files
 *.tmp
