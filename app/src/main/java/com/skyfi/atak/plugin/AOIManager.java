@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.atakmap.coremap.maps.coords.GeoPoint;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
@@ -61,7 +62,9 @@ public class AOIManager {
     public AOIManager(Context context) {
         this.context = context;
         this.prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        this.gson = new Gson();
+        this.gson = new GsonBuilder()
+                .serializeSpecialFloatingPointValues()
+                .create();
         loadAOIs();
     }
     

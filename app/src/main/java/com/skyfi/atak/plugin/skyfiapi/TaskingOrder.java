@@ -3,6 +3,7 @@ package com.skyfi.atak.plugin.skyfiapi;
 public class TaskingOrder {
     String aoi; // required
     boolean priorityItem = false;
+    boolean assuredTasking = false;
     String productType; // required
     String resolution; // required
     String requiredProvider; // Ironically not required
@@ -18,6 +19,7 @@ public class TaskingOrder {
         return "TaskingOrder{" +
                 "aoi='" + aoi + '\'' +
                 ", priorityItem=" + priorityItem +
+                ", assuredTasking=" + assuredTasking +
                 ", productType='" + productType + '\'' +
                 ", resolution='" + resolution + '\'' +
                 ", requiredProvider='" + requiredProvider + '\'' +
@@ -76,6 +78,14 @@ public class TaskingOrder {
 
     public void setPriorityItem(boolean priorityItem) {
         this.priorityItem = priorityItem;
+    }
+
+    public boolean isAssuredTasking() {
+        return assuredTasking;
+    }
+
+    public void setAssuredTasking(boolean assuredTasking) {
+        this.assuredTasking = assuredTasking;
     }
 
     public String getProductType() {

@@ -1,0 +1,47 @@
+version: 2
+updates:
+  # Enable version updates for Gradle dependencies
+  - package-ecosystem: "gradle"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "optisense/skyfi-atak-maintainers"
+    assignees:
+      - "optisense/skyfi-atak-maintainers"
+    commit-message:
+      prefix: "deps:"
+      include: "scope"
+    labels:
+      - "dependencies"
+      - "security-review-required"
+    ignore:
+      # Ignore ATAK SDK updates (must be manually managed)
+      - dependency-name: "com.atakmap.*"
+      # Ignore major version updates for critical dependencies
+      - dependency-name: "com.android.tools.build:gradle"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "androidx.*"
+        update-types: ["version-update:semver-major"]
+
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+    open-pull-requests-limit: 3
+    reviewers:
+      - "optisense/skyfi-atak-maintainers"
+    assignees:
+      - "optisense/skyfi-atak-maintainers"
+    commit-message:
+      prefix: "ci:"
+      include: "scope"
+    labels:
+      - "ci/cd"
+      - "security-review-required"

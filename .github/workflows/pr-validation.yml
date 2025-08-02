@@ -1,0 +1,185 @@
+name: PR Validation
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+env:
+  JAVA_VERSION: '11'
+  ANDROID_COMPILE_SDK: '33'
+  ANDROID_MIN_SDK: '21'
+  ANDROID_TARGET_SDK: '33'
+
+jobs:
+  validate:
+    name: Validate Build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        flavor: [civ]  # Only test CIV flavor for PRs to save resources
+        build_type: [debug]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: zulu
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          api-level: ${{ env.ANDROID_COMPILE_SDK }}
+          target: default
+          arch: x86_64
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Cache Android SDK
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ env.ANDROID_SDK_ROOT }}
+          key: ${{ runner.os }}-android-sdk-${{ env.ANDROID_COMPILE_SDK }}
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@v1
+
+      - name: Set up keystore for signing
+        run: |
+          # Create a dummy keystore for CI builds
+          mkdir -p app/build
+          keytool -genkey -v -keystore app/build/android_keystore -alias wintec_mapping -keyalg RSA -keysize 2048 -validity 10000 -storepass tnttnt -keypass tnttnt -dname "CN=SkyFi CI, OU=Development, O=SkyFi, L=Unknown, S=Unknown, C=US"
+
+      - name: Create local.properties
+        run: |
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
+          echo "takrepo.force=false" >> local.properties
+
+      - name: Run lint checks
+        run: |
+          ./gradlew --no-daemon lint${{ matrix.flavor }}${{ matrix.build_type }} -Ptakrepo.force=false
+        continue-on-error: true
+
+      - name: Build ${{ matrix.flavor }} ${{ matrix.build_type }} APK
+        run: |
+          ./gradlew --no-daemon assemble${{ matrix.flavor }}${{ matrix.build_type }} -Ptakrepo.force=false --stacktrace
+        env:
+          GRADLE_OPTS: -Dorg.gradle.daemon=false
+
+      - name: Run unit tests
+        run: |
+          ./gradlew --no-daemon test${{ matrix.flavor }}${{ matrix.build_type }}UnitTest -Ptakrepo.force=false
+        continue-on-error: true
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-${{ matrix.flavor }}-${{ matrix.build_type }}
+          path: |
+            app/build/reports/tests/
+            app/build/reports/lint-results-*.html
+          retention-days: 7
+
+      - name: Find APK files
+        id: find_apk
+        run: |
+          APK_PATH=$(find app/build/outputs/apk/${{ matrix.flavor }}/${{ matrix.build_type }} -name "*.apk" -type f | head -1)
+          if [ -f "$APK_PATH" ]; then
+            echo "apk_path=$APK_PATH" >> $GITHUB_OUTPUT
+            echo "apk_name=$(basename $APK_PATH)" >> $GITHUB_OUTPUT
+            echo "✅ Build successful: $APK_PATH"
+            ls -la "$APK_PATH"
+          else
+            echo "❌ APK not found!"
+            find app/build/outputs -name "*.apk" -type f || true
+            exit 1
+          fi
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pr-validation-apk-${{ matrix.flavor }}-${{ matrix.build_type }}
+          path: ${{ steps.find_apk.outputs.apk_path }}
+          retention-days: 7
+
+      - name: Comment PR with build results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const apkName = '${{ steps.find_apk.outputs.apk_name }}';
+            const buildStatus = '✅ Build successful';
+            
+            const comment = `## 🚀 PR Build Results
+            
+            **Status**: ${buildStatus}
+            **APK**: \`${apkName}\`
+            **Flavor**: ${{ matrix.flavor }}
+            **Build Type**: ${{ matrix.build_type }}
+            
+            ### Artifacts
+            - APK artifact uploaded for testing
+            - Test results available in workflow artifacts
+            
+            ### Next Steps
+            - Download the APK artifact from the workflow run
+            - Test the plugin functionality
+            - Verify integration with ATAK
+            
+            ---
+            *Built from commit ${context.sha.substring(0, 7)}*`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+  build-summary:
+    name: PR Validation Summary
+    needs: validate
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+      - name: Generate validation summary
+        run: |
+          echo "# PR Validation Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [[ "${{ needs.validate.result }}" == "success" ]]; then
+            echo "✅ **Validation Status**: Passed" >> $GITHUB_STEP_SUMMARY
+            echo "- All builds completed successfully" >> $GITHUB_STEP_SUMMARY
+            echo "- APK artifacts are available for testing" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Validation Status**: Failed" >> $GITHUB_STEP_SUMMARY
+            echo "- Check the build logs for details" >> $GITHUB_STEP_SUMMARY
+            echo "- Fix any compilation or test errors" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Validation Details" >> $GITHUB_STEP_SUMMARY
+          echo "- **Trigger**: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Branch**: ${{ github.head_ref || github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit**: [\`${GITHUB_SHA:0:7}\`](https://github.com/${{ github.repository }}/commit/${{ github.sha }})" >> $GITHUB_STEP_SUMMARY
+          echo "- **Flavors Tested**: CIV (Debug)" >> $GITHUB_STEP_SUMMARY

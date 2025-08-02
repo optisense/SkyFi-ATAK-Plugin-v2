@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.atakmap.coremap.maps.coords.GeoPoint;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.skyfi.atak.plugin.skyfiapi.Archive;
 
@@ -65,7 +66,10 @@ public class AORFilterManager {
     public AORFilterManager(Context context) {
         this.context = context;
         this.prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        this.gson = new Gson();
+        // Configure Gson to handle NaN and special floating point values
+        this.gson = new GsonBuilder()
+                .serializeSpecialFloatingPointValues()
+                .create();
         loadAORDefinitions();
         initializeDefaultAORs();
     }

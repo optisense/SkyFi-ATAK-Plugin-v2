@@ -56,10 +56,11 @@
         android:id="@+id/mgrs_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="MGRS (e.g., 13SDD1234567890)"
+        android:hint="MGRS coordinates (e.g., 13SDD1234567890)"
         android:inputType="textCapCharacters"
         android:visibility="gone"
-        android:layout_marginBottom="8dp" />
+        android:layout_marginBottom="8dp"
+        android:maxLength="15" />
 
     <TextView
         android:id="@+id/current_location_text"

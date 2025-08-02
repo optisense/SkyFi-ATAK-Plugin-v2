@@ -12,7 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.skyfi.atak.plugin.skyfiapi.Archive;
 
@@ -33,12 +36,14 @@ public class ArchivesBrowserRecyclerViewAdapter extends RecyclerView.Adapter<Arc
     private int selectedPosition = -1;
     private Context context;
     private ImagePreferencesManager imagePrefsManager;
+    private ImageCacheManager imageCacheManager;
 
     ArchivesBrowserRecyclerViewAdapter(Context context, ArrayList<Archive> data) {
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
         this.context = context;
         this.imagePrefsManager = ImagePreferencesManager.getInstance(context);
+        this.imageCacheManager = ImageCacheManager.getInstance(context);
     }
 
     @NonNull
@@ -88,8 +93,9 @@ public class ArchivesBrowserRecyclerViewAdapter extends RecyclerView.Adapter<Arc
             holder.cloudCoverage.setText(String.format(context.getString(R.string.cloud_coverage), archive.getCloudCoveragePercent()));
             holder.pricePerSqkm.setText(String.format(context.getString(R.string.price_per_sqkm), archive.getPriceForOneSquareKm()));
             
-            // Update button states based on preferences
+            // Update button states based on preferences and cache status
             updateButtonStates(holder, archive.getArchiveId());
+            updateCacheButtonState(holder, archive);
         } catch (Exception e) {
             Log.d(LOGTAG, "Failed", e);
         }
@@ -108,8 +114,12 @@ public class ArchivesBrowserRecyclerViewAdapter extends RecyclerView.Adapter<Arc
         TextView provider;
         TextView cloudCoverage;
         TextView pricePerSqkm;
+        Button cacheButton;
         Button archiveButton;
         Button favoriteButton;
+        LinearLayout progressLayout;
+        ProgressBar cacheProgress;
+        TextView cacheProgressText;
         RecyclerView recyclerView;
 
         ViewHolder(View itemView) {
@@ -121,10 +131,15 @@ public class ArchivesBrowserRecyclerViewAdapter extends RecyclerView.Adapter<Arc
             resolution = itemView.findViewById(R.id.resolution);
             provider = itemView.findViewById(R.id.provider);
             pricePerSqkm = itemView.findViewById(R.id.price_per_sqkm);
+            cacheButton = itemView.findViewById(R.id.cache_button);
             archiveButton = itemView.findViewById(R.id.archive_button);
             favoriteButton = itemView.findViewById(R.id.favorite_button);
+            progressLayout = itemView.findViewById(R.id.progress_layout);
+            cacheProgress = itemView.findViewById(R.id.cache_progress);
+            cacheProgressText = itemView.findViewById(R.id.cache_progress_text);
             
             itemView.setOnClickListener(this);
+            cacheButton.setOnClickListener(this);
             archiveButton.setOnClickListener(this);
             favoriteButton.setOnClickListener(this);
         }
@@ -136,7 +151,9 @@ public class ArchivesBrowserRecyclerViewAdapter extends RecyclerView.Adapter<Arc
             
             Archive archive = mData.get(position);
             
-            if (view.getId() == R.id.archive_button) {
+            if (view.getId() == R.id.cache_button) {
+                handleCacheButtonClick(this, archive);
+            } else if (view.getId() == R.id.archive_button) {
                 imagePrefsManager.toggleArchived(archive.getArchiveId());
                 updateButtonStates(this, archive.getArchiveId());
             } else if (view.getId() == R.id.favorite_button) {
@@ -171,12 +188,82 @@ public class ArchivesBrowserRecyclerViewAdapter extends RecyclerView.Adapter<Arc
         boolean isArchived = imagePrefsManager.isArchived(archiveId);
         boolean isFavorite = imagePrefsManager.isFavorite(archiveId);
         
-        holder.archiveButton.setText(isArchived ? "Unarchive" : context.getString(R.string.archive_image));
-        holder.favoriteButton.setText(isFavorite ? "Unfavorite" : context.getString(R.string.favorite_image));
+        holder.archiveButton.setText(isArchived ? context.getString(R.string.unarchive) : context.getString(R.string.archive_image));
+        holder.favoriteButton.setText(isFavorite ? context.getString(R.string.unfavorite) : context.getString(R.string.favorite_image));
         
         // Change button appearance based on state
         holder.archiveButton.setAlpha(isArchived ? 0.7f : 1.0f);
         holder.favoriteButton.setAlpha(isFavorite ? 0.7f : 1.0f);
+    }
+    
+    private void updateCacheButtonState(ViewHolder holder, Archive archive) {
+        // Check if image is already cached
+        Map.Entry<String, String> entry = archive.getThumbnailUrls().entrySet().iterator().next();
+        String imageUrl = entry.getValue();
+        boolean isCached = imageCacheManager.isCached(imageUrl);
+        
+        holder.cacheButton.setText(isCached ? "Cached" : context.getString(R.string.cache_images));
+        holder.cacheButton.setAlpha(isCached ? 0.7f : 1.0f);
+        holder.cacheButton.setEnabled(!isCached);
+    }
+    
+    private void handleCacheButtonClick(ViewHolder holder, Archive archive) {
+        // Get the image URL to cache
+        Map.Entry<String, String> entry = archive.getThumbnailUrls().entrySet().iterator().next();
+        String imageUrl = entry.getValue();
+        
+        // Check if already cached
+        if (imageCacheManager.isCached(imageUrl)) {
+            Toast.makeText(context, context.getString(R.string.image_already_cached), Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
+        // Show progress indicator
+        holder.progressLayout.setVisibility(View.VISIBLE);
+        holder.cacheButton.setEnabled(false);
+        holder.cacheProgressText.setText(context.getString(R.string.caching_progress));
+        
+        // Start caching in background thread
+        Thread cacheThread = new Thread(() -> {
+            try {
+                URL url = new URL(imageUrl);
+                URLConnection connection = url.openConnection();
+                Bitmap image = BitmapFactory.decodeStream(connection.getInputStream());
+                
+                if (image != null) {
+                    imageCacheManager.cacheImage(imageUrl, image, success -> {
+                        Handler mainHandler = new Handler(Looper.getMainLooper());
+                        mainHandler.post(() -> {
+                            holder.progressLayout.setVisibility(View.GONE);
+                            if (success) {
+                                updateCacheButtonState(holder, archive);
+                                Toast.makeText(context, context.getString(R.string.cache_complete), Toast.LENGTH_SHORT).show();
+                            } else {
+                                holder.cacheButton.setEnabled(true);
+                                Toast.makeText(context, context.getString(R.string.cache_failed), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    });
+                } else {
+                    Handler mainHandler = new Handler(Looper.getMainLooper());
+                    mainHandler.post(() -> {
+                        holder.progressLayout.setVisibility(View.GONE);
+                        holder.cacheButton.setEnabled(true);
+                        Toast.makeText(context, context.getString(R.string.cache_failed), Toast.LENGTH_SHORT).show();
+                    });
+                }
+            } catch (Exception e) {
+                Log.e(LOGTAG, "Failed to cache image", e);
+                Handler mainHandler = new Handler(Looper.getMainLooper());
+                mainHandler.post(() -> {
+                    holder.progressLayout.setVisibility(View.GONE);
+                    holder.cacheButton.setEnabled(true);
+                    Toast.makeText(context, context.getString(R.string.cache_failed), Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
+        
+        cacheThread.start();
     }
 
 }

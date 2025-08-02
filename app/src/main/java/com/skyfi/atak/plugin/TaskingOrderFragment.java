@@ -61,6 +61,7 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
     private final CheckBox prioritize;
     private final CheckBox assuredTasking;
     private final TextView priorityPrice;
+    private final TextView assuredTaskingPrice;
     private final TextView totalPrice;
 
     // Resolutions
@@ -108,6 +109,8 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
         assuredTasking.setOnClickListener(this);
 
         priorityPrice = mainView.findViewById(R.id.priority_price);
+
+        assuredTaskingPrice = mainView.findViewById(R.id.assured_tasking_price);
 
         totalPrice = mainView.findViewById(R.id.total_price);
 
@@ -267,6 +270,7 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
 
                 resetProviders();
                 resolutions.clearCheck();
+                updateAssuredTaskingAvailability();
             }
         }
         else if (view.getId() == R.id.product_type_sar) {
@@ -283,6 +287,7 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
                 siwei.setEnabled(false);
                 impro.setEnabled(false);
                 planet.setEnabled(false);
+                updateAssuredTaskingAvailability();
             }
         }
         else if (view.getId() == R.id.product_type_stereo) {
@@ -295,6 +300,7 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
 
                 resolutions.clearCheck();
                 resetProviders();
+                updateAssuredTaskingAvailability();
             }
         }
 
@@ -408,26 +414,32 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
         else if (view.getId() == R.id.provider_siwei) {
             if (siwei.isChecked())
                 taskingOrder.setRequiredProvider(context.getString(R.string.siwei));
+            updateAssuredTaskingAvailability();
         }
         else if (view.getId() == R.id.provider_satellogic) {
             if (satellogic.isChecked())
                 taskingOrder.setRequiredProvider(context.getString(R.string.satellogic));
+            updateAssuredTaskingAvailability();
         }
         else if (view.getId() == R.id.provider_umbra) {
             if (umbra.isChecked())
                 taskingOrder.setRequiredProvider(context.getString(R.string.umbra));
+            updateAssuredTaskingAvailability();
         }
         else if (view.getId() == R.id.provider_geosat) {
             if (geosat.isChecked())
                 taskingOrder.setRequiredProvider(context.getString(R.string.geosat));
+            updateAssuredTaskingAvailability();
         }
         else if (view.getId() == R.id.provider_planet) {
             if (planet.isChecked())
                 taskingOrder.setRequiredProvider(context.getString(R.string.planet));
+            updateAssuredTaskingAvailability();
         }
         else if (view.getId() == R.id.provider_impro) {
             if (impro.isChecked())
                 taskingOrder.setRequiredProvider(context.getString(R.string.impro));
+            updateAssuredTaskingAvailability();
         }
 
         else if (view.getId() == R.id.priority) {
@@ -436,9 +448,9 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
         }
         
         else if (view.getId() == R.id.assured_tasking) {
-            // Handle assured tasking - this may require additional API fields
-            // For now, just log the selection
+            taskingOrder.setAssuredTasking(assuredTasking.isChecked());
             Log.d(LOGTAG, "Assured tasking: " + assuredTasking.isChecked());
+            updateTotalPrice();
         }
 
         else if (view.getId() == R.id.place_order_button) {
@@ -466,6 +478,45 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
         siwei.setEnabled(true);
         impro.setEnabled(true);
         planet.setEnabled(true);
+    }
+
+    private void updateAssuredTaskingAvailability() {
+        // Determine if assured tasking is available based on product type and provider
+        String productType = taskingOrder.getProductType();
+        String provider = taskingOrder.getRequiredProvider();
+        
+        boolean isAssuredTaskingAvailable = true;
+        
+        // Space Force requirements: Assured tasking typically not available for:
+        // - SAR imagery (requires special handling)
+        // - Certain providers that don't support guaranteed delivery
+        if (productType != null) {
+            if (productType.equals(context.getString(R.string.sar))) {
+                // SAR typically requires special assured tasking handling
+                isAssuredTaskingAvailable = false;
+            }
+        }
+        
+        // Provider-specific limitations
+        if (provider != null) {
+            if (provider.equals(context.getString(R.string.satellogic)) || 
+                provider.equals(context.getString(R.string.geosat))) {
+                // Some providers may not support assured tasking
+                isAssuredTaskingAvailable = false;
+            }
+        }
+        
+        assuredTasking.setEnabled(isAssuredTaskingAvailable);
+        
+        if (!isAssuredTaskingAvailable) {
+            assuredTasking.setChecked(false);
+            taskingOrder.setAssuredTasking(false);
+            Log.d(LOGTAG, "Assured tasking disabled for product type: " + productType + ", provider: " + provider);
+        } else {
+            Log.d(LOGTAG, "Assured tasking available for product type: " + productType + ", provider: " + provider);
+        }
+        
+        updateTotalPrice();
     }
 
     private void placeOrder() {
@@ -619,9 +670,27 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
                                 total += area * pricing.getPriorityTaskingPriceOneSqkm();
                             }
 
+                            // Handle assured tasking pricing
+                            if (pricing.getAssuredTaskingEnabled() != null && !pricing.getAssuredTaskingEnabled()) {
+                                assuredTasking.setChecked(false);
+                                assuredTasking.setEnabled(false);
+                            } else {
+                                assuredTasking.setEnabled(true);
+                                if (assuredTasking.isChecked() && pricing.getAssuredTaskingPriceOneSqkm() != null) {
+                                    total += area * pricing.getAssuredTaskingPriceOneSqkm();
+                                }
+                            }
+
                             totalPrice.setText(String.format(context.getString(R.string.total_price), total));
 
                             priorityPrice.setText(String.format(context.getString(R.string.priority_extra_cost), area * pricing.getPriorityTaskingPriceOneSqkm()));
+                            
+                            // Show assured tasking price if available
+                            if (pricing.getAssuredTaskingPriceOneSqkm() != null) {
+                                assuredTaskingPrice.setText(String.format(context.getString(R.string.assured_tasking_extra_cost), area * pricing.getAssuredTaskingPriceOneSqkm()));
+                            } else {
+                                assuredTaskingPrice.setText(String.format(context.getString(R.string.assured_tasking_extra_cost), 0f));
+                            }
                             break;
                         }
                         catch (Exception e) {
@@ -711,6 +780,8 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
         impro.setChecked(false);
         impro.setEnabled(true);
         prioritize.setChecked(false);
+        assuredTasking.setChecked(false);
+        assuredTasking.setEnabled(true);
 
         productTypes.clearCheck();
         resolutions.clearCheck();
@@ -733,6 +804,7 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
                 Log.e(LOGTAG, "aoi null");
 
             priorityPrice.setText(String.format(this.context.getString(R.string.priority_extra_cost), 0f));
+            assuredTaskingPrice.setText(String.format(this.context.getString(R.string.assured_tasking_extra_cost), 0f));
             totalPrice.setText(String.format(this.context.getString(R.string.total_price), 0f));
 
             int orientation = context.getResources().getConfiguration().orientation;

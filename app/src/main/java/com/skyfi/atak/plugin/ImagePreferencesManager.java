@@ -6,6 +6,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
@@ -27,7 +28,9 @@ public class ImagePreferencesManager {
     private ImagePreferencesManager(Context context) {
         this.context = context.getApplicationContext();
         this.prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        this.gson = new Gson();
+        this.gson = new GsonBuilder()
+                .serializeSpecialFloatingPointValues()
+                .create();
         loadPreferences();
     }
     

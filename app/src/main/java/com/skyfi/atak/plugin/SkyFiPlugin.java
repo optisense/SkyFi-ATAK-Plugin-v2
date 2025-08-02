@@ -124,13 +124,9 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
 
         // Defer dropdown receiver registration until MapView is available
         
-        // Add the toolbar item immediately since we're using the new plugin API
-        if (uiService != null) {
-            uiService.addToolbarItem(toolbarItem);
-            Log.d(LOGTAG, "Added toolbar item to UI service");
-        } else {
-            Log.e(LOGTAG, "UI service is null, cannot add toolbar item");
-        }
+        // Don't add toolbar item here - it will be added in onStart()
+        // This prevents duplicate icons
+        Log.d(LOGTAG, "Toolbar item created, will be added in onStart()");
     }
 
 

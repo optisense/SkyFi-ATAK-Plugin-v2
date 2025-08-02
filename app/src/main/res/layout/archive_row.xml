@@ -74,6 +74,17 @@
         android:paddingTop="8dp">
         
         <Button
+            android:id="@+id/cache_button"
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:layout_weight="1"
+            android:text="@string/cache_images"
+            android:textSize="12sp"
+            android:background="@drawable/new_dark_button_bg"
+            android:textColor="@android:color/white"
+            android:layout_marginEnd="2dp" />
+        
+        <Button
             android:id="@+id/archive_button"
             android:layout_width="0dp"
             android:layout_height="32dp"
@@ -82,7 +93,8 @@
             android:textSize="12sp"
             android:background="@drawable/new_dark_button_bg"
             android:textColor="@android:color/white"
-            android:layout_marginEnd="4dp" />
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="2dp" />
             
         <Button
             android:id="@+id/favorite_button"
@@ -93,7 +105,37 @@
             android:textSize="12sp"
             android:background="@drawable/new_dark_button_bg"
             android:textColor="@android:color/white"
-            android:layout_marginStart="4dp" />
+            android:layout_marginStart="2dp" />
+    
+    </LinearLayout>
+
+    <!-- Progress indicator for caching operations -->
+    <LinearLayout
+        android:id="@+id/progress_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:visibility="gone">
+        
+        <ProgressBar
+            android:id="@+id/cache_progress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="8dp"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            android:max="100" />
+            
+        <TextView
+            android:id="@+id/cache_progress_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@string/caching_progress"
+            android:textSize="10sp"
+            android:layout_gravity="center_vertical" />
     
     </LinearLayout>
 

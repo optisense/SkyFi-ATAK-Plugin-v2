@@ -120,6 +120,8 @@ public class PricingResponse {
             Float taskingPriceOneSqkm;
             Boolean isPriorityEnabled;
             Float priorityTaskingPriceOneSqkm;
+            Boolean isAssuredTaskingEnabled;
+            Float assuredTaskingPriceOneSqkm;
 
             @NonNull
             @Override
@@ -131,6 +133,8 @@ public class PricingResponse {
                         ", taskingMaxSqkm=" + taskingMaxSqkm +
                         ", taskingPriceOneSqkm=" + taskingPriceOneSqkm +
                         ", priorityTaskingPriceOneSqkm=" + priorityTaskingPriceOneSqkm +
+                        ", isAssuredTaskingEnabled=" + isAssuredTaskingEnabled +
+                        ", assuredTaskingPriceOneSqkm=" + assuredTaskingPriceOneSqkm +
                         '}';
             }
 
@@ -181,6 +185,22 @@ public class PricingResponse {
             public void setTaskingPriceOneSqkm(Float taskingPriceOneSqkm) {
                 this.taskingPriceOneSqkm = taskingPriceOneSqkm;
             }
+
+            public Boolean getAssuredTaskingEnabled() {
+                return isAssuredTaskingEnabled;
+            }
+
+            public void setAssuredTaskingEnabled(Boolean assuredTaskingEnabled) {
+                isAssuredTaskingEnabled = assuredTaskingEnabled;
+            }
+
+            public Float getAssuredTaskingPriceOneSqkm() {
+                return assuredTaskingPriceOneSqkm;
+            }
+
+            public void setAssuredTaskingPriceOneSqkm(Float assuredTaskingPriceOneSqkm) {
+                this.assuredTaskingPriceOneSqkm = assuredTaskingPriceOneSqkm;
+            }
         }
 
         public class Provider {
@@ -190,6 +210,8 @@ public class PricingResponse {
             Float taskingPriceOneSqkm;
             Boolean isPriorityEnabled;
             Float priorityTaskingPriceOneSqkm;
+            Boolean isAssuredTaskingEnabled;
+            Float assuredTaskingPriceOneSqkm;
             String provider;
             String providerOperational;
 
@@ -203,6 +225,8 @@ public class PricingResponse {
                         ", taskingMaxSqkm=" + taskingMaxSqkm +
                         ", taskingPriceOneSqkm=" + taskingPriceOneSqkm +
                         ", priorityTaskingPriceOneSqkm=" + priorityTaskingPriceOneSqkm +
+                        ", isAssuredTaskingEnabled=" + isAssuredTaskingEnabled +
+                        ", assuredTaskingPriceOneSqkm=" + assuredTaskingPriceOneSqkm +
                         ", provider='" + provider + '\'' +
                         ", providerOperational='" + providerOperational + '\'' +
                         '}';
@@ -270,6 +294,22 @@ public class PricingResponse {
 
             public void setTaskingPriceOneSqkm(Float taskingPriceOneSqkm) {
                 this.taskingPriceOneSqkm = taskingPriceOneSqkm;
+            }
+
+            public Boolean getAssuredTaskingEnabled() {
+                return isAssuredTaskingEnabled;
+            }
+
+            public void setAssuredTaskingEnabled(Boolean assuredTaskingEnabled) {
+                isAssuredTaskingEnabled = assuredTaskingEnabled;
+            }
+
+            public Float getAssuredTaskingPriceOneSqkm() {
+                return assuredTaskingPriceOneSqkm;
+            }
+
+            public void setAssuredTaskingPriceOneSqkm(Float assuredTaskingPriceOneSqkm) {
+                this.assuredTaskingPriceOneSqkm = assuredTaskingPriceOneSqkm;
             }
         }
     }

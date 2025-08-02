@@ -258,10 +258,16 @@
                 android:layout_height="wrap_content">
 
                 <CheckBox
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/assured_tasking"
                     android:text="@string/assured_tasking" />
+                <TextView
+                    android:id="@+id/assured_tasking_price"
+                    android:text="@string/assured_tasking_extra_cost"
+                    android:gravity="end"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
             </LinearLayout>
 

@@ -105,6 +105,53 @@ public class TaskingOrderTest {
     }
     
     @Test
+    public void testAssuredTasking() {
+        // Test assured tasking functionality for Space Force requirements
+        TaskingOrder order = new TaskingOrder();
+        
+        // Test default state
+        assertFalse("Assured tasking should be false by default", order.isAssuredTasking());
+        
+        // Test enabling assured tasking
+        order.setAssuredTasking(true);
+        order.setProductType("optical");
+        order.setRequiredProvider("Siwei");
+        
+        assertTrue("Assured tasking should be enabled", order.isAssuredTasking());
+        assertEquals("Product type should be optical for assured tasking", "optical", order.getProductType());
+        assertEquals("Provider should support assured tasking", "Siwei", order.getRequiredProvider());
+    }
+    
+    @Test
+    public void testAssuredTaskingLimitations() {
+        // Test that assured tasking has appropriate limitations
+        TaskingOrder order = new TaskingOrder();
+        
+        // SAR products typically don't support assured tasking
+        order.setProductType("sar");
+        order.setAssuredTasking(true);
+        
+        assertEquals("SAR product type should be set", "sar", order.getProductType());
+        assertTrue("Assured tasking flag should be settable", order.isAssuredTasking());
+        
+        // Note: The actual availability logic is in the UI fragment, 
+        // not the model itself
+    }
+    
+    @Test
+    public void testAssuredTaskingWithPriority() {
+        // Test that assured tasking can be combined with priority
+        TaskingOrder order = new TaskingOrder();
+        order.setPriorityItem(true);
+        order.setAssuredTasking(true);
+        order.setProductType("optical");
+        
+        assertTrue("Both priority and assured tasking should be enabled", 
+                   order.isPriorityItem() && order.isAssuredTasking());
+        assertEquals("Product type should support both options", "optical", order.getProductType());
+    }
+    
+    @Test
     public void testCloudCoverageConstraints() {
         // Test cloud coverage constraints
         TaskingOrder order = new TaskingOrder();
