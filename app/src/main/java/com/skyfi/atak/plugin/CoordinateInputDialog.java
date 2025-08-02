@@ -14,6 +14,8 @@ import com.atakmap.coremap.conversions.CoordinateFormat;
 import com.atakmap.coremap.conversions.CoordinateFormatUtilities;
 import com.atakmap.coremap.maps.coords.GeoPoint;
 import com.atakmap.coremap.maps.coords.MGRSPoint;
+import com.atakmap.coremap.maps.coords.MutableMGRSPoint;
+import com.atakmap.coremap.maps.conversion.EGM96;
 
 public class CoordinateInputDialog {
     
@@ -93,9 +95,11 @@ public class CoordinateInputDialog {
                         
                     } else if (checkedId == R.id.format_mgrs) {
                         String mgrs = mgrsInput.getText().toString().trim();
-                        MGRSPoint mgrsPoint = MGRSPoint.decodeString(mgrs);
-                        result = mgrsPoint.toGeoPoint();
-                        displayName = mgrs;
+                        // For now, show error that MGRS is not yet supported
+                        Toast.makeText(context, "MGRS input coming soon", Toast.LENGTH_SHORT).show();
+                        return;
+                        // TODO: Implement MGRS parsing when API is clarified
+                        // displayName = mgrs;
                         
                     } else if (checkedId == R.id.format_current) {
                         result = getCurrentLocation(context);

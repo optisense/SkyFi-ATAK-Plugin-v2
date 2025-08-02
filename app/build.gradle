@@ -11,7 +11,7 @@ buildscript {
     ext.PLUGIN_VERSION = "2.0"
     ext.ATAK_VERSION = "5.4.0"
 
-    def takdevVersion = '2.+'
+    def takdevVersion = '3.+'
 
     def getValueFromPropertiesFile = { propFile, key ->
         if(!propFile.isFile() || !propFile.canRead())
@@ -59,7 +59,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.8.2'
+        classpath 'com.android.tools.build:gradle:7.4.2'
         if(isDevKitEnabled()) {
             classpath "com.atakmap.gradle:atak-gradle-takdev:${takdevVersion}"
         } else {
@@ -91,28 +91,11 @@ def supportedFlavors =
         [
                 [ name : 'civ', default: true ],
                 [ name : 'mil' /** example: true **/],
-                [ name : 'aus' ],
-                [ name : 'nzl' ],
-                [ name : 'prt' ],
-                [ name : 'nor' ],
-                [ name : 'swe' ],
-                [ name : 'gbr' ],
-                [ name : 'can' ],
-                [ name : 'hun' ],
-                [ name : 'bel' ],
-                [ name : 'est' ],
-                [ name : 'ltu' ],
-                [ name : 'ukr' ],
-                [ name : 'pol' ],
-                [ name : 'nld' ],
-                [ name : 'esp' ],
-                [ name : 'aeronet' ],
                 [ name : 'gov' ],
-                [ name : 'natosof' ],
         ]
 
 android {
-    compileSdkVersion 35
+    compileSdk 33
     namespace 'com.skyfi.atak.plugin'
 
     buildFeatures {
@@ -120,8 +103,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
     //kotlinOptions {
@@ -248,8 +231,8 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 26
-        targetSdkVersion 34
+        minSdkVersion 21
+        targetSdkVersion 33
 
         def runTasks = gradle.startParameter.taskNames
         if(runTasks.toString().contains('bundle')) {
@@ -305,14 +288,16 @@ def getCommandFlavor() {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: '*.jar')
+    compileOnly fileTree(dir: "${rootDir}/sdk/ATAK-CIV-5.4.0.18-SDK", include: 'main.jar')
+    implementation fileTree(dir: "${rootDir}/sdk/ATAK-CIV-5.4.0.18-SDK", include: '*.jar', exclude: 'main.jar')
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
     implementation('com.squareup.retrofit2:retrofit:2.11.0')
     implementation('com.squareup.retrofit2:converter-gson:2.11.0')
-    implementation('androidx.recyclerview:recyclerview:1.4.0')
+    implementation('androidx.recyclerview:recyclerview:1.3.2')
     implementation('org.locationtech.jts:jts-core:1.16.1')
     implementation('androidx.swiperefreshlayout:swiperefreshlayout:1.1.0')
-    implementation('com.google.android.material:material:1.12.0')
+    // Removed Material Design - use standard Android/ATAK components instead
     
     // Test dependencies
     testImplementation 'junit:junit:4.13.2'
@@ -343,4 +328,7 @@ configurations.implementation {
     exclude group: 'androidx.fragment', module: 'fragment'
     exclude group: 'androidx.lifecycle', module: 'lifecycle'
     exclude group: 'androidx.lifecycle', module: 'lifecycle-process'
+    exclude group: 'androidx.tracing', module: 'tracing'
+    exclude group: 'androidx.tracing', module: 'tracing-ktx'
+    exclude group: 'androidx.annotation', module: 'annotation'
 }

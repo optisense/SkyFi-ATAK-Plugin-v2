@@ -9,6 +9,8 @@ import com.atakmap.android.ipc.DocumentedExtra;
 import com.atakmap.android.maps.MapEvent;
 import com.atakmap.android.maps.MapEventDispatcher;
 import com.atakmap.coremap.log.Log;
+import com.atakmap.coremap.conversions.CoordinateFormat;
+import com.atakmap.coremap.conversions.CoordinateFormatUtilities;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -50,7 +52,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SkyFiPlugin extends DropDownMapComponent implements IPlugin, MainRecyclerViewAdapter.ItemClickListener {
+public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickListener {
 
     private static final String LOGTAG = "SkyFiPlugin";
     IServiceController serviceController;
@@ -120,46 +122,17 @@ public class SkyFiPlugin extends DropDownMapComponent implements IPlugin, MainRe
             }
         });
 
-        AtakBroadcast.DocumentedIntentFilter documentedIntentFilter = new AtakBroadcast.DocumentedIntentFilter();
-        documentedIntentFilter.addAction(Orders.ACTION);
-        registerDropDownReceiver(new Orders(MapView.getMapView(), pluginContext), documentedIntentFilter);
-
-        AtakBroadcast.DocumentedIntentFilter newOrderIntentFilter = new AtakBroadcast.DocumentedIntentFilter();
-        newOrderIntentFilter.addAction(NewOrderFragment.ACTION);
-        registerDropDownReceiver(new NewOrderFragment(MapView.getMapView(), pluginContext, ""), newOrderIntentFilter);
-
-        AtakBroadcast.DocumentedIntentFilter archiveSearchFilter = new AtakBroadcast.DocumentedIntentFilter();
-        archiveSearchFilter.addAction(ArchiveSearch.ACTION);
-        registerDropDownReceiver(new ArchiveSearch(MapView.getMapView(), pluginContext, ""), archiveSearchFilter);
-
-        AtakBroadcast.DocumentedIntentFilter archivesBrowserFilter = new AtakBroadcast.DocumentedIntentFilter();
-        archivesBrowserFilter.addAction(ArchivesBrowser.ACTION);
-        registerDropDownReceiver(new ArchivesBrowser(MapView.getMapView(), pluginContext), archivesBrowserFilter);
-
-        AtakBroadcast.DocumentedIntentFilter taskingOrderFilter = new AtakBroadcast.DocumentedIntentFilter();
-        taskingOrderFilter.addAction(TaskingOrderFragment.ACTION);
-        registerDropDownReceiver(new TaskingOrderFragment(MapView.getMapView(), pluginContext), taskingOrderFilter);
-
-        AtakBroadcast.DocumentedIntentFilter profileFilter = new AtakBroadcast.DocumentedIntentFilter();
-        profileFilter.addAction(Profile.ACTION);
-        registerDropDownReceiver(new Profile(MapView.getMapView(), pluginContext), profileFilter);
-
-        OrderUtility orderUtility = new OrderUtility(MapView.getMapView(), pluginContext);
-        AtakBroadcast.DocumentedIntentFilter filter = new AtakBroadcast.DocumentedIntentFilter();
-        filter.addAction("com.atakmap.android.cot_utility.receivers.cotMenu",
-                "this intent launches the cot send utility",
-                new DocumentedExtra[] {
-                        new DocumentedExtra("targetUID",
-                                "the map item identifier used to populate the drop down")
-                });
-        registerDropDownReceiver(orderUtility, filter);
+        // Defer dropdown receiver registration until MapView is available
+        
+        // Add the toolbar item immediately since we're using the new plugin API
+        if (uiService != null) {
+            uiService.addToolbarItem(toolbarItem);
+            Log.d(LOGTAG, "Added toolbar item to UI service");
+        } else {
+            Log.e(LOGTAG, "UI service is null, cannot add toolbar item");
+        }
     }
 
-    @Override
-    public void onCreate(Context context, Intent intent, MapView mapView) {
-        super.onCreate(context, intent, mapView);
-        this.mapView = mapView;
-    }
 
     @Override
     public void onStart() {
@@ -168,6 +141,48 @@ public class SkyFiPlugin extends DropDownMapComponent implements IPlugin, MainRe
             return;
 
         uiService.addToolbarItem(toolbarItem);
+        
+        // Get MapView and register dropdown receivers  
+        mapView = MapView.getMapView();
+        if (mapView != null) {
+            registerDropDownReceivers();
+        }
+    }
+    
+    private void registerDropDownReceivers() {
+        AtakBroadcast.DocumentedIntentFilter documentedIntentFilter = new AtakBroadcast.DocumentedIntentFilter();
+        documentedIntentFilter.addAction(Orders.ACTION);
+        AtakBroadcast.getInstance().registerReceiver(new Orders(mapView, pluginContext), documentedIntentFilter);
+
+        AtakBroadcast.DocumentedIntentFilter newOrderIntentFilter = new AtakBroadcast.DocumentedIntentFilter();
+        newOrderIntentFilter.addAction(NewOrderFragment.ACTION);
+        AtakBroadcast.getInstance().registerReceiver(new NewOrderFragment(mapView, pluginContext, ""), newOrderIntentFilter);
+
+        AtakBroadcast.DocumentedIntentFilter archiveSearchFilter = new AtakBroadcast.DocumentedIntentFilter();
+        archiveSearchFilter.addAction(ArchiveSearch.ACTION);
+        AtakBroadcast.getInstance().registerReceiver(new ArchiveSearch(mapView, pluginContext, ""), archiveSearchFilter);
+
+        AtakBroadcast.DocumentedIntentFilter archivesBrowserFilter = new AtakBroadcast.DocumentedIntentFilter();
+        archivesBrowserFilter.addAction(ArchivesBrowser.ACTION);
+        AtakBroadcast.getInstance().registerReceiver(new ArchivesBrowser(mapView, pluginContext), archivesBrowserFilter);
+
+        AtakBroadcast.DocumentedIntentFilter taskingOrderFilter = new AtakBroadcast.DocumentedIntentFilter();
+        taskingOrderFilter.addAction(TaskingOrderFragment.ACTION);
+        AtakBroadcast.getInstance().registerReceiver(new TaskingOrderFragment(mapView, pluginContext), taskingOrderFilter);
+
+        AtakBroadcast.DocumentedIntentFilter profileFilter = new AtakBroadcast.DocumentedIntentFilter();
+        profileFilter.addAction(Profile.ACTION);
+        AtakBroadcast.getInstance().registerReceiver(new Profile(mapView, pluginContext), profileFilter);
+
+        OrderUtility orderUtility = new OrderUtility(mapView, pluginContext);
+        AtakBroadcast.DocumentedIntentFilter filter = new AtakBroadcast.DocumentedIntentFilter();
+        filter.addAction("com.atakmap.android.cot_utility.receivers.cotMenu",
+                "this intent launches the cot send utility",
+                new DocumentedExtra[] {
+                        new DocumentedExtra("targetUID",
+                                "the map item identifier used to populate the drop down")
+                });
+        AtakBroadcast.getInstance().registerReceiver(orderUtility, filter);
     }
 
     @Override
@@ -609,15 +624,14 @@ public class SkyFiPlugin extends DropDownMapComponent implements IPlugin, MainRe
                     String mgrsString = mgrsInput.getText().toString().trim();
                     if (!mgrsString.isEmpty()) {
                         try {
-                            // Convert MGRS to Lat/Lon using ATAK conversion utilities
-                            com.atakmap.coremap.maps.coords.GeoPoint geoPoint = 
-                                CoordinateFormatUtilities.convert(mgrsString, CoordinateFormat.MGRS, CoordinateFormat.DD);
-                            
-                            if (geoPoint != null) {
-                                createOrderFromCoordinates(geoPoint.getLatitude(), geoPoint.getLongitude());
-                            } else {
-                                throw new Exception("Invalid MGRS coordinate");
-                            }
+                            // For now, show error that MGRS is not yet supported
+                            new AlertDialog.Builder(MapView.getMapView().getContext())
+                                    .setTitle(pluginContext.getString(R.string.error))
+                                    .setMessage("MGRS input coming soon")
+                                    .setPositiveButton(pluginContext.getString(R.string.ok), null)
+                                    .show();
+                            return;
+                            // TODO: Implement MGRS parsing when API is clarified
                         } catch (Exception e) {
                             new AlertDialog.Builder(MapView.getMapView().getContext())
                                     .setTitle(pluginContext.getString(R.string.error))
@@ -651,7 +665,7 @@ public class SkyFiPlugin extends DropDownMapComponent implements IPlugin, MainRe
             public void onMapEvent(MapEvent event) {
                 if (MapEvent.MAP_CLICK.equals(event.getType())) {
                     com.atakmap.coremap.maps.coords.GeoPoint point = 
-                        mapView.inverse(event.getPoint().x, event.getPoint().y).get();
+                        mapView.inverse(event.getPointF().x, event.getPointF().y).get();
                     
                     // Remove this listener after first click
                     mapView.getMapEventDispatcher().removeMapEventListener(MapEvent.MAP_CLICK, this);

@@ -95,7 +95,7 @@ public class PolygonDrawingHandler implements MapEventDispatcher.MapEventDispatc
     public void onMapEvent(MapEvent event) {
         if (!isDrawing) return;
         
-        GeoPoint point = mapView.inverse(event.getPoint().x, event.getPoint().y).get();
+        GeoPoint point = mapView.inverse(event.getPointF().x, event.getPointF().y).get();
         
         if (event.getType().equals(MapEvent.MAP_CLICK)) {
             // Add point to polygon
