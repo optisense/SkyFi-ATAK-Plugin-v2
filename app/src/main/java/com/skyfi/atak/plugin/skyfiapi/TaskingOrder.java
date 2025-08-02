@@ -4,6 +4,8 @@ public class TaskingOrder {
     String aoi; // required
     boolean priorityItem = false;
     boolean assuredTasking = false;
+    String taskPriority; // WHEN_AVAILABLE, PRIORITY, NATSEC
+    String sensorType; // new field for sensor type selection
     String productType; // required
     String resolution; // required
     String requiredProvider; // Ironically not required
@@ -20,6 +22,8 @@ public class TaskingOrder {
                 "aoi='" + aoi + '\'' +
                 ", priorityItem=" + priorityItem +
                 ", assuredTasking=" + assuredTasking +
+                ", taskPriority='" + taskPriority + '\'' +
+                ", sensorType='" + sensorType + '\'' +
                 ", productType='" + productType + '\'' +
                 ", resolution='" + resolution + '\'' +
                 ", requiredProvider='" + requiredProvider + '\'' +
@@ -126,5 +130,21 @@ public class TaskingOrder {
 
     public void setRequiredProvider(String requiredProvider) {
         this.requiredProvider = requiredProvider;
+    }
+
+    public String getSensorType() {
+        return sensorType;
+    }
+
+    public void setSensorType(String sensorType) {
+        this.sensorType = sensorType;
+    }
+
+    public String getTaskPriority() {
+        return taskPriority;
+    }
+
+    public void setTaskPriority(String taskPriority) {
+        this.taskPriority = taskPriority;
     }
 }

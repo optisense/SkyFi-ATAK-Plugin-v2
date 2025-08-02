@@ -101,4 +101,16 @@
     <string name="yes">Yes</string>
     <string name="set_diameter">Set diameter in kilometers</string>
     <string name="reset_form">Reset Form</string>
+    
+    <!-- AOR Filter strings -->
+    <string name="aor_filter_label">Area Filter:</string>
+    <string name="aor_filter_world">World</string>
+    <string name="aor_filter_region">Region</string>
+    <string name="aor_filter_description_world">Showing images worldwide</string>
+    <string name="aor_filter_description_region">Showing images in current map region only</string>
+    <string name="search_in_region_title">Search in this region?</string>
+    <string name="search_in_region_message">Would you like to limit your search to the current map region to reduce clutter?</string>
+    <string name="search_in_region_yes">Yes, search region</string>
+    <string name="search_in_region_no">No, search worldwide</string>
+    <string name="dont_ask_again">Don\'t ask again</string>
 </resources>

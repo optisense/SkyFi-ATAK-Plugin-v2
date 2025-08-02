@@ -48,6 +48,7 @@ public class ArchivesBrowser extends DropDownReceiver implements DropDown.OnStat
     private ArrayList<String> pageHashes = new ArrayList<>();
     private ArchivesRequest request = new ArchivesRequest();
     private String aoi;
+    private AORFilterManager aorFilterManager;
 
     Button nextButton;
     Button previousButton;
@@ -57,6 +58,7 @@ public class ArchivesBrowser extends DropDownReceiver implements DropDown.OnStat
         super(mapView);
 
         this.context = context;
+        this.aorFilterManager = AORFilterManager.getInstance(context);
         mainView = PluginLayoutInflater.inflate(context, R.layout.archives, null);
 
         recyclerView = mainView.findViewById(R.id.archives_recycler_view);
@@ -151,7 +153,11 @@ public class ArchivesBrowser extends DropDownReceiver implements DropDown.OnStat
                 }
 
                 archives.clear();
-                archives.addAll(archiveResponse.getArchives());
+                
+                // Apply AOR filtering to the archives
+                List<Archive> allArchives = archiveResponse.getArchives();
+                List<Archive> filteredArchives = aorFilterManager.filterArchives(allArchives);
+                archives.addAll(filteredArchives);
 
                 if (pageNumber == -1 && archiveResponse.getNextPage() != null) {
                     // First page

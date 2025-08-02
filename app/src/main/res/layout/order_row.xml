@@ -106,6 +106,59 @@
 
     </LinearLayout>
 
+    <!-- Opacity control for SAR imagery -->
+    <LinearLayout
+        android:id="@+id/opacity_control_section"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Opacity:"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:paddingEnd="8dp"
+            android:gravity="center_vertical" />
+
+        <SeekBar
+            android:id="@+id/opacity_seekbar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:max="100"
+            android:progress="80"
+            android:layout_marginEnd="8dp" />
+
+        <TextView
+            android:id="@+id/opacity_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="80%"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#0080FF"
+            android:minWidth="40dp"
+            android:gravity="center" />
+
+        <Button
+            android:id="@+id/opacity_advanced_button"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:text="⚙"
+            android:textSize="12sp"
+            android:layout_marginStart="4dp"
+            android:background="@drawable/btn_gray"
+            android:minWidth="32dp"
+            android:paddingStart="2dp"
+            android:paddingEnd="2dp" />
+
+    </LinearLayout>
+
     <View
         android:id="@+id/divider"
         android:paddingTop="5dp"

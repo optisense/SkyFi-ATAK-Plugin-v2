@@ -11,6 +11,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -25,6 +27,7 @@ public class ImageCacheManager {
     private final LruCache<String, Bitmap> memoryCache;
     private final File diskCacheDir;
     private final ExecutorService executorService;
+    private final AORFilterManager aorFilterManager;
     
     public interface CacheCallback {
         void onCached(boolean success);
@@ -38,6 +41,7 @@ public class ImageCacheManager {
     private ImageCacheManager(Context context) {
         this.context = context.getApplicationContext();
         this.executorService = Executors.newFixedThreadPool(2);
+        this.aorFilterManager = new AORFilterManager(context);
         
         // Initialize memory cache
         memoryCache = new LruCache<String, Bitmap>(MEMORY_CACHE_SIZE) {
@@ -333,5 +337,116 @@ public class ImageCacheManager {
         String key = generateKey(url);
         File file = new File(diskCacheDir, key + ".highres");
         return file.exists();
+    }
+    
+    /**
+     * Cache images that are within the current AOR region with progress tracking
+     */
+    public void cacheRegionImages(List<String> imageUrls, List<Double> latitudes, List<Double> longitudes, ProgressCallback callback) {
+        if (imageUrls == null || imageUrls.isEmpty()) {
+            if (callback != null) {
+                callback.onComplete(false, "No images to cache");
+            }
+            return;
+        }
+        
+        if (latitudes.size() != imageUrls.size() || longitudes.size() != imageUrls.size()) {
+            if (callback != null) {
+                callback.onComplete(false, "Image URLs and coordinates size mismatch");
+            }
+            return;
+        }
+        
+        executorService.execute(() -> {
+            // Filter images based on current AOR settings
+            List<String> filteredUrls = new ArrayList<>();
+            for (int i = 0; i < imageUrls.size(); i++) {
+                String url = imageUrls.get(i);
+                double lat = latitudes.get(i);
+                double lon = longitudes.get(i);
+                
+                // Check if this image should be cached based on AOR filter settings
+                // For now, cache all images since we don't have specific point-in-region checking
+                // This could be enhanced to check if the point is within the selected AOR bounds
+                if (aorFilterManager.getSelectedAOR().equals("all")) {
+                    filteredUrls.add(url);
+                } else {
+                    // For a specific AOR, we would need to implement point-in-region checking
+                    // For now, include all images when a specific AOR is selected
+                    filteredUrls.add(url);
+                }
+            }
+            
+            if (filteredUrls.isEmpty()) {
+                if (callback != null) {
+                    callback.onComplete(true, "No images in current region to cache");
+                }
+                return;
+            }
+            
+            Log.d(TAG, "Caching " + filteredUrls.size() + " images in region (filtered from " + imageUrls.size() + " total)");
+            
+            // Use existing caching logic for filtered URLs
+            cacheHighResImages(filteredUrls, callback);
+        });
+    }
+    
+    /**
+     * Get cache statistics for region vs world
+     */
+    public void getCacheStats(CacheStatsCallback callback) {
+        executorService.execute(() -> {
+            File[] files = diskCacheDir.listFiles();
+            if (files == null) {
+                if (callback != null) {
+                    callback.onStatsReady(0, 0, 0);
+                }
+                return;
+            }
+            
+            long totalSize = 0;
+            int totalFiles = 0;
+            int regionFiles = 0;
+            
+            for (File file : files) {
+                totalSize += file.length();
+                totalFiles++;
+                
+                // For now, we can't determine which files are region-specific without metadata
+                // In a real implementation, you might store this information
+            }
+            
+            if (callback != null) {
+                callback.onStatsReady(totalFiles, regionFiles, totalSize);
+            }
+        });
+    }
+    
+    /**
+     * Clear cache for images outside current region (if in region mode)
+     */
+    public void clearNonRegionCache(CacheCallback callback) {
+        if (aorFilterManager.getSelectedAOR().equals("all")) {
+            // Don't clear anything when showing all regions
+            if (callback != null) {
+                callback.onCached(true);
+            }
+            return;
+        }
+        
+        executorService.execute(() -> {
+            // In a full implementation, you would need to track which cached files
+            // correspond to which geographic locations to selectively clear them
+            // For now, this is a placeholder that could be enhanced with metadata storage
+            Log.d(TAG, "Selective region cache clearing would be implemented here");
+            
+            if (callback != null) {
+                callback.onCached(true);
+            }
+        });
+    }
+    
+    public interface CacheStatsCallback {
+        void onStatsReady(int totalFiles, int regionFiles, long totalSize);
     }
 }

@@ -37,6 +37,10 @@
     <string name="very_high">VERY HIGH</string>
     <string name="super_high">SUPER HIGH</string>
     <string name="ultra_high">ULTRA HIGH</string>
+    <string name="sensor_types">Sensor Types</string>
+    <string name="asap">ASAP</string>
+    <string name="eo">EO</string>
+    <string name="ads_b">ADS-B</string>
     <string name="product_types">Product Types</string>
     <string name="day">DAY</string>
     <string name="night">NIGHT</string>
@@ -75,6 +79,10 @@
     <string name="skyfi_tasking_pricing">SkyFi / Tasking Order Pricing</string>
     <string name="skyfi_tasking_order">SkyFi / Tasking Order</string>
     <string name="priority">Prioritize</string>
+    <string name="task_priority">Task Priority</string>
+    <string name="when_available">WHEN AVAILABLE</string>
+    <string name="priority_tasking">PRIORITY</string>
+    <string name="natsec">NATSEC</string>
     <string name="priority_extra_cost">+$%.2f</string>
     <string name="assured_tasking_extra_cost">+$%.2f</string>
     <string name="total_price">Total Price: $%.2f</string>
@@ -141,4 +149,24 @@
     <string name="high_res_cached">High-res cached</string>
     <string name="unarchive">Unarchive</string>
     <string name="unfavorite">Unfavorite</string>
+    
+    <!-- Preview functionality -->
+    <string name="imagery_preview">Imagery Preview</string>
+    <string name="no_imagery_available">No imagery available at this location</string>
+    <string name="full_search">Full Search</string>
+    <string name="enable_preview_mode">Enable Preview Mode</string>
+    <string name="disable_preview_mode">Disable Preview Mode</string>
+    <string name="preview_mode_enabled">Preview mode enabled - tap map to see imagery</string>
+    <string name="preview_mode_disabled">Preview mode disabled</string>
+    
+    <!-- Feasibility functionality -->
+    <string name="feasibility_title">Satellite Pass Feasibility</string>
+    <string name="expected_passes">Expected Passes: %d</string>
+    <string name="feasibility_level">Feasibility: %s</string>
+    <string name="feasibility_explanation">%s</string>
+    <string name="feasibility_unknown">Select sensor type and dates to see feasibility</string>
+    <string name="excellent_feasibility">Excellent</string>
+    <string name="good_feasibility">Good</string>
+    <string name="fair_feasibility">Fair</string>
+    <string name="poor_feasibility">Poor</string>
 </resources>

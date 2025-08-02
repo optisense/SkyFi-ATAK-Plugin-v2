@@ -6,7 +6,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.skyfi.atak.plugin.skyfiapi.Order;
@@ -22,14 +24,17 @@ public class OrdersRecyclerViewAdapter extends RecyclerView.Adapter<OrdersRecycl
     private List<Order> mData;
     private LayoutInflater mInflater;
     private ItemClickListener mClickListener;
+    private OpacityChangeListener mOpacityChangeListener;
     private int selectedPosition = -1;
     private Context context;
+    private Preferences preferences;
 
     // data is passed into the constructor
     OrdersRecyclerViewAdapter(Context context, List<Order> data) {
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
         this.context = context;
+        this.preferences = new Preferences();
     }
 
 
@@ -74,9 +79,59 @@ public class OrdersRecyclerViewAdapter extends RecyclerView.Adapter<OrdersRecycl
                 holder.resolution.setText(order.getResolution());
                 holder.provider.setText(order.getRequiredProvider());
             }
+            
+            // Show opacity control for SAR imagery or completed orders with tiles
+            boolean isSarImagery = isSarImagery(order);
+            boolean hasActiveLayer = order.getTilesUrl() != null && order.getStatus().equals("PROCESSING_COMPLETE");
+            
+            if (isSarImagery && hasActiveLayer) {
+                holder.opacityControlSection.setVisibility(View.VISIBLE);
+                setupOpacityControls(holder, order);
+            } else {
+                holder.opacityControlSection.setVisibility(View.GONE);
+            }
         } catch (Exception e) {
             Log.d(LOGTAG, "Failed", e);
         }
+    }
+    
+    private boolean isSarImagery(Order order) {
+        // Check if this is SAR imagery based on order properties
+        return order.getSarProductTypes() != null && order.getSarProductTypes().length > 0;
+    }
+    
+    private void setupOpacityControls(ViewHolder holder, Order order) {
+        String layerName = "SkyFi " + order.getOrderName();
+        int currentOpacity = preferences.getLayerOpacity(layerName);
+        
+        holder.opacitySeekBar.setProgress(currentOpacity);
+        holder.opacityValue.setText(currentOpacity + "%");
+        
+        holder.opacitySeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser) {
+                    holder.opacityValue.setText(progress + "%");
+                    preferences.setLayerOpacity(layerName, progress);
+                    
+                    if (mOpacityChangeListener != null) {
+                        mOpacityChangeListener.onOpacityChanged(layerName, progress);
+                    }
+                }
+            }
+            
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+            
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
+        
+        holder.opacityAdvancedButton.setOnClickListener(v -> {
+            if (mOpacityChangeListener != null) {
+                mOpacityChangeListener.onShowAdvancedOpacityDialog(layerName, currentOpacity);
+            }
+        });
     }
 
     // total number of rows
@@ -96,6 +151,10 @@ public class OrdersRecyclerViewAdapter extends RecyclerView.Adapter<OrdersRecycl
         TextView status;
         TextView provider;
         LinearLayout linearLayout;
+        LinearLayout opacityControlSection;
+        SeekBar opacitySeekBar;
+        TextView opacityValue;
+        Button opacityAdvancedButton;
         RecyclerView recyclerView;
 
         ViewHolder(View itemView) {
@@ -108,6 +167,10 @@ public class OrdersRecyclerViewAdapter extends RecyclerView.Adapter<OrdersRecycl
             status = itemView.findViewById(R.id.status);
             provider = itemView.findViewById(R.id.provider);
             linearLayout = itemView.findViewById(R.id.linear_layout);
+            opacityControlSection = itemView.findViewById(R.id.opacity_control_section);
+            opacitySeekBar = itemView.findViewById(R.id.opacity_seekbar);
+            opacityValue = itemView.findViewById(R.id.opacity_value);
+            opacityAdvancedButton = itemView.findViewById(R.id.opacity_advanced_button);
             itemView.setOnClickListener(this);
         }
 
@@ -131,9 +194,20 @@ public class OrdersRecyclerViewAdapter extends RecyclerView.Adapter<OrdersRecycl
     void setClickListener(ItemClickListener itemClickListener) {
         this.mClickListener = itemClickListener;
     }
+    
+    // allows opacity change events to be caught
+    void setOpacityChangeListener(OpacityChangeListener opacityChangeListener) {
+        this.mOpacityChangeListener = opacityChangeListener;
+    }
 
     // parent activity will implement this method to respond to click events
     public interface ItemClickListener {
         void onItemClick(View view, int position);
+    }
+    
+    // parent activity will implement this method to respond to opacity changes
+    public interface OpacityChangeListener {
+        void onOpacityChanged(String layerName, int opacity);
+        void onShowAdvancedOpacityDialog(String layerName, int currentOpacity);
     }
 }

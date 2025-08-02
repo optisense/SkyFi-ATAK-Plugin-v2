@@ -176,9 +176,20 @@ public class CoordinateInputDialog {
     }
     
     private static GeoPoint getCurrentLocation(Context context) {
-        // In a real implementation, this would get the current location from ATAK's GPS service
-        // For now, return a default location
-        // TODO: Integrate with ATAK's location service
-        return new GeoPoint(39.7392, -104.9903); // Denver, CO
+        try {
+            // Get current location from ATAK's MapView self marker
+            com.atakmap.android.maps.MapView mapView = com.atakmap.android.maps.MapView.getMapView();
+            if (mapView != null && mapView.getSelfMarker() != null) {
+                com.atakmap.coremap.maps.coords.GeoPoint selfPoint = mapView.getSelfMarker().getPoint();
+                if (selfPoint != null && selfPoint.isValid()) {
+                    return new GeoPoint(selfPoint.getLatitude(), selfPoint.getLongitude());
+                }
+            }
+        } catch (Exception e) {
+            // Fall back to default location if ATAK location is not available
+        }
+        
+        // Fallback location (Denver, CO) if GPS is not available
+        return new GeoPoint(39.7392, -104.9903);
     }
 }

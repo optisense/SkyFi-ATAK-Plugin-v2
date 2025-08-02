@@ -5,34 +5,41 @@
     android:orientation="vertical"
     android:padding="16dp">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Select coordinate input method:"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+
     <RadioGroup
         android:id="@+id/coordinate_format_group"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_marginBottom="16dp">
 
         <RadioButton
             android:id="@+id/format_lat_lon"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Lat/Lon"
-            android:checked="true" />
+            android:text="Latitude/Longitude (Decimal Degrees)"
+            android:checked="true"
+            android:layout_marginBottom="4dp" />
 
         <RadioButton
             android:id="@+id/format_mgrs"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="MGRS" />
+            android:text="MGRS (Military Grid Reference System)"
+            android:layout_marginBottom="4dp" />
 
         <RadioButton
             android:id="@+id/format_current"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Current" />
+            android:text="Use Current Location"
+            android:layout_marginBottom="4dp" />
 
     </RadioGroup>
 

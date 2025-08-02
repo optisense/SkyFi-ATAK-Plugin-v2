@@ -65,6 +65,7 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
     MainRecyclerViewAdapter mainRecyclerViewAdapter;
     private MapView mapView;
     private TextView radiusTextView;
+    private ImageryPreviewManager previewManager;
 
     public SkyFiPlugin() {}
 
@@ -142,6 +143,8 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
         mapView = MapView.getMapView();
         if (mapView != null) {
             registerDropDownReceivers();
+            // Initialize preview manager
+            previewManager = new ImageryPreviewManager(pluginContext, mapView);
         }
     }
     
@@ -188,6 +191,11 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
             return;
 
         uiService.removeToolbarItem(toolbarItem);
+        
+        // Cleanup preview manager
+        if (previewManager != null) {
+            previewManager.cleanup();
+        }
     }
 
     private void showPane() {
@@ -220,6 +228,12 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
         options.add(pluginContext.getString(R.string.new_order_my_location));
         options.add(pluginContext.getString(R.string.coordinate_input));
         options.add(pluginContext.getString(R.string.manage_aois));
+        // Add preview mode toggle
+        if (previewManager != null && previewManager.isPreviewModeEnabled()) {
+            options.add(pluginContext.getString(R.string.disable_preview_mode));
+        } else {
+            options.add(pluginContext.getString(R.string.enable_preview_mode));
+        }
         options.add(pluginContext.getString(R.string.set_api_key));
         options.add(pluginContext.getString(R.string.my_profile));
 
@@ -322,6 +336,18 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
                 showAOIManagementDialog();
                 break;
             case 4:
+                // Toggle preview mode
+                if (previewManager != null) {
+                    if (previewManager.isPreviewModeEnabled()) {
+                        previewManager.disablePreviewMode();
+                    } else {
+                        previewManager.enablePreviewMode();
+                    }
+                    // Refresh the menu to update the toggle text
+                    showPane();
+                }
+                break;
+            case 5:
                 // Set API key
                 Preferences prefs = new Preferences();
 
@@ -338,7 +364,7 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
                 apiKeyAlertDialog.setPositiveButton(pluginContext.getString(R.string.ok), (dialogInterface, i) -> prefs.setApiKey(editText.getText().toString()));
                 apiKeyAlertDialog.create().show();
                 break;
-            case 5:
+            case 6:
                 Intent profileIntent = new Intent();
                 profileIntent.setAction(Profile.ACTION);
                 AtakBroadcast.getInstance().sendBroadcast(profileIntent);
@@ -555,8 +581,7 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
     
     private void showCoordinateInputDialog() {
         String[] inputMethods = {
-            pluginContext.getString(R.string.latitude) + "/" + pluginContext.getString(R.string.longitude),
-            pluginContext.getString(R.string.mgrs_coordinates),
+            pluginContext.getString(R.string.latitude) + "/" + pluginContext.getString(R.string.longitude) + " / MGRS",
             pluginContext.getString(R.string.pindrop_tasking)
         };
         
@@ -564,13 +589,10 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
                 .setTitle(pluginContext.getString(R.string.coordinate_input))
                 .setItems(inputMethods, (dialog, which) -> {
                     switch (which) {
-                        case 0: // Lat/Lon
-                            showLatLonInputDialog();
+                        case 0: // Lat/Lon/MGRS unified dialog
+                            showUnifiedCoordinateInputDialog();
                             break;
-                        case 1: // MGRS
-                            showMGRSInputDialog();
-                            break;
-                        case 2: // Pindrop
+                        case 1: // Pindrop
                             startPindropTasking();
                             break;
                     }
@@ -579,66 +601,19 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
                 .show();
     }
     
-    private void showLatLonInputDialog() {
-        View inputView = PluginLayoutInflater.inflate(pluginContext, R.layout.coordinate_input_dialog, null);
-        EditText latInput = inputView.findViewById(R.id.latitude_input);
-        EditText lonInput = inputView.findViewById(R.id.longitude_input);
-        
-        new AlertDialog.Builder(MapView.getMapView().getContext())
-                .setTitle(pluginContext.getString(R.string.latitude) + "/" + pluginContext.getString(R.string.longitude))
-                .setView(inputView)
-                .setPositiveButton(pluginContext.getString(R.string.ok), (dialog, which) -> {
-                    try {
-                        double lat = Double.parseDouble(latInput.getText().toString());
-                        double lon = Double.parseDouble(lonInput.getText().toString());
-                        
-                        if (lat < -90 || lat > 90 || lon < -180 || lon > 180) {
-                            throw new NumberFormatException("Invalid coordinates");
-                        }
-                        
-                        createOrderFromCoordinates(lat, lon);
-                    } catch (NumberFormatException e) {
-                        new AlertDialog.Builder(MapView.getMapView().getContext())
-                                .setTitle(pluginContext.getString(R.string.error))
-                                .setMessage("Invalid coordinates. Please enter valid latitude (-90 to 90) and longitude (-180 to 180)")
-                                .setPositiveButton(pluginContext.getString(R.string.ok), null)
-                                .show();
-                    }
-                })
-                .setNegativeButton(pluginContext.getString(R.string.cancel), null)
-                .show();
-    }
-    
-    private void showMGRSInputDialog() {
-        EditText mgrsInput = new EditText(MapView.getMapView().getContext());
-        mgrsInput.setHint("e.g., 38SMB4484");
-        
-        new AlertDialog.Builder(MapView.getMapView().getContext())
-                .setTitle(pluginContext.getString(R.string.mgrs_coordinates))
-                .setView(mgrsInput)
-                .setPositiveButton(pluginContext.getString(R.string.ok), (dialog, which) -> {
-                    String mgrsString = mgrsInput.getText().toString().trim();
-                    if (!mgrsString.isEmpty()) {
-                        try {
-                            // For now, show error that MGRS is not yet supported
-                            new AlertDialog.Builder(MapView.getMapView().getContext())
-                                    .setTitle(pluginContext.getString(R.string.error))
-                                    .setMessage("MGRS input coming soon")
-                                    .setPositiveButton(pluginContext.getString(R.string.ok), null)
-                                    .show();
-                            return;
-                            // TODO: Implement MGRS parsing when API is clarified
-                        } catch (Exception e) {
-                            new AlertDialog.Builder(MapView.getMapView().getContext())
-                                    .setTitle(pluginContext.getString(R.string.error))
-                                    .setMessage("Invalid MGRS coordinate: " + mgrsString)
-                                    .setPositiveButton(pluginContext.getString(R.string.ok), null)
-                                    .show();
-                        }
-                    }
-                })
-                .setNegativeButton(pluginContext.getString(R.string.cancel), null)
-                .show();
+    private void showUnifiedCoordinateInputDialog() {
+        CoordinateInputDialog.show(MapView.getMapView().getContext(), new CoordinateInputDialog.CoordinateSelectedListener() {
+            @Override
+            public void onCoordinateSelected(com.atakmap.coremap.maps.coords.GeoPoint point, String displayName) {
+                // Convert ATAK GeoPoint to standard coordinates
+                createOrderFromCoordinates(point.getLatitude(), point.getLongitude());
+            }
+            
+            @Override
+            public void onCancelled() {
+                // User cancelled, nothing to do
+            }
+        });
     }
     
     private void startPindropTasking() {

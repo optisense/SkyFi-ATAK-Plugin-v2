@@ -11,7 +11,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.atak.plugins.impl.PluginLayoutInflater;
@@ -72,6 +75,13 @@ public class ArchiveSearch extends DropDownReceiver implements DropDown.OnStateL
 
     private final Switch openData;
     private final EditText minOverlapRatio;
+
+    // AOR Filter controls
+    private final RadioGroup aorFilterGroup;
+    private final RadioButton aorFilterWorld;
+    private final RadioButton aorFilterRegion;
+    private final TextView aorFilterDescription;
+    private AORFilterManager aorFilterManager;
 
     private final Button searchButton;
 
@@ -167,6 +177,21 @@ public class ArchiveSearch extends DropDownReceiver implements DropDown.OnStateL
         openData = mainView.findViewById(R.id.open_data);
         openData.setOnClickListener(this);
 
+        // Initialize AOR filter controls
+        aorFilterGroup = mainView.findViewById(R.id.aor_filter_group);
+        aorFilterWorld = mainView.findViewById(R.id.aor_filter_world);
+        aorFilterRegion = mainView.findViewById(R.id.aor_filter_region);
+        aorFilterDescription = mainView.findViewById(R.id.aor_filter_description);
+        
+        // Initialize AOR filter manager
+        aorFilterManager = AORFilterManager.getInstance(context);
+        
+        // Set up AOR filter listeners
+        aorFilterGroup.setOnCheckedChangeListener(this::onAORFilterChanged);
+        
+        // Set initial filter state
+        updateAORFilterUI();
+
         searchButton = mainView.findViewById(R.id.search_button);
         searchButton.setOnClickListener(this);
 
@@ -237,6 +262,48 @@ public class ArchiveSearch extends DropDownReceiver implements DropDown.OnStateL
             public void afterTextChanged(Editable editable) {}
         });
     }
+    
+    /**
+     * Handle AOR filter radio button changes
+     */
+    private void onAORFilterChanged(RadioGroup group, int checkedId) {
+        if (checkedId == R.id.aor_filter_world) {
+            aorFilterManager.setFilterMode(AORFilterManager.FilterMode.WORLD);
+        } else if (checkedId == R.id.aor_filter_region) {
+            aorFilterManager.setFilterMode(AORFilterManager.FilterMode.REGION);
+            // Update current region based on map view
+            aorFilterManager.updateCurrentRegion(mapView);
+        }
+        updateAORFilterDescription();
+    }
+    
+    /**
+     * Update the AOR filter UI based on current settings
+     */
+    private void updateAORFilterUI() {
+        AORFilterManager.FilterMode currentMode = aorFilterManager.getFilterMode();
+        
+        if (currentMode == AORFilterManager.FilterMode.WORLD) {
+            aorFilterWorld.setChecked(true);
+        } else {
+            aorFilterRegion.setChecked(true);
+        }
+        
+        updateAORFilterDescription();
+    }
+    
+    /**
+     * Update the description text for the AOR filter
+     */
+    private void updateAORFilterDescription() {
+        String description;
+        if (aorFilterManager.getFilterMode() == AORFilterManager.FilterMode.WORLD) {
+            description = context.getString(R.string.aor_filter_description_world);
+        } else {
+            description = context.getString(R.string.aor_filter_description_region);
+        }
+        aorFilterDescription.setText(description);
+    }
 
     @Override
     public void onDropDownSelectionRemoved() {
@@ -275,12 +342,38 @@ public class ArchiveSearch extends DropDownReceiver implements DropDown.OnStateL
             if (aoi == null)
                 Log.e(LOGTAG, "aoi null");
 
+            // Update current region for AOR filtering
+            aorFilterManager.updateCurrentRegion(mapView);
+            
+            // Show region prompt if appropriate
+            showRegionPromptIfNeeded();
+
             int orientation = context.getResources().getConfiguration().orientation;
             if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
                 showDropDown(mainView, HALF_WIDTH, FULL_HEIGHT, FULL_WIDTH, FULL_HEIGHT, false);
             } else {
                 showDropDown(mainView, FULL_WIDTH, HALF_HEIGHT, FULL_WIDTH, HALF_HEIGHT, false);
             }
+        }
+    }
+    
+    /**
+     * Show the region prompt dialog if appropriate
+     */
+    private void showRegionPromptIfNeeded() {
+        if (aorFilterManager.hasRegionChangedSignificantly(mapView)) {
+            RegionPromptDialog dialog = new RegionPromptDialog(context);
+            dialog.showIfNeeded(new RegionPromptDialog.RegionPromptCallback() {
+                @Override
+                public void onRegionSelected() {
+                    updateAORFilterUI();
+                }
+
+                @Override
+                public void onWorldSelected() {
+                    updateAORFilterUI();
+                }
+            });
         }
     }
 

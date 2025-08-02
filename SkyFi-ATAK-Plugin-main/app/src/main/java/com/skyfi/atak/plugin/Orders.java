@@ -17,6 +17,9 @@ import android.os.Environment;
 import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import com.atak.plugins.impl.PluginLayoutInflater;
 import com.atakmap.android.dropdown.DropDown;
@@ -64,6 +67,13 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
     private int pageNumber = 0;
     private int pageSize = 10;
     private String mobacUri;
+    private AORFilterManager aorFilterManager;
+
+    // AOR Filter controls for Orders
+    private RadioGroup ordersAorFilterGroup;
+    private RadioButton ordersAorFilterWorld;
+    private RadioButton ordersAorFilterRegion;
+    private TextView ordersAorFilterDescription;
 
     Button nextButton;
     Button previousButton;
@@ -72,6 +82,7 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
     public Orders(MapView mapView, Context context) {
         super(mapView);
         this.context = context;
+        this.aorFilterManager = AORFilterManager.getInstance(context);
         mainView = PluginLayoutInflater.inflate(context, R.layout.orders, null);
 
         recyclerView = mainView.findViewById(R.id.order_recycler_view);
@@ -95,6 +106,113 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
 
         updateOrders = mainView.findViewById(R.id.pull_to_refresh);
         updateOrders.setOnRefreshListener(this::getOrders);
+        
+        // Initialize AOR filter controls
+        ordersAorFilterGroup = mainView.findViewById(R.id.orders_aor_filter_group);
+        ordersAorFilterWorld = mainView.findViewById(R.id.orders_aor_filter_world);
+        ordersAorFilterRegion = mainView.findViewById(R.id.orders_aor_filter_region);
+        ordersAorFilterDescription = mainView.findViewById(R.id.orders_aor_filter_description);
+        
+        // Set up AOR filter listeners
+        ordersAorFilterGroup.setOnCheckedChangeListener(this::onOrdersAORFilterChanged);
+        
+        // Set initial filter state
+        updateOrdersAORFilterUI();
+    }
+    
+    /**
+     * Handle AOR filter radio button changes for Orders
+     */
+    private void onOrdersAORFilterChanged(RadioGroup group, int checkedId) {
+        if (checkedId == R.id.orders_aor_filter_world) {
+            aorFilterManager.setFilterMode(AORFilterManager.FilterMode.WORLD);
+        } else if (checkedId == R.id.orders_aor_filter_region) {
+            aorFilterManager.setFilterMode(AORFilterManager.FilterMode.REGION);
+            // Update current region based on map view
+            aorFilterManager.updateCurrentRegion(getMapView());
+        }
+        updateOrdersAORFilterDescription();
+        
+        // Refresh orders with new filter
+        getOrders();
+    }
+    
+    /**
+     * Update the AOR filter UI for Orders based on current settings
+     */
+    private void updateOrdersAORFilterUI() {
+        AORFilterManager.FilterMode currentMode = aorFilterManager.getFilterMode();
+        
+        if (currentMode == AORFilterManager.FilterMode.WORLD) {
+            ordersAorFilterWorld.setChecked(true);
+        } else {
+            ordersAorFilterRegion.setChecked(true);
+        }
+        
+        updateOrdersAORFilterDescription();
+    }
+    
+    /**
+     * Update the description text for the Orders AOR filter
+     */
+    private void updateOrdersAORFilterDescription() {
+        String description;
+        if (aorFilterManager.getFilterMode() == AORFilterManager.FilterMode.WORLD) {
+            description = context.getString(R.string.aor_filter_description_world);
+        } else {
+            description = context.getString(R.string.aor_filter_description_region);
+        }
+        ordersAorFilterDescription.setText(description);
+    }
+    
+    /**
+     * Filter orders based on current AOR filter settings
+     */
+    private List<Order> filterOrdersByRegion(List<Order> ordersList) {
+        if (aorFilterManager.getFilterMode() == AORFilterManager.FilterMode.WORLD) {
+            return ordersList; // Return all orders if in world mode
+        }
+        
+        List<Order> filteredOrders = new ArrayList<>();
+        for (Order order : ordersList) {
+            if (isOrderInRegion(order)) {
+                filteredOrders.add(order);
+            }
+        }
+        
+        Log.d(LOGTAG, "Filtered " + ordersList.size() + " orders to " + filteredOrders.size() + " in region");
+        return filteredOrders;
+    }
+    
+    /**
+     * Check if an order intersects with the current region
+     */
+    private boolean isOrderInRegion(Order order) {
+        if (aorFilterManager.getFilterMode() == AORFilterManager.FilterMode.WORLD || order == null || order.getAoi() == null) {
+            return true; // Show all if in world mode or no AOI available
+        }
+        
+        try {
+            // Parse the order's AOI and check if it intersects with current region
+            WKTReader wktReader = new WKTReader();
+            Geometry orderGeometry = wktReader.read(order.getAoi());
+            
+            // Use AORFilterManager to check if it's in region (this will handle the region boundary logic)
+            Coordinate[] coords = orderGeometry.getCoordinates();
+            if (coords.length > 0) {
+                // Check if any point of the order's geometry is in the region
+                for (Coordinate coord : coords) {
+                    if (aorFilterManager.isPointInRegion(coord.y, coord.x)) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+            
+        } catch (Exception e) {
+            Log.e(LOGTAG, "Failed to check order region intersection", e);
+            return true; // Show if unable to determine
+        }
     }
 
     private void getOrders() {
@@ -135,7 +253,11 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
                             previousButton.setVisibility(GONE);
 
                         orders.clear();
-                        orders.addAll(Arrays.asList(response.body().getOrders()));
+                        
+                        // Apply AOR filtering to orders
+                        Order[] allOrders = response.body().getOrders();
+                        List<Order> filteredOrders = filterOrdersByRegion(Arrays.asList(allOrders));
+                        orders.addAll(filteredOrders);
                         synchronized (ordersRecyclerViewAdapter) {
                             ordersRecyclerViewAdapter.notifyDataSetChanged();
                         }

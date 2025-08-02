@@ -24,6 +24,11 @@ public class Constants {
     public static String MULTISPECTRAL = "MULTISPECTRAL";
     public static String STEREO = "STEREO";
 
+    // Sensor Types
+    public static String ASAP = "ASAP";
+    public static String EO = "EO";
+    public static String ADS_B = "ADS-B";
+
     // Resolutions
     public static String LOW = "LOW";
     public static String MEDIUM = "MEDIUM";

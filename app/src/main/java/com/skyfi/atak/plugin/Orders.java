@@ -52,7 +52,10 @@ import static com.atakmap.android.layers.LayersManagerBroadcastReceiver.ACTION_S
 import static com.atakmap.android.layers.LayersManagerBroadcastReceiver.EXTRA_LAYER_NAME;
 import static com.atakmap.android.layers.LayersManagerBroadcastReceiver.EXTRA_SELECTION;
 
-public class Orders extends DropDownReceiver implements DropDown.OnStateListener, OrdersRecyclerViewAdapter.ItemClickListener {
+import java.util.HashMap;
+import java.util.Map;
+
+public class Orders extends DropDownReceiver implements DropDown.OnStateListener, OrdersRecyclerViewAdapter.ItemClickListener, OrdersRecyclerViewAdapter.OpacityChangeListener {
     public final static String ACTION = "com.skyfi.orders";
     private final static String LOGTAG = "SkyFiOrders";
     private View mainView;
@@ -64,6 +67,8 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
     private int pageNumber = 0;
     private int pageSize = 10;
     private String mobacUri;
+    private Map<String, String> layerUriMap = new HashMap<>();
+    private Preferences preferences;
 
     Button nextButton;
     Button previousButton;
@@ -72,12 +77,14 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
     public Orders(MapView mapView, Context context) {
         super(mapView);
         this.context = context;
+        this.preferences = new Preferences();
         mainView = PluginLayoutInflater.inflate(context, R.layout.orders, null);
 
         recyclerView = mainView.findViewById(R.id.order_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         ordersRecyclerViewAdapter = new OrdersRecyclerViewAdapter(context, orders);
         ordersRecyclerViewAdapter.setClickListener(this);
+        ordersRecyclerViewAdapter.setOpacityChangeListener(this);
         recyclerView.setAdapter(ordersRecyclerViewAdapter);
 
         nextButton = mainView.findViewById(R.id.next_button);
@@ -251,6 +258,10 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
             fw.close();
 
             mobacUri = Uri.fromFile(f).toString();
+            
+            // Store the layer URI mapping for opacity control
+            String layerName = "SkyFi " + order.getOrderName();
+            layerUriMap.put(layerName, mobacUri);
 
             Intent intent = new Intent();
             intent.setAction(ACTION_IMPORT_DATA);
@@ -266,10 +277,18 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
             handler.postDelayed(() -> {
                 Intent selectLayer = new Intent();
                 selectLayer.setAction(ACTION_SELECT_LAYER);
-                selectLayer.putExtra(EXTRA_LAYER_NAME, "SkyFi " + order.getOrderName());
-                selectLayer.putExtra(EXTRA_SELECTION, "SkyFi " + order.getOrderName());
+                selectLayer.putExtra(EXTRA_LAYER_NAME, layerName);
+                selectLayer.putExtra(EXTRA_SELECTION, layerName);
                 AtakBroadcast.getInstance().sendBroadcast(selectLayer);
-                Log.d(LOGTAG, "selected " + "SkyFi " + order.getOrderName());
+                Log.d(LOGTAG, "selected " + layerName);
+                
+                // Apply saved opacity after layer is selected (wait a bit more for layer to load)
+                Handler opacityHandler = new Handler();
+                opacityHandler.postDelayed(() -> {
+                    int savedOpacity = preferences.getLayerOpacity(layerName);
+                    onOpacityChanged(layerName, savedOpacity);
+                    Log.d(LOGTAG, "Applied saved opacity " + savedOpacity + "% to " + layerName);
+                }, 2000);
             }, 5000);
 
             // Get the order's vertices and move the map to fit the imagery
@@ -287,6 +306,44 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
             ATAKUtilities.scaleToFit(MapView.getMapView(), points, 1000, 1000);
         } catch (Exception e) {
             Log.e(LOGTAG, "Failed to make map source", e);
+        }
+    }
+    
+    @Override
+    public void onOpacityChanged(String layerName, int opacity) {
+        try {
+            // Apply opacity to the layer through ATAK's layer system
+            // Note: ATAK handles opacity through broadcasts to layer managers
+            Intent opacityIntent = new Intent();
+            opacityIntent.setAction("com.atakmap.android.layers.SET_LAYER_ALPHA");
+            opacityIntent.putExtra(EXTRA_LAYER_NAME, layerName);
+            opacityIntent.putExtra("alpha", opacity / 100.0f); // Convert percentage to 0.0-1.0 range
+            AtakBroadcast.getInstance().sendBroadcast(opacityIntent);
+            
+            Log.d(LOGTAG, "Set opacity for layer " + layerName + " to " + opacity + "%");
+        } catch (Exception e) {
+            Log.e(LOGTAG, "Failed to set layer opacity", e);
+        }
+    }
+    
+    @Override
+    public void onShowAdvancedOpacityDialog(String layerName, int currentOpacity) {
+        try {
+            OpacityControlDialog.show(
+                context,
+                "Adjust " + layerName + " Opacity",
+                currentOpacity,
+                opacity -> {
+                    // Update preferences and apply the change
+                    preferences.setLayerOpacity(layerName, opacity);
+                    onOpacityChanged(layerName, opacity);
+                    
+                    // Refresh the adapter to update the UI
+                    ordersRecyclerViewAdapter.notifyDataSetChanged();
+                }
+            );
+        } catch (Exception e) {
+            Log.e(LOGTAG, "Failed to show advanced opacity dialog", e);
         }
     }
 }
