@@ -121,6 +121,49 @@ public class OrderUtility extends DropDownReceiver implements MapEventDispatcher
                             .show();
                     }
                 }
+                else if (mapItem instanceof DrawingShape) {
+                    // Handle polygon shapes
+                    DrawingShape shape = (DrawingShape) mapItem;
+                    aoi = getWkt(shape.getPoints());
+                    
+                    if (aoi != null) {
+                        // Calculate area
+                        double areaKm2 = calculatePolygonArea(shape.getPoints());
+                        
+                        // Show dialog to save as AOI or use directly
+                        new AlertDialog.Builder(MapView.getMapView().getContext())
+                            .setTitle("Use Polygon AOI")
+                            .setMessage(String.format("Area: %.2f km²\n\nWhat would you like to do?", areaKm2))
+                            .setPositiveButton("Save & Use for Order", (dialog, which) -> {
+                                // Save as AOI
+                                AOIManager aoiManager = new AOIManager(context);
+                                AOIManager.AOI aoiObj = new AOIManager.AOI(
+                                    aoiManager.generateAOIId(),
+                                    "Polygon AOI " + new java.text.SimpleDateFormat("HH:mm").format(new java.util.Date()),
+                                    aoi
+                                );
+                                aoiObj.areaKm2 = areaKm2;
+                                aoiManager.saveAOI(aoiObj);
+                                
+                                // Launch new order
+                                Intent newOrderIntent = new Intent();
+                                newOrderIntent.setAction(NewOrderFragment.ACTION);
+                                newOrderIntent.putExtra("aoi", aoi);
+                                newOrderIntent.putExtra("aoiName", aoiObj.name);
+                                AtakBroadcast.getInstance().sendBroadcast(newOrderIntent);
+                            })
+                            .setNeutralButton("Use for Order Only", (dialog, which) -> {
+                                // Just use for order without saving
+                                Intent newOrderIntent = new Intent();
+                                newOrderIntent.setAction(NewOrderFragment.ACTION);
+                                newOrderIntent.putExtra("aoi", aoi);
+                                AtakBroadcast.getInstance().sendBroadcast(newOrderIntent);
+                            })
+                            .setNegativeButton("Cancel", null)
+                            .create()
+                            .show();
+                    }
+                }
                 else {
                     Log.d(LOGTAG, "Unknown " + mapItem.getClass() + " " + mapItem.getType());
                 }

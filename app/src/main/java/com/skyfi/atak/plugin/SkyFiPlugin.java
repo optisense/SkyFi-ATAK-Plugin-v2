@@ -178,11 +178,7 @@ public class SkyFiPlugin extends DropDownMapComponent implements IPlugin, MainRe
         AtakBroadcast.getInstance().registerReceiver(ordersDropDown, ordersFilter);
         Log.d(TAG, "Registered Orders receiver");
 
-        profileDropDown = new Profile(mapView, pluginContext);
-        AtakBroadcast.DocumentedIntentFilter profileFilter = new AtakBroadcast.DocumentedIntentFilter();
-        profileFilter.addAction(Profile.ACTION);
-        AtakBroadcast.getInstance().registerReceiver(profileDropDown, profileFilter);
-        Log.d(TAG, "Registered Profile receiver");
+        // Profile registration moved to later in the method with other dropdowns
         
         // Register other receivers
         AtakBroadcast.DocumentedIntentFilter newOrderIntentFilter = new AtakBroadcast.DocumentedIntentFilter();
@@ -195,11 +191,16 @@ public class SkyFiPlugin extends DropDownMapComponent implements IPlugin, MainRe
 
         AtakBroadcast.DocumentedIntentFilter archivesBrowserFilter = new AtakBroadcast.DocumentedIntentFilter();
         archivesBrowserFilter.addAction(ArchivesBrowser.ACTION);
-        AtakBroadcast.getInstance().registerReceiver(new ArchivesBrowser(mapView, pluginContext), archivesBrowserFilter);
+        registerDropDownReceiver(new ArchivesBrowser(mapView, pluginContext), archivesBrowserFilter);
 
         AtakBroadcast.DocumentedIntentFilter taskingOrderFilter = new AtakBroadcast.DocumentedIntentFilter();
         taskingOrderFilter.addAction(TaskingOrderFragment.ACTION);
-        AtakBroadcast.getInstance().registerReceiver(new TaskingOrderFragment(mapView, pluginContext), taskingOrderFilter);
+        registerDropDownReceiver(new TaskingOrderFragment(mapView, pluginContext), taskingOrderFilter);
+
+        profileDropDown = new Profile(mapView, pluginContext);
+        AtakBroadcast.DocumentedIntentFilter profileFilter = new AtakBroadcast.DocumentedIntentFilter();
+        profileFilter.addAction(Profile.ACTION);
+        registerDropDownReceiver(profileDropDown, profileFilter);
 
         OrderUtility orderUtility = new OrderUtility(mapView, pluginContext);
         AtakBroadcast.DocumentedIntentFilter filter = new AtakBroadcast.DocumentedIntentFilter();
@@ -209,7 +210,7 @@ public class SkyFiPlugin extends DropDownMapComponent implements IPlugin, MainRe
                         new DocumentedExtra("targetUID",
                                 "the map item identifier used to populate the drop down")
                 });
-        AtakBroadcast.getInstance().registerReceiver(orderUtility, filter);
+        registerDropDownReceiver(orderUtility, filter);
     }
 
     @Override

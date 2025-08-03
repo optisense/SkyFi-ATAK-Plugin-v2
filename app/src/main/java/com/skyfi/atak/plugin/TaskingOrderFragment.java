@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.LinearLayout;
 
+import androidx.cardview.widget.CardView;
 import com.atak.plugins.impl.PluginLayoutInflater;
 import com.atakmap.android.dropdown.DropDown;
 import com.atakmap.android.dropdown.DropDownReceiver;
@@ -72,7 +73,7 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
     private final RadioButton frequencyOnce;
     private final RadioButton frequencyDaily;
     private final RadioButton frequencyWeekly;
-    private final LinearLayout polarizationContainer;
+    private final CardView polarizationContainer;
     private final CheckBox polHH;
     private final CheckBox polVV;
     private final CheckBox polHV;
@@ -87,7 +88,7 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
     private final RadioButton sensorSAR;
     private final RadioButton sensorADSB;
     private final SeekBar taskPrioritySlider;
-    private final LinearLayout stereoContainer;
+    private final CardView stereoContainer;
     private final RadioGroup stereoOptions;
     private final RadioButton stereo1;
     private final RadioButton stereo2;

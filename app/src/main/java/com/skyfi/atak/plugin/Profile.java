@@ -35,13 +35,24 @@ public class Profile extends DropDownReceiver implements DropDown.OnStateListene
         super(mapView);
 
         this.context = context;
-        mainView = PluginLayoutInflater.inflate(context, R.layout.my_profile, null);
-        name = mainView.findViewById(R.id.name);
-        email = mainView.findViewById(R.id.email);
-        totalBudget = mainView.findViewById(R.id.total_budget);
-        budgetUsage = mainView.findViewById(R.id.budget_usage);
-        remainingBudget = mainView.findViewById(R.id.budget_remaining);
-        ccOnFile = mainView.findViewById(R.id.cc_on_file);;
+        try {
+            mainView = PluginLayoutInflater.inflate(context, R.layout.my_profile, null);
+            if (mainView == null) {
+                Log.e(LOGTAG, "Failed to inflate my_profile layout");
+                return;
+            }
+            
+            name = mainView.findViewById(R.id.name);
+            email = mainView.findViewById(R.id.email);
+            totalBudget = mainView.findViewById(R.id.total_budget);
+            budgetUsage = mainView.findViewById(R.id.budget_usage);
+            remainingBudget = mainView.findViewById(R.id.budget_remaining);
+            ccOnFile = mainView.findViewById(R.id.cc_on_file);
+            
+            Log.d(LOGTAG, "Profile view initialized successfully");
+        } catch (Exception e) {
+            Log.e(LOGTAG, "Error initializing Profile view", e);
+        }
     }
 
     private void getProfile() {
