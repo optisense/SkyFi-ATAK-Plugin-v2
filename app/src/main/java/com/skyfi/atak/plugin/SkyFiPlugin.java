@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.atak.plugins.impl.PluginContextProvider;
 import com.atak.plugins.impl.PluginLayoutInflater;
@@ -66,6 +67,7 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
     private MapView mapView;
     private TextView radiusTextView;
     private ImageryPreviewManager previewManager;
+    private SkyFiDrawingToolsHandler drawingHandler;
 
     public SkyFiPlugin() {}
 
@@ -145,6 +147,8 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
             registerDropDownReceivers();
             // Initialize preview manager
             previewManager = new ImageryPreviewManager(pluginContext, mapView);
+            // Initialize drawing handler
+            drawingHandler = new SkyFiDrawingToolsHandler(pluginContext, mapView);
         }
     }
     
@@ -196,6 +200,11 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
         if (previewManager != null) {
             previewManager.cleanup();
         }
+        
+        // Cleanup drawing handler
+        if (drawingHandler != null) {
+            drawingHandler.dispose();
+        }
     }
 
     private void showPane() {
@@ -226,6 +235,7 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
         ArrayList<String> options = new ArrayList<>();
         options.add(pluginContext.getString(R.string.view_orders));
         options.add(pluginContext.getString(R.string.new_order_my_location));
+        options.add(pluginContext.getString(R.string.draw_aoi));
         options.add(pluginContext.getString(R.string.coordinate_input));
         options.add(pluginContext.getString(R.string.manage_aois));
         // Add preview mode toggle
@@ -328,14 +338,18 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
                 }
                 break;
             case 2:
+                // Draw AOI with ATAK
+                startATAKDrawing();
+                break;
+            case 3:
                 // Coordinate Input
                 showCoordinateInputDialog();
                 break;
-            case 3:
+            case 4:
                 // Manage AOIs
                 showAOIManagementDialog();
                 break;
-            case 4:
+            case 5:
                 // Toggle preview mode
                 if (previewManager != null) {
                     if (previewManager.isPreviewModeEnabled()) {
@@ -347,7 +361,7 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
                     showPane();
                 }
                 break;
-            case 5:
+            case 6:
                 // Set API key
                 Preferences prefs = new Preferences();
 
@@ -364,7 +378,8 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
                 apiKeyAlertDialog.setPositiveButton(pluginContext.getString(R.string.ok), (dialogInterface, i) -> prefs.setApiKey(editText.getText().toString()));
                 apiKeyAlertDialog.create().show();
                 break;
-            case 6:
+            case 7:
+                // My Profile
                 Intent profileIntent = new Intent();
                 profileIntent.setAction(Profile.ACTION);
                 AtakBroadcast.getInstance().sendBroadcast(profileIntent);
@@ -372,6 +387,64 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
         }
     }
 
+    /**
+     * Start ATAK's built-in drawing tools for AOI creation
+     */
+    private void startATAKDrawing() {
+        if (drawingHandler != null) {
+            // Hide the main pane
+            if (uiService != null) {
+                uiService.hidePane(templatePane);
+            }
+            
+            // Start drawing with callback
+            drawingHandler.startPolygonDrawing(new SkyFiDrawingToolsHandler.ShapeCompleteListener() {
+                @Override
+                public void onShapeComplete(String shapeUid, List<GeoPoint> points, double areaSqKm) {
+                    // Convert gov.tak.api GeoPoints to com.atakmap GeoPoints
+                    List<com.atakmap.coremap.maps.coords.GeoPoint> atakPoints = new ArrayList<>();
+                    for (GeoPoint point : points) {
+                        atakPoints.add(new com.atakmap.coremap.maps.coords.GeoPoint(
+                            point.getLatitude(), 
+                            point.getLongitude()
+                        ));
+                    }
+                    
+                    // Save as AOI
+                    try {
+                        AOIManager aoiManager = new AOIManager(pluginContext);
+                        String aoiName = "AOI_" + System.currentTimeMillis();
+                        String aoiId = aoiManager.saveAOI(aoiName, atakPoints);
+                        
+                        // Show success and offer to create order
+                        new AlertDialog.Builder(MapView.getMapView().getContext())
+                            .setTitle("AOI Created")
+                            .setMessage(String.format("AOI saved: %.2f sq km\\nWould you like to create a tasking order?", areaSqKm))
+                            .setPositiveButton("Create Order", (dialog, which) -> {
+                                // Launch tasking order with the AOI
+                                Intent intent = new Intent();
+                                intent.setAction(TaskingOrderFragment.ACTION);
+                                intent.putExtra("aoi_id", aoiId);
+                                AtakBroadcast.getInstance().sendBroadcast(intent);
+                            })
+                            .setNegativeButton("Later", null)
+                            .show();
+                            
+                    } catch (Exception e) {
+                        Log.e(LOGTAG, "Failed to save AOI", e);
+                        Toast.makeText(pluginContext, "Failed to save AOI: " + e.getMessage(), 
+                            Toast.LENGTH_SHORT).show();
+                    }
+                }
+                
+                @Override
+                public void onShapeCancelled() {
+                    Log.d(LOGTAG, "Drawing cancelled");
+                }
+            });
+        }
+    }
+    
     private String squareWkt(double diameter) {
         try {
             double lat = MapView.getMapView().getSelfMarker().getPoint().getLatitude();
