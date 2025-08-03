@@ -14,6 +14,7 @@ SkyFi ATAK Plugin v2 integrates satellite imagery and geospatial intelligence ca
 - Mission planning and analysis tools
 - Geospatial intelligence overlays
 - Integration with ATAK's native mapping capabilities
+- Priority tasking support (WHEN_AVAILABLE and PRIORITY)
 
 _________________________________________________________________
 ## STATUS
@@ -24,10 +25,65 @@ _________________________________________________________________
 **ATAK Compatibility**: 5.4.0 (CIV and MIL variants)
 
 ### Recent Updates
+- Removed NATSEC priority functionality (not yet available)
+- Updated tasking order UI with radio button priority selection
 - GitHub Actions CI/CD pipeline implemented
 - Automated build and release process
 - Multi-flavor support (CIV/MIL)
 - Comprehensive testing framework
+
+_________________________________________________________________
+## 🚀 BETA TESTING ON ANDROID PHONES
+
+### Quick Start for Beta Testers
+
+#### Option 1: Download Pre-built APK (Recommended)
+1. On your Android phone, download the latest beta APK from:
+   - [GitHub Releases Page](https://github.com/optisense/SkyFi-ATAK-Plugin-v2/releases)
+   - Download the appropriate APK file (e.g., `skyfi-atak-plugin-v2.0-beta-civ-debug.apk`)
+
+#### Option 2: Install via ADB
+If you have ADB (Android Debug Bridge) set up:
+```bash
+# Connect your phone via USB with debugging enabled
+adb install -r skyfi-atak-plugin-v2.0-beta-civ-debug.apk
+```
+
+### Prerequisites for Beta Testing
+1. **ATAK 5.4.0 CIV** must be installed on your Android device
+   - Download from [tak.gov](https://tak.gov) (requires registration)
+2. **Android Version**: Minimum Android 5.0 (API 21)
+3. **Enable Installation from Unknown Sources**:
+   - Go to Settings → Security
+   - Enable "Unknown sources" or "Install unknown apps"
+   - For Android 8.0+: Settings → Apps & notifications → Advanced → Special app access → Install unknown apps
+
+### Installation Steps
+1. **Download the APK** to your Android phone
+2. **Open the APK file** using your file manager
+3. **Tap "Install"** when prompted
+4. **Accept any security prompts**
+5. **Open ATAK** after installation
+6. The SkyFi plugin will load automatically
+
+### Testing the Plugin
+1. **Access the Plugin**: In ATAK, tap the menu → Tools → SkyFi
+2. **Login**: Use your SkyFi credentials
+3. **Test Features**:
+   - Draw an Area of Interest (AOI) on the map
+   - Create a tasking order
+   - Test priority selection (WHEN_AVAILABLE vs PRIORITY)
+   - Browse satellite imagery archives
+   - Check order status
+
+### Reporting Beta Issues
+Please report any issues or feedback:
+- [GitHub Issues](https://github.com/optisense/SkyFi-ATAK-Plugin-v2/issues)
+- Include:
+  - Android version
+  - ATAK version
+  - Steps to reproduce
+  - Screenshots if applicable
 
 _________________________________________________________________
 ## POINT OF CONTACTS
