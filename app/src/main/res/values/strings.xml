@@ -33,10 +33,10 @@
     <string name="max_off_nadir_angle">Max Off Nadir Angle</string>
     <string name="low">LOW</string>
     <string name="medium">MEDIUM</string>
-    <string name="high">HIGH</string>
-    <string name="very_high">VERY HIGH</string>
-    <string name="super_high">SUPER HIGH</string>
-    <string name="ultra_high">ULTRA HIGH</string>
+    <string name="high">High (&gt;50 cm ≤ 1 m/px)</string>
+    <string name="very_high">Very High (&gt;30 cm ≤ 50 cm/px)</string>
+    <string name="super_high">Super High (&gt;15 cm ≤ 30 cm/px)</string>
+    <string name="ultra_high">Ultra High (≤ 15 cm/px)</string>
     <string name="sensor_types">Sensor Types</string>
     <string name="asap">ASAP</string>
     <string name="eo">EO</string>
