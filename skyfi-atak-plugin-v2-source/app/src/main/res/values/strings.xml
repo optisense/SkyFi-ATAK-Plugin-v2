@@ -82,6 +82,7 @@
     <string name="task_priority">Task Priority</string>
     <string name="when_available">WHEN AVAILABLE</string>
     <string name="priority_tasking">PRIORITY</string>
+    <string name="natsec">NATSEC</string>
     <string name="priority_extra_cost">+$%.2f</string>
     <string name="assured_tasking_extra_cost">+$%.2f</string>
     <string name="total_price">Total Price: $%.2f</string>

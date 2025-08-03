@@ -67,11 +67,6 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
     private final TextView assuredTaskingPrice;
     private final TextView totalPrice;
     
-    // Task Priority RadioGroup
-    private final RadioGroup taskPriorityGroup;
-    private final RadioButton priorityWhenAvailable;
-    private final RadioButton priorityPriority;
-    
     // Feasibility UI elements
     private final TextView feasibilityPasses;
     private final TextView feasibilityLevel;
@@ -128,18 +123,11 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
         assuredTasking = mainView.findViewById(R.id.assured_tasking);
         assuredTasking.setOnClickListener(this);
 
-        priorityPrice = mainView.findViewById(R.id.priority_price_display);
+        priorityPrice = mainView.findViewById(R.id.priority_price);
 
         assuredTaskingPrice = mainView.findViewById(R.id.assured_tasking_price);
 
         totalPrice = mainView.findViewById(R.id.total_price);
-        
-        // Task Priority RadioGroup
-        taskPriorityGroup = mainView.findViewById(R.id.task_priority_group);
-        priorityWhenAvailable = mainView.findViewById(R.id.priority_when_available);
-        priorityWhenAvailable.setOnClickListener(this);
-        priorityPriority = mainView.findViewById(R.id.priority_priority);
-        priorityPriority.setOnClickListener(this);
         
         // Feasibility UI elements
         feasibilityPasses = mainView.findViewById(R.id.feasibility_passes);
@@ -545,22 +533,6 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
         else if (view.getId() == R.id.priority) {
             taskingOrder.setPriorityItem(prioritize.isChecked());
             updateTotalPrice();
-        }
-        
-        // Task Priority Radio Buttons
-        else if (view.getId() == R.id.priority_when_available) {
-            if (priorityWhenAvailable.isChecked()) {
-                taskingOrder.setTaskPriority("WHEN_AVAILABLE");
-                taskingOrder.setPriorityItem(false);
-                updateTotalPrice();
-            }
-        }
-        else if (view.getId() == R.id.priority_priority) {
-            if (priorityPriority.isChecked()) {
-                taskingOrder.setTaskPriority("PRIORITY");
-                taskingOrder.setPriorityItem(true);
-                updateTotalPrice();
-            }
         }
         
         else if (view.getId() == R.id.assured_tasking) {

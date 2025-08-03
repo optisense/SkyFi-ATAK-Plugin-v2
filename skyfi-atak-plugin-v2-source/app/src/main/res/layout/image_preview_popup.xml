@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="300dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/new_dark_button_bg"
+    android:padding="12dp"
+    android:elevation="8dp">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/imagery_preview"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/close_button"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:background="@android:drawable/ic_menu_close_clear_cancel"
+            android:layout_marginStart="8dp" />
+
+    </LinearLayout>
+
+    <!-- Loading indicator -->
+    <ProgressBar
+        android:id="@+id/loading_indicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="16dp"
+        android:visibility="visible" />
+
+    <!-- Content container -->
+    <LinearLayout
+        android:id="@+id/content_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <!-- Location info -->
+        <TextView
+            android:id="@+id/location_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            android:text="Lat: 0.000, Lon: 0.000"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Thumbnail grid -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/thumbnail_grid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:maxHeight="120dp"
+            android:scrollbars="vertical" />
+
+        <!-- No results message -->
+        <TextView
+            android:id="@+id/no_results_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/no_imagery_available"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:visibility="gone"
+            android:layout_marginBottom="8dp"
+            android:paddingTop="24dp"
+            android:paddingBottom="24dp" />
+
+        <!-- Action buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/full_search_button"
+                android:layout_width="0dp"
+                android:layout_height="32dp"
+                android:layout_weight="1"
+                android:text="@string/full_search"
+                android:textSize="11sp"
+                android:background="@drawable/new_dark_button_bg"
+                android:textColor="@android:color/white"
+                android:layout_marginEnd="4dp" />
+
+            <Button
+                android:id="@+id/order_button"
+                android:layout_width="0dp"
+                android:layout_height="32dp"
+                android:layout_weight="1"
+                android:text="@string/place_order"
+                android:textSize="11sp"
+                android:background="@drawable/new_dark_button_bg"
+                android:textColor="@android:color/white"
+                android:layout_marginStart="4dp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

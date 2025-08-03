@@ -4,7 +4,7 @@ public class TaskingOrder {
     String aoi; // required
     boolean priorityItem = false;
     boolean assuredTasking = false;
-    String taskPriority; // WHEN_AVAILABLE, PRIORITY
+    String taskPriority; // WHEN_AVAILABLE, PRIORITY, NATSEC
     String sensorType; // new field for sensor type selection
     String productType; // required
     String resolution; // required

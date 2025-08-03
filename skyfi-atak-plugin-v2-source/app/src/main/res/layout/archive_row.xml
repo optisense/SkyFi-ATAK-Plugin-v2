@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linear_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:alpha="1"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/thumbnail"
+            android:layout_width="125dp"
+            android:layout_height="125dp"
+            android:alpha=".25"
+            tools:srcCompat="@drawable/placeholder" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="5dp"
+            android:paddingEnd="5dp">
+
+            <TextView
+                android:id="@+id/product_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Product Type" />
+
+            <TextView
+                android:id="@+id/resolution"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Resolution" />
+
+            <TextView
+                android:id="@+id/capture_timestamp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1970-01-01" />
+
+            <TextView
+                android:id="@+id/provider"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/provider" />
+
+            <TextView
+                android:id="@+id/cloud_coverage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/cloud_coverage" />
+
+            <TextView
+                android:id="@+id/price_per_sqkm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/price_per_sqkm" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="8dp">
+        
+        <Button
+            android:id="@+id/cache_button"
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:layout_weight="1"
+            android:text="@string/cache_images"
+            android:textSize="12sp"
+            android:background="@drawable/new_dark_button_bg"
+            android:textColor="@android:color/white"
+            android:layout_marginEnd="2dp" />
+        
+        <Button
+            android:id="@+id/archive_button"
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:layout_weight="1"
+            android:text="@string/archive_image"
+            android:textSize="12sp"
+            android:background="@drawable/new_dark_button_bg"
+            android:textColor="@android:color/white"
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="2dp" />
+            
+        <Button
+            android:id="@+id/favorite_button"
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:layout_weight="1"
+            android:text="@string/favorite_image"
+            android:textSize="12sp"
+            android:background="@drawable/new_dark_button_bg"
+            android:textColor="@android:color/white"
+            android:layout_marginStart="2dp" />
+    
+    </LinearLayout>
+
+    <!-- Progress indicator for caching operations -->
+    <LinearLayout
+        android:id="@+id/progress_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
+        android:visibility="gone">
+        
+        <ProgressBar
+            android:id="@+id/cache_progress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="8dp"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical"
+            android:max="100" />
+            
+        <TextView
+            android:id="@+id/cache_progress_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@string/caching_progress"
+            android:textSize="10sp"
+            android:layout_gravity="center_vertical" />
+    
+    </LinearLayout>
+
+
+</LinearLayout>
