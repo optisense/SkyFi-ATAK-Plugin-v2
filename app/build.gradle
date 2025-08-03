@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 // Global variables for the plugin
 ext.PLUGIN_VERSION = "2.0"
-ext.ATAK_VERSION = "5.5.0"
+ext.ATAK_VERSION = "5.4.0"
 
 def supportedFlavors = [
     [ name : 'civ', default: true ],
