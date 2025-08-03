@@ -171,8 +171,7 @@ public class SkyFiDrawingToolsHandler {
         String aoiName = "AOI_" + System.currentTimeMillis();
         
         try {
-            // Calculate area for the AOI
-            double areaSqKm = calculateAreaSqKm(points);
+            // Area is already calculated and passed as parameter
             AOIManager.AOI aoi = aoiManager.createAOI(aoiName, points, areaSqKm, "default");
             String aoiId = aoi.id;
             Toast.makeText(context, "Saved as AOI: " + aoiName, Toast.LENGTH_SHORT).show();
