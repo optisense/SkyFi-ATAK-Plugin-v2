@@ -393,28 +393,24 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
     private void startATAKDrawing() {
         if (drawingHandler != null) {
             // Hide the main pane
-            if (uiService != null) {
-                uiService.hidePane(templatePane);
+            if (uiService != null && templatePane != null && uiService.isPaneVisible(templatePane)) {
+                // Close the pane by showing a different one or using back action
+                Intent intent = new Intent("com.atakmap.android.maps.UNFOCUS");
+                AtakBroadcast.getInstance().sendBroadcast(intent);
             }
             
             // Start drawing with callback
             drawingHandler.startPolygonDrawing(new SkyFiDrawingToolsHandler.ShapeCompleteListener() {
                 @Override
-                public void onShapeComplete(String shapeUid, List<GeoPoint> points, double areaSqKm) {
-                    // Convert gov.tak.api GeoPoints to com.atakmap GeoPoints
-                    List<com.atakmap.coremap.maps.coords.GeoPoint> atakPoints = new ArrayList<>();
-                    for (GeoPoint point : points) {
-                        atakPoints.add(new com.atakmap.coremap.maps.coords.GeoPoint(
-                            point.getLatitude(), 
-                            point.getLongitude()
-                        ));
-                    }
+                public void onShapeComplete(String shapeUid, List<com.atakmap.coremap.maps.coords.GeoPoint> points, double areaSqKm) {
+                    // Points are already in the correct format
                     
                     // Save as AOI
                     try {
                         AOIManager aoiManager = new AOIManager(pluginContext);
                         String aoiName = "AOI_" + System.currentTimeMillis();
-                        String aoiId = aoiManager.saveAOI(aoiName, atakPoints);
+                        AOIManager.AOI aoi = aoiManager.createAOI(aoiName, points, areaSqKm, "default");
+                        String aoiId = aoi.id;
                         
                         // Show success and offer to create order
                         new AlertDialog.Builder(MapView.getMapView().getContext())

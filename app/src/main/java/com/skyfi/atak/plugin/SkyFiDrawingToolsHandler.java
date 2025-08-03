@@ -107,12 +107,12 @@ public class SkyFiDrawingToolsHandler {
         // Register receivers
         AtakBroadcast.getInstance().registerReceiver(
             drawingCompleteReceiver, 
-            new IntentFilter(DRAWING_COMPLETE_ACTION)
+            new AtakBroadcast.DocumentedIntentFilter(DRAWING_COMPLETE_ACTION)
         );
         
         AtakBroadcast.getInstance().registerReceiver(
             shapeActionReceiver,
-            new IntentFilter(SKYFI_SHAPE_ACTION)
+            new AtakBroadcast.DocumentedIntentFilter(SKYFI_SHAPE_ACTION)
         );
     }
     
@@ -171,7 +171,10 @@ public class SkyFiDrawingToolsHandler {
         String aoiName = "AOI_" + System.currentTimeMillis();
         
         try {
-            String aoiId = aoiManager.saveAOI(aoiName, points);
+            // Calculate area for the AOI
+            double areaSqKm = calculateAreaSqKm(points);
+            AOIManager.AOI aoi = aoiManager.createAOI(aoiName, points, areaSqKm, "default");
+            String aoiId = aoi.id;
             Toast.makeText(context, "Saved as AOI: " + aoiName, Toast.LENGTH_SHORT).show();
             
             // Update shape metadata
@@ -190,9 +193,11 @@ public class SkyFiDrawingToolsHandler {
      */
     private void taskSatellite(Shape shape, List<GeoPoint> points, double areaSqKm) {
         // Check minimum area
-        if (areaSqKm < AOIManager.MIN_AOI_SIZE_SQ_KM) {
+        // Check minimum area based on default sensor type
+        double minArea = aoiManager.getMinimumAreaForSensor("default");
+        if (areaSqKm < minArea) {
             Toast.makeText(context, 
-                String.format("Area too small. Minimum: %.2f sq km", AOIManager.MIN_AOI_SIZE_SQ_KM), 
+                String.format("Area too small. Minimum: %.2f sq km", minArea), 
                 Toast.LENGTH_SHORT).show();
             return;
         }

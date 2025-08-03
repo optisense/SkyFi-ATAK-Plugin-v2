@@ -120,7 +120,6 @@
     <string name="all_aors">All AORs</string>
     <string name="rename_aoi">Rename AOI</string>
     <string name="aoi_name">AOI Name</string>
-    <string name="draw_aoi">Draw AOI</string>
     <string name="archive_image">Archive</string>
     <string name="favorite_image">Favorite</string>
     <string name="opacity">Opacity</string>
