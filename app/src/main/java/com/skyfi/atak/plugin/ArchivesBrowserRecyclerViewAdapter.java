@@ -91,7 +91,7 @@ public class ArchivesBrowserRecyclerViewAdapter extends RecyclerView.Adapter<Arc
             holder.captureTimestamp.setText(archive.getCaptureTimestamp().toString());
             holder.provider.setText(archive.getProvider());
             holder.cloudCoverage.setText(String.format(context.getString(R.string.cloud_coverage), archive.getCloudCoveragePercent()));
-            holder.pricePerSqkm.setText(String.format(context.getString(R.string.price_per_sqkm), archive.getPriceForOneSquareKm()));
+            holder.pricePerSqkm.setText(String.format(context.getString(R.string.price_per_sqkm), archive.getPriceForOneSquareKm() / 100.0));
             
             // Update button states based on preferences and cache status
             updateButtonStates(holder, archive.getArchiveId());
