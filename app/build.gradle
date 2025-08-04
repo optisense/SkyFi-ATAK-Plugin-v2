@@ -300,6 +300,11 @@ dependencies {
     implementation('androidx.cardview:cardview:1.0.0')
     // Removed Material Design - use standard Android/ATAK components instead
     
+    // AI and Machine Learning dependencies
+    implementation('com.google.code.gson:gson:2.10.1') // JSON processing for AI models
+    implementation('javax.websocket:javax.websocket-api:1.1') // WebSocket support for TAK MCP
+    implementation('org.java-websocket:Java-WebSocket:1.5.4') // WebSocket client implementation
+    
     // Test dependencies
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.mockito:mockito-core:5.11.0'
@@ -307,6 +312,10 @@ dependencies {
     testImplementation 'com.squareup.okhttp3:mockwebserver:4.12.0'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    
+    // AI-specific test dependencies
+    testImplementation 'org.mockito:mockito-inline:5.2.0' // For mocking final classes in AI services
+    testImplementation 'org.powermock:powermock-api-mockito2:2.0.9' // For advanced mocking
 }
 
 configurations.all {

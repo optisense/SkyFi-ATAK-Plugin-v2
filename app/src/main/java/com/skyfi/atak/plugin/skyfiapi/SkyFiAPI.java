@@ -1,5 +1,6 @@
 package com.skyfi.atak.plugin.skyfiapi;
 
+import com.skyfi.atak.plugin.ai.models.*;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -39,4 +40,23 @@ public interface SkyFiAPI {
 
     @GET("/platform-api/auth/whoami")
     Call<MyProfile> getProfile();
+    
+    // AI Endpoints
+    @POST("/api/v2/ai/analyze")
+    Call<ObjectDetectionResponse> analyzeImagery(@Body ObjectDetectionRequest request);
+    
+    @POST("/api/v2/ai/predict")
+    Call<PredictionResponse> generatePredictions(@Body PredictionRequest request);
+    
+    @POST("/api/v2/ai/query")
+    Call<NaturalLanguageResponse> processNaturalLanguageQuery(@Body NaturalLanguageRequest request);
+    
+    @GET("/api/v2/ai/stream")
+    Call<AIResponse> getAIUpdates(@Query("request_id") String requestId);
+    
+    @GET("/api/v2/ai/status")
+    Call<AIServiceStatus> getAIServiceStatus();
+    
+    @POST("/api/v2/ai/feedback")
+    Call<AIResponse> submitAIFeedback(@Body AIFeedback feedback);
 }

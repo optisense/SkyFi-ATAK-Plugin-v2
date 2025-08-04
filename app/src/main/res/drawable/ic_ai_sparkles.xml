@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    
+    <!-- AI Sparkles/Magic icon -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M12,2L14,8L20,6L14,10L12,16L10,10L4,6L10,8Z"/>
+    
+    <!-- Additional sparkles -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M6,2L7,5L10,4L7,6L6,9L5,6L2,4L5,5Z"/>
+    
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M18,15L19,18L22,17L19,19L18,22L17,19L14,17L17,18Z"/>
+</vector>
