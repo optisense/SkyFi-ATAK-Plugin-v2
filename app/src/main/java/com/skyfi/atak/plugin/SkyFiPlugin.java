@@ -4,6 +4,9 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Looper;
+import android.widget.ImageView;
+import android.widget.RadioGroup;
+import android.widget.Button;
 
 import com.atakmap.android.ipc.DocumentedExtra;
 import com.atakmap.android.maps.MapEvent;
@@ -36,6 +39,7 @@ import org.locationtech.jts.io.WKTWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import gov.tak.api.engine.map.coords.GeoCalculations;
@@ -68,6 +72,9 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
     private TextView radiusTextView;
     private ImageryPreviewManager previewManager;
     private SkyFiDrawingToolsHandler drawingHandler;
+    private AOIVisualizationManager aoiVisualizationManager;
+    private View currentView;
+    private View dashboardView;
 
     public SkyFiPlugin() {}
 
@@ -149,6 +156,10 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
             previewManager = new ImageryPreviewManager(pluginContext, mapView);
             // Initialize drawing handler
             drawingHandler = new SkyFiDrawingToolsHandler(pluginContext, mapView);
+            // Initialize AOI visualization
+            aoiVisualizationManager = new AOIVisualizationManager(pluginContext, mapView);
+            // Connect the visualization manager to drawing handler
+            drawingHandler.setAOIVisualizationManager(aoiVisualizationManager);
         }
     }
     
@@ -205,6 +216,11 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
         if (drawingHandler != null) {
             drawingHandler.dispose();
         }
+        
+        // Cleanup AOI visualization
+        if (aoiVisualizationManager != null) {
+            aoiVisualizationManager.dispose();
+        }
     }
 
     private void showPane() {
@@ -214,7 +230,9 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
             // In this case, using it is not necessary - but I am putting it here to remind
             // developers to look at this Inflator
 
-            mainView = PluginLayoutInflater.inflate(pluginContext, R.layout.main_layout, null);
+            dashboardView = PluginLayoutInflater.inflate(pluginContext, R.layout.skyfi_dashboard, null);
+            mainView = dashboardView;
+            currentView = dashboardView;
 
             templatePane = new PaneBuilder(mainView)
                     // relative location is set to default; pane will switch location dependent on
@@ -232,26 +250,11 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
             uiService.showPane(templatePane, null);
         }
 
-        ArrayList<String> options = new ArrayList<>();
-        options.add(pluginContext.getString(R.string.view_orders));
-        options.add(pluginContext.getString(R.string.new_order_my_location));
-        options.add(pluginContext.getString(R.string.draw_aoi));
-        options.add(pluginContext.getString(R.string.coordinate_input));
-        options.add(pluginContext.getString(R.string.manage_aois));
-        // Add preview mode toggle
-        if (previewManager != null && previewManager.isPreviewModeEnabled()) {
-            options.add(pluginContext.getString(R.string.disable_preview_mode));
-        } else {
-            options.add(pluginContext.getString(R.string.enable_preview_mode));
-        }
-        options.add(pluginContext.getString(R.string.set_api_key));
-        options.add(pluginContext.getString(R.string.my_profile));
-
-        RecyclerView recyclerView = mainView.findViewById(R.id.main_recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(pluginContext));
-        mainRecyclerViewAdapter = new MainRecyclerViewAdapter(pluginContext, options);
-        mainRecyclerViewAdapter.setClickListener(this);
-        recyclerView.setAdapter(mainRecyclerViewAdapter);
+        // Initialize dashboard UI
+        initializeDashboard();
+        
+        // Update metrics
+        updateDashboardMetrics();
     }
 
     @Override
@@ -787,5 +790,347 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
             Log.e(LOGTAG, "Failed to calculate area from WKT", e);
             return 1.0; // Default fallback
         }
+    }
+    
+    private void initializeDashboard() {
+        // Set up click listeners for dashboard cards
+        CardView newOrderCard = mainView.findViewById(R.id.new_order_card);
+        CardView viewOrdersCard = mainView.findViewById(R.id.view_orders_card);
+        CardView manageAoisCard = mainView.findViewById(R.id.manage_aois_card);
+        CardView settingsCard = mainView.findViewById(R.id.settings_card);
+        
+        newOrderCard.setOnClickListener(v -> {
+            // Show options for creating new order
+            showNewOrderOptions();
+        });
+        
+        viewOrdersCard.setOnClickListener(v -> {
+            Intent intent = new Intent();
+            intent.setAction(Orders.ACTION);
+            AtakBroadcast.getInstance().sendBroadcast(intent);
+        });
+        
+        manageAoisCard.setOnClickListener(v -> {
+            showAOIManagementDialog();
+        });
+        
+        settingsCard.setOnClickListener(v -> {
+            showSettingsMenu();
+        });
+    }
+    
+    private void updateDashboardMetrics() {
+        TextView satelliteCount = mainView.findViewById(R.id.satellite_count);
+        TextView coveragePercent = mainView.findViewById(R.id.coverage_percent);
+        TextView activeOrders = mainView.findViewById(R.id.active_orders);
+        TextView apiStatus = mainView.findViewById(R.id.api_status);
+        
+        // Check API connection status
+        apiClient.ping().enqueue(new Callback<com.skyfi.atak.plugin.skyfiapi.Pong>() {
+            @Override
+            public void onResponse(Call<com.skyfi.atak.plugin.skyfiapi.Pong> call, 
+                                 Response<com.skyfi.atak.plugin.skyfiapi.Pong> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    MapView.getMapView().post(() -> {
+                        apiStatus.setText("Connected");
+                        apiStatus.setTextColor(0xFF4CAF50); // Green
+                    });
+                }
+            }
+            
+            @Override
+            public void onFailure(Call<com.skyfi.atak.plugin.skyfiapi.Pong> call, Throwable t) {
+                MapView.getMapView().post(() -> {
+                    apiStatus.setText("Disconnected");
+                    apiStatus.setTextColor(0xFFFF5252); // Red
+                });
+            }
+        });
+        
+        // For now, use placeholder values for satellite metrics
+        // TODO: Implement real satellite feasibility calculation when API is available
+        MapView.getMapView().post(() -> {
+            satelliteCount.setText("12");
+            coveragePercent.setText("87%");
+        });
+        
+        // Get active orders count
+        apiClient.getOrders(0, 100).enqueue(new Callback<com.skyfi.atak.plugin.skyfiapi.OrderResponse>() {
+            @Override
+            public void onResponse(Call<com.skyfi.atak.plugin.skyfiapi.OrderResponse> call,
+                                 Response<com.skyfi.atak.plugin.skyfiapi.OrderResponse> response) {
+                if (response.isSuccessful() && response.body() != null && response.body().getOrders() != null) {
+                    int activeCount = 0;
+                    for (com.skyfi.atak.plugin.skyfiapi.Order order : response.body().getOrders()) {
+                        if ("ACTIVE".equals(order.getStatus()) || "PENDING".equals(order.getStatus())) {
+                            activeCount++;
+                        }
+                    }
+                    final int count = activeCount;
+                    MapView.getMapView().post(() -> activeOrders.setText(String.valueOf(count)));
+                }
+            }
+            
+            @Override
+            public void onFailure(Call<com.skyfi.atak.plugin.skyfiapi.OrderResponse> call, Throwable t) {
+                Log.e(LOGTAG, "Failed to get orders", t);
+            }
+        });
+    }
+    
+    private void showSettingsMenu() {
+        // Inflate settings menu layout
+        View settingsView = PluginLayoutInflater.inflate(pluginContext, R.layout.settings_menu, null);
+        
+        // Update the pane with settings view
+        currentView = settingsView;
+        templatePane = new PaneBuilder(settingsView)
+                .setMetaValue(Pane.RELATIVE_LOCATION, Pane.Location.Default)
+                .setMetaValue(Pane.PREFERRED_WIDTH_RATIO, 0.5D)
+                .setMetaValue(Pane.PREFERRED_HEIGHT_RATIO, 0.5D)
+                .build();
+        
+        uiService.showPane(templatePane, null);
+        
+        // Set up back button
+        ImageView backButton = settingsView.findViewById(R.id.back_button);
+        backButton.setOnClickListener(v -> {
+            // Return to dashboard
+            showPane();
+        });
+        
+        // Set up API key setting
+        CardView apiKeySetting = settingsView.findViewById(R.id.api_key_setting);
+        apiKeySetting.setOnClickListener(v -> {
+            EditText input = new EditText(MapView.getMapView().getContext());
+            String currentKey = pluginContext.getSharedPreferences("SkyFiPlugin", Context.MODE_PRIVATE)
+                .getString("apiKey", "");
+            input.setText(currentKey);
+            
+            new AlertDialog.Builder(MapView.getMapView().getContext())
+                .setTitle("Set API Key")
+                .setView(input)
+                .setPositiveButton("Save", (d, w) -> {
+                    String apiKey = input.getText().toString();
+                    if (!apiKey.isEmpty()) {
+                        pluginContext.getSharedPreferences("SkyFiPlugin", Context.MODE_PRIVATE)
+                            .edit()
+                            .putString("apiKey", apiKey)
+                            .apply();
+                        Toast.makeText(pluginContext, "API Key saved", Toast.LENGTH_SHORT).show();
+                        updateDashboardMetrics(); // Refresh connection status
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+        });
+        
+        // Set up profile setting
+        CardView profileSetting = settingsView.findViewById(R.id.profile_setting);
+        profileSetting.setOnClickListener(v -> {
+            Intent profileIntent = new Intent();
+            profileIntent.setAction(Profile.ACTION);
+            AtakBroadcast.getInstance().sendBroadcast(profileIntent);
+        });
+        
+        // Set up preview mode setting
+        CardView previewModeSetting = settingsView.findViewById(R.id.preview_mode_setting);
+        TextView previewModeTitle = settingsView.findViewById(R.id.preview_mode_title);
+        
+        // Update title based on current state
+        if (previewManager != null && previewManager.isPreviewModeEnabled()) {
+            previewModeTitle.setText("Disable Preview Mode");
+        }
+        
+        previewModeSetting.setOnClickListener(v -> {
+            if (previewManager != null) {
+                if (previewManager.isPreviewModeEnabled()) {
+                    previewManager.disablePreviewMode();
+                    Toast.makeText(pluginContext, "Preview mode disabled", Toast.LENGTH_SHORT).show();
+                    previewModeTitle.setText("Enable Preview Mode");
+                } else {
+                    previewManager.enablePreviewMode();
+                    Toast.makeText(pluginContext, "Preview mode enabled", Toast.LENGTH_SHORT).show();
+                    previewModeTitle.setText("Disable Preview Mode");
+                }
+            }
+        });
+        
+        // Set up about setting
+        CardView aboutSetting = settingsView.findViewById(R.id.about_setting);
+        aboutSetting.setOnClickListener(v -> {
+            showAboutDialog();
+        });
+    }
+    
+    private void showAboutDialog() {
+        new AlertDialog.Builder(MapView.getMapView().getContext())
+            .setTitle("About SkyFi")
+            .setMessage("SkyFi ATAK Plugin v2.0\n\n" +
+                       "Satellite tasking made simple.\n\n" +
+                       "© 2024 OptiSense")
+            .setPositiveButton("OK", null)
+            .show();
+    }
+    
+    private void showNewOrderOptions() {
+        String[] options = {
+            "Draw on Map",
+            "From GPS Location",
+            "Enter Coordinates",
+            "From Existing Shape"
+        };
+        
+        new AlertDialog.Builder(MapView.getMapView().getContext())
+            .setTitle("Create New AOI")
+            .setItems(options, (dialog, which) -> {
+                switch (which) {
+                    case 0: // Draw on Map
+                        uiService.closePane(templatePane);
+                        startATAKDrawing();
+                        break;
+                    case 1: // From GPS Location
+                        showGPSAOIDialog();
+                        break;
+                    case 2: // Enter Coordinates
+                        showCoordinateInputDialog();
+                        break;
+                    case 3: // From Existing Shape
+                        Toast.makeText(pluginContext, "Select a shape on the map", Toast.LENGTH_LONG).show();
+                        uiService.closePane(templatePane);
+                        break;
+                }
+            })
+            .setNegativeButton("Cancel", null)
+            .show();
+    }
+    
+    private void showGPSAOIDialog() {
+        View dialogView = PluginLayoutInflater.inflate(pluginContext, R.layout.gps_aoi_dialog, null);
+        
+        // Get current location
+        com.atakmap.coremap.maps.coords.GeoPoint currentLoc = mapView.getSelfMarker().getPoint();
+        
+        TextView locationText = dialogView.findViewById(R.id.current_location_text);
+        locationText.setText(CoordinateFormatUtilities.formatToString(currentLoc, CoordinateFormat.DD));
+        
+        EditText nameInput = dialogView.findViewById(R.id.aoi_name_input);
+        nameInput.setText("GPS_AOI_" + System.currentTimeMillis());
+        
+        SeekBar sizeSeekbar = dialogView.findViewById(R.id.size_seekbar);
+        TextView sizeText = dialogView.findViewById(R.id.size_text);
+        TextView sizeWarning = dialogView.findViewById(R.id.size_warning);
+        
+        // Calculate minimum diameter for 5 sq km area
+        double minDiameterKm = Math.sqrt(5.0) * 2; // For square
+        int minSeekBar = (int)Math.ceil(minDiameterKm);
+        
+        sizeSeekbar.setMin(minSeekBar);
+        sizeSeekbar.setMax(50);
+        sizeSeekbar.setProgress(minSeekBar);
+        
+        sizeSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                double areaSqKm = (progress * progress) / 4.0; // Square area
+                sizeText.setText(String.format("%d km diameter (%.1f sq km)", progress, areaSqKm));
+                
+                if (areaSqKm < 5.0) {
+                    sizeWarning.setVisibility(View.VISIBLE);
+                } else {
+                    sizeWarning.setVisibility(View.GONE);
+                }
+            }
+            
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+            
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
+        
+        AlertDialog dialog = new AlertDialog.Builder(MapView.getMapView().getContext())
+            .setView(dialogView)
+            .setPositiveButton("Create AOI", null) // Set to null to override later
+            .setNegativeButton("Cancel", null)
+            .create();
+            
+        dialog.show();
+        
+        // Override positive button to prevent auto-dismiss
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+            String aoiName = nameInput.getText().toString().trim();
+            if (aoiName.isEmpty()) {
+                Toast.makeText(pluginContext, "Please enter AOI name", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            
+            int diameter = sizeSeekbar.getProgress();
+            double areaSqKm = (diameter * diameter) / 4.0;
+            
+            // Create square AOI around GPS location
+            List<com.atakmap.coremap.maps.coords.GeoPoint> points = createSquareAround(currentLoc, diameter / 2.0);
+            
+            try {
+                AOIManager aoiManager = new AOIManager(pluginContext);
+                AOIManager.AOI aoi = aoiManager.createAOI(aoiName, points, areaSqKm, "gps_location");
+                
+                Toast.makeText(pluginContext, "AOI created: " + aoiName, Toast.LENGTH_SHORT).show();
+                
+                // Visualize the AOI
+                if (aoiVisualizationManager != null) {
+                    aoiVisualizationManager.displayAOI(aoi);
+                }
+                
+                // Zoom to AOI
+                mapView.getMapController().panTo(currentLoc, true);
+                
+                dialog.dismiss();
+                
+                // Ask if user wants to task satellite
+                new AlertDialog.Builder(MapView.getMapView().getContext())
+                    .setTitle("AOI Created")
+                    .setMessage("Would you like to task a satellite for this AOI?")
+                    .setPositiveButton("Yes", (d, w) -> {
+                        Intent intent = new Intent();
+                        intent.setAction(TaskingOrderFragment.ACTION);
+                        intent.putExtra("aoi_id", aoi.id);
+                        AtakBroadcast.getInstance().sendBroadcast(intent);
+                    })
+                    .setNegativeButton("No", null)
+                    .show();
+                    
+            } catch (Exception e) {
+                Log.e(LOGTAG, "Failed to create GPS AOI", e);
+                Toast.makeText(pluginContext, "Failed to create AOI: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    
+    private List<com.atakmap.coremap.maps.coords.GeoPoint> createSquareAround(
+            com.atakmap.coremap.maps.coords.GeoPoint center, double radiusKm) {
+        List<com.atakmap.coremap.maps.coords.GeoPoint> points = new ArrayList<>();
+        
+        // Convert radius to meters
+        double radiusMeters = radiusKm * 1000;
+        
+        // Calculate corner points
+        double lat = center.getLatitude();
+        double lon = center.getLongitude();
+        
+        // Approximate degrees per meter
+        double metersPerDegreeLat = 111132.92 - 559.82 * Math.cos(2 * Math.toRadians(lat));
+        double metersPerDegreeLon = 111412.84 * Math.cos(Math.toRadians(lat));
+        
+        double deltaLat = radiusMeters / metersPerDegreeLat;
+        double deltaLon = radiusMeters / metersPerDegreeLon;
+        
+        // Create square corners
+        points.add(new com.atakmap.coremap.maps.coords.GeoPoint(lat - deltaLat, lon - deltaLon)); // SW
+        points.add(new com.atakmap.coremap.maps.coords.GeoPoint(lat - deltaLat, lon + deltaLon)); // SE  
+        points.add(new com.atakmap.coremap.maps.coords.GeoPoint(lat + deltaLat, lon + deltaLon)); // NE
+        points.add(new com.atakmap.coremap.maps.coords.GeoPoint(lat + deltaLat, lon - deltaLon)); // NW
+        
+        return points;
     }
 }

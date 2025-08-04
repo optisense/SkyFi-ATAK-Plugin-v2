@@ -11,6 +11,9 @@
         android:theme="@style/AppTheme" >
         <meta-data android:name="plugin-api" android:value="${atakApiVersion}"/>
         <meta-data android:name="app_desc" android:value="@string/app_desc"/>
+        
+        <!-- SkyFi MapComponent for menu integration -->
+        <meta-data android:name="component" android:value="com.skyfi.atak.plugin.SkyFiMapComponent"/>
 
 
         <!-- This fictitious activity entry allow for ATAK 4.6.0.2 and newer to perform

@@ -34,6 +34,7 @@ public class SkyFiDrawingToolsHandler {
     private final Context context;
     private final MapView mapView;
     private final AOIManager aoiManager;
+    private AOIVisualizationManager aoiVisualizationManager;
     private ShapeCompleteListener listener;
     private BroadcastReceiver drawingCompleteReceiver;
     private BroadcastReceiver shapeActionReceiver;
@@ -48,6 +49,10 @@ public class SkyFiDrawingToolsHandler {
         this.mapView = mapView;
         this.aoiManager = new AOIManager(context);
         registerReceivers();
+    }
+    
+    public void setAOIVisualizationManager(AOIVisualizationManager manager) {
+        this.aoiVisualizationManager = manager;
     }
     
     /**
@@ -180,6 +185,11 @@ public class SkyFiDrawingToolsHandler {
             shape.setMetaString("skyfi_aoi_id", aoiId);
             shape.setMetaString("skyfi_aoi_name", aoiName);
             shape.setTitle("SkyFi AOI: " + aoiName);
+            
+            // Visualize the AOI on map
+            if (aoiVisualizationManager != null) {
+                aoiVisualizationManager.displayAOI(aoi);
+            }
             
         } catch (Exception e) {
             Log.e(TAG, "Failed to save AOI", e);

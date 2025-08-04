@@ -54,6 +54,9 @@ buttonWidth='87' >
         disableIconSwap='true'
         onClick='actions/move_editable_polyline_vertex.xml' />
 
-    <button icon="skyfi_logo.png" onClick="skyfi.xml" />
+    <button 
+        icon="skyfi_logo.png" 
+        onClick="skyfi.xml"
+        tooltip="SkyFi Options" />
 
 </menu>
