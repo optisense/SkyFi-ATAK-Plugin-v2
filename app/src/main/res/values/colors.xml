@@ -1,8 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     
+    <!-- Core Colors -->
     <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+    
+    <!-- SkyFi Brand Colors - Light Mode -->
+    <color name="skyfi_primary">#007AFF</color>
+    <color name="skyfi_primary_dark">#0056CC</color>
+    <color name="skyfi_accent">#FF6B6B</color>
+    <color name="skyfi_background">#F2F2F7</color>
+    <color name="skyfi_surface">#FFFFFF</color>
+    <color name="skyfi_text_primary">#000000</color>
+    <color name="skyfi_text_secondary">#6C6C70</color>
+    <color name="skyfi_divider">#E5E5EA</color>
+    
+    <!-- Legacy Colors -->
     <color name="darker_gray">#121212</color>
     <color name="heading_yellow">#dfb228</color>
+    
+    <!-- Card and Shadow Colors - Light Mode -->
+    <color name="card_shadow">#1A000000</color>
+    <color name="card_background">@color/skyfi_surface</color>
+    
+    <!-- Button Colors - Light Mode -->
+    <color name="button_primary_bg">@color/skyfi_primary</color>
+    <color name="button_primary_text">@color/white</color>
+    <color name="button_secondary_bg">@color/skyfi_surface</color>
+    <color name="button_secondary_text">@color/skyfi_primary</color>
 
 </resources>

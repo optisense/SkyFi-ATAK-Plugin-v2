@@ -1,5 +1,6 @@
 package com.skyfi.atak.plugin;
 
+import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
@@ -287,7 +288,7 @@ public class AIQuickActionsMenu extends FrameLayout {
         }
         
         openAnimatorSet = new AnimatorSet();
-        openAnimatorSet.playTogether(animators);
+        openAnimatorSet.playTogether(animators.toArray(new Animator[0]));
         openAnimatorSet.addListener(new AnimatorSet.AnimatorListener() {
             @Override
             public void onAnimationStart(android.animation.Animator animation) {}
@@ -352,7 +353,7 @@ public class AIQuickActionsMenu extends FrameLayout {
         }
         
         closeAnimatorSet = new AnimatorSet();
-        closeAnimatorSet.playTogether(animators);
+        closeAnimatorSet.playTogether(animators.toArray(new Animator[0]));
         closeAnimatorSet.addListener(new AnimatorSet.AnimatorListener() {
             @Override
             public void onAnimationStart(android.animation.Animator animation) {}

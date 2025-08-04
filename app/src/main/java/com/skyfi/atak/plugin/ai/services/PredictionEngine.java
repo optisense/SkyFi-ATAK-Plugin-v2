@@ -463,7 +463,7 @@ public class PredictionEngine {
         return predictions;
     }
     
-    private PredictionResponse.Prediction.RiskLevel determineRiskLevel(double probability) {
+    private static PredictionResponse.Prediction.RiskLevel determineRiskLevel(double probability) {
         if (probability > 0.8) return PredictionResponse.Prediction.RiskLevel.HIGH;
         if (probability > 0.6) return PredictionResponse.Prediction.RiskLevel.MEDIUM;
         return PredictionResponse.Prediction.RiskLevel.LOW;

@@ -20,7 +20,8 @@
 -renamesourcefileattribute SourceFile
 -keepattributes SourceFile,LineNumberTable
 
--applymapping <atak.proguard.mapping>
+# Mapping file not available in this SDK version
+# -applymapping <atak.proguard.mapping>
 
 -keepattributes *Annotation*
 -keepattributes Signature, InnerClasses

@@ -98,7 +98,7 @@
     <string name="window_start_error">The start window is required and must be at least 36 hours in the future</string>
     <string name="window_end_error">The ending window is required and should be after the start window</string>
     <string name="my_profile_header">SkyFi / My Profile</string>
-    <string name="name">Name: %s %s</string>
+    <string name="name">Name: %1$s %2$s</string>
     <string name="email">Email: %s</string>
     <string name="budget_usage">Budget Usage: $%d</string>
     <string name="total_budget">Total Budget: $%d</string>

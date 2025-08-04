@@ -75,6 +75,7 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
     private AOIVisualizationManager aoiVisualizationManager;
     private View currentView;
     private View dashboardView;
+    private AIMapOverlay aiMapOverlay;
 
     public SkyFiPlugin() {}
 
@@ -160,6 +161,9 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
             aoiVisualizationManager = new AOIVisualizationManager(pluginContext, mapView);
             // Connect the visualization manager to drawing handler
             drawingHandler.setAOIVisualizationManager(aoiVisualizationManager);
+            // Initialize AI overlay system
+            aiMapOverlay = new AIMapOverlay(mapView, pluginContext);
+            mapView.getMapOverlayManager().addOverlay(aiMapOverlay);
         }
     }
     
@@ -220,6 +224,12 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
         // Cleanup AOI visualization
         if (aoiVisualizationManager != null) {
             aoiVisualizationManager.dispose();
+        }
+        
+        // Cleanup AI overlay
+        if (aiMapOverlay != null) {
+            mapView.getMapOverlayManager().removeOverlay(aiMapOverlay);
+            aiMapOverlay.dispose();
         }
     }
 
