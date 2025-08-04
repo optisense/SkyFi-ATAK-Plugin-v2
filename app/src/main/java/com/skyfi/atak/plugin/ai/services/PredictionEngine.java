@@ -59,14 +59,29 @@ public class PredictionEngine {
             }
             
             // Generate predictions based on type
-            PredictionResponse response = switch (request.getPredictionType()) {
-                case POPULATION_MOVEMENT -> generatePopulationMovementPredictions(request);
-                case WEATHER_IMPACT -> generateWeatherImpactPredictions(request);
-                case THREAT_ASSESSMENT -> generateThreatAssessmentPredictions(request);
-                case ROUTE_OPTIMIZATION -> generateRouteOptimizationPredictions(request);
-                case RESOURCE_REQUIREMENTS -> generateResourceRequirementPredictions(request);
-                case ACTIVITY_PATTERNS -> generateActivityPatternPredictions(request);
-            };
+            PredictionResponse response;
+            switch (request.getPredictionType()) {
+                case POPULATION_MOVEMENT:
+                    response = generatePopulationMovementPredictions(request);
+                    break;
+                case WEATHER_IMPACT:
+                    response = generateWeatherImpactPredictions(request);
+                    break;
+                case THREAT_ASSESSMENT:
+                    response = generateThreatAssessmentPredictions(request);
+                    break;
+                case ROUTE_OPTIMIZATION:
+                    response = generateRouteOptimizationPredictions(request);
+                    break;
+                case RESOURCE_REQUIREMENTS:
+                    response = generateResourceRequirementPredictions(request);
+                    break;
+                case ACTIVITY_PATTERNS:
+                    response = generateActivityPatternPredictions(request);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unknown prediction type: " + request.getPredictionType());
+            }
             
             // Cache the result
             int cacheTtl = getCacheTtlForPredictionType(request.getPredictionType());
@@ -705,14 +720,22 @@ public class PredictionEngine {
     }
     
     private int getCacheTtlForPredictionType(PredictionRequest.PredictionType type) {
-        return switch (type) {
-            case WEATHER_IMPACT -> 1800; // 30 minutes - weather changes quickly
-            case POPULATION_MOVEMENT -> 3600; // 1 hour
-            case THREAT_ASSESSMENT -> 7200; // 2 hours
-            case ROUTE_OPTIMIZATION -> 14400; // 4 hours - routes don't change often
-            case RESOURCE_REQUIREMENTS -> 10800; // 3 hours
-            case ACTIVITY_PATTERNS -> 21600; // 6 hours - patterns are more stable
-        };
+        switch (type) {
+            case WEATHER_IMPACT:
+                return 1800; // 30 minutes - weather changes quickly
+            case POPULATION_MOVEMENT:
+                return 3600; // 1 hour
+            case THREAT_ASSESSMENT:
+                return 7200; // 2 hours
+            case ROUTE_OPTIMIZATION:
+                return 14400; // 4 hours - routes don't change often
+            case RESOURCE_REQUIREMENTS:
+                return 10800; // 3 hours
+            case ACTIVITY_PATTERNS:
+                return 21600; // 6 hours - patterns are more stable
+            default:
+                return 3600; // Default 1 hour
+        }
     }
     
     private String generateCacheKey(PredictionRequest request) {

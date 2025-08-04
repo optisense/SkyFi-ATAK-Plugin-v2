@@ -120,7 +120,7 @@
                 android:src="@drawable/ic_close"
                 android:tint="#CCFFFFFF"
                 android:clickable="true"
-                android:background="?attr/selectableItemBackgroundBorderless"
+                android:background="?android:attr/selectableItemBackground"
                 android:padding="2dp" />
 
         </LinearLayout>
