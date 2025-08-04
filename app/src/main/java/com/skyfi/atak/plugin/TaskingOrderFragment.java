@@ -827,13 +827,13 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
                             Geometry geometry = reader.read(taskingOrder.getAoi());
                             double area = calculatePolygonArea(geometry.getCoordinates());
 
-                            double total = area * pricing.getTaskingPriceOneSqkm();
+                            double total = area * pricing.getTaskingPriceOneSqkm() / 100.0;
                             if (!pricing.getPriorityEnabled()) {
                                 prioritize.setChecked(false);
                                 pricing.setPriorityEnabled(false);
                             }
                             else if (prioritize.isChecked()) {
-                                total += area * pricing.getPriorityTaskingPriceOneSqkm();
+                                total += area * pricing.getPriorityTaskingPriceOneSqkm() / 100.0;
                             }
 
                             // Handle assured tasking pricing
@@ -849,7 +849,7 @@ public class TaskingOrderFragment extends DropDownReceiver implements DropDown.O
 
                             totalPrice.setText(String.format(context.getString(R.string.total_price), total));
 
-                            priorityPrice.setText(String.format(context.getString(R.string.priority_extra_cost), area * pricing.getPriorityTaskingPriceOneSqkm()));
+                            priorityPrice.setText(String.format(context.getString(R.string.priority_extra_cost), area * pricing.getPriorityTaskingPriceOneSqkm() / 100.0));
                             
                             // Show assured tasking price if available
                             if (pricing.getAssuredTaskingPriceOneSqkm() != null) {

@@ -60,7 +60,7 @@ public class OrdersRecyclerViewAdapter extends RecyclerView.Adapter<OrdersRecycl
 
             holder.orderName.setText(order.getOrderName());
             holder.aoiSqkm.setText(String.valueOf(order.getAoiSqkm()));
-            holder.cost.setText(String.format("$%s", order.getOrderCost()));
+            holder.cost.setText(String.format("$%.2f", order.getOrderCost() / 100.0));
 
             holder.status.setText(order.getStatus());
             if (order.getStatus().equals("PROCESSING_COMPLETE"))
