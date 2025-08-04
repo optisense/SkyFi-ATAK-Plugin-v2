@@ -6,6 +6,9 @@
 *.ap_
 *.aab
 
+# But allow APKs in builds directory
+!builds/**/*.apk
+
 # Files for the ART/Dalvik VM
 *.dex
 

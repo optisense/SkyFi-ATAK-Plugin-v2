@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <com.atakmap.android.gui.PanEditTextPreference
-        android:key="pref_api_key"
-        android:title="@string/api_key" />
-</PreferenceScreen>
