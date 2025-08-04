@@ -136,8 +136,8 @@ SkyFi ATAK Plugin v2 - Unsigned Build for TAK.gov
 Build Information:
 - Flavor: ${BUILD_FLAVOR^^}
 - Date: $(date +"%Y-%m-%d %H:%M:%S UTC")
-- Git SHA: ${{ github.sha }}
-- Branch: ${{ github.ref_name }}
+- Git SHA: ${GITHUB_SHA}
+- Branch: ${GITHUB_REF_NAME}
 - ATAK Version: 5.4.0
 
 This APK is UNSIGNED and ready for TAK.gov submission.
