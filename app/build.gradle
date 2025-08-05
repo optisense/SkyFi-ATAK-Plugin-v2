@@ -143,6 +143,10 @@ android {
         }
         unsigned {
             // No signing config - for TAK.gov submission
+            storeFile null
+            storePassword null
+            keyAlias null
+            keyPassword null
         }
     }
 
