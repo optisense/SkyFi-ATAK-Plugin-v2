@@ -165,3 +165,27 @@ google-services.json
 *.hprof
 
 skyfi-atak-v2.0-beta1-bundle.zip
+
+# Additional Security Patterns
+*.p12
+*.pem
+*.key
+keystore.properties
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Backup files
+*.bak
+*.backup
+*.tmp
+
+# Temporary files
+temp/
+tmp/
+
+# OS files
+.DS_Store
+Thumbs.db

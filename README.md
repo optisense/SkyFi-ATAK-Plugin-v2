@@ -1,10 +1,33 @@
-# SkyFi ATAK Plugin v2
+# 🛰️ SkyFi ATAK Plugin v2
+
+```
+   _____ _          ______ _       _______ _____ _  __
+  / ____| |        |  ____(_)   /\|__   __|  __ \ |/ /
+ | (___ | | ___   _| |__   _   /  \  | |  | |__) | ' / 
+  \___ \| |/ / | | |  __| | | / /\ \ | |  |  _  /|  <  
+  ____) |   <| |_| | |    | |/ ____ \| |  | | \ \| . \ 
+ |_____/|_|\_\\__, |_|    |_/_/    \_\_|  |_|  \_\_|\_\
+               __/ |                                   
+              |___/                                    
+```
 
 [![Build and Release](https://github.com/optisense/SkyFi-ATAK-Plugin-v2/actions/workflows/build-release.yml/badge.svg)](https://github.com/optisense/SkyFi-ATAK-Plugin-v2/actions/workflows/build-release.yml)
 [![PR Validation](https://github.com/optisense/SkyFi-ATAK-Plugin-v2/actions/workflows/pr-validation.yml/badge.svg)](https://github.com/optisense/SkyFi-ATAK-Plugin-v2/actions/workflows/pr-validation.yml)
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/optisense/SkyFi-ATAK-Plugin-v2)](https://github.com/optisense/SkyFi-ATAK-Plugin-v2/releases)
+[![Android](https://img.shields.io/badge/Android-5.0%2B-green.svg)](https://developer.android.com)
+[![ATAK](https://img.shields.io/badge/ATAK-5.4.0-blue.svg)](https://tak.gov)
+[![Java](https://img.shields.io/badge/Java-11-orange.svg)](https://openjdk.java.net/projects/jdk/11/)
 
-_________________________________________________________________
+> **🆕 New to ATAK?** Check out our [Complete Onboarding Guide](ONBOARDING_GUIDE.md) for step-by-step setup and tutorials!
+
+## 🚀 Quick Links
+- 📥 [Download Latest Release](https://github.com/optisense/SkyFi-ATAK-Plugin-v2/releases)
+- 📖 [Complete Onboarding Guide](ONBOARDING_GUIDE.md) - **Start here for setup!**
+- 🐛 [Report Issues](https://github.com/optisense/SkyFi-ATAK-Plugin-v2/issues)
+- 🤝 [Contributing Guide](CONTRIBUTING.md)
+
+---
+
 ## PURPOSE AND CAPABILITIES
 
 SkyFi ATAK Plugin v2 integrates satellite imagery and geospatial intelligence capabilities directly into the Android Team Awareness Kit (ATAK). This plugin enables Space Force and military personnel to access real-time satellite data, perform mission planning, and enhance situational awareness through advanced geospatial tools.
