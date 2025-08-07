@@ -130,13 +130,15 @@ android {
 
     signingConfigs {
         debug {
-            storeFile file("${buildDir}/android_keystore")
+            // Use the SDK keystore for local debug builds
+            storeFile file("${rootDir}/sdk/ATAK-CIV-5.4.0.18-SDK/android_keystore")
             storePassword "tnttnt"
             keyAlias "wintec_mapping"
             keyPassword "tnttnt"
         }
         release {
-            storeFile file("${buildDir}/android_keystore")
+            // Use the SDK keystore for local release builds
+            storeFile file("${rootDir}/sdk/ATAK-CIV-5.4.0.18-SDK/android_keystore")
             storePassword "tnttnt"
             keyAlias "wintec_mapping"
             keyPassword "tnttnt"

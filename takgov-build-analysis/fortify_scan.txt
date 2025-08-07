@@ -1,0 +1,20 @@
+[2025-08-06 23:11:15.335 INFO  1451]
+Analyzing 324 source file(s)
+[2025-08-06 23:11:21.801 WARN  1214]
+Multiple definitions found for class com.atakmap.android.plugintemplate.plugin.PluginNativeLoader (/app/plugin-src/SkyFi-ATAK-Plugin-v2/sdk/ATAK-CIV-5.4.0.18-SDK/samples/PluginTemplateLegacy/app/src/main/java/com/atakmap/android/plugintemplate/plugin/PluginNativeLoader.java and /app/plugin-src/SkyFi-ATAK-Plugin-v2/sdk/ATAK-CIV-5.4.0.18-SDK/samples/plugintemplate/app/src/main/java/com/atakmap/android/plugintemplate/plugin/PluginNativeLoader.java).
+[2025-08-06 23:11:21.830 WARN  1214]
+Multiple definitions found for class com.atakmap.android.plugintemplate.PluginTemplateDropDownReceiver (/app/plugin-src/SkyFi-ATAK-Plugin-v2/sdk/ATAK-CIV-5.4.0.18-SDK/samples/PluginTemplateLegacy/app/src/main/java/com/atakmap/android/plugintemplate/PluginTemplateDropDownReceiver.java and /app/plugin-src/SkyFi-ATAK-Plugin-v2/sdk/ATAK-CIV-5.4.0.18-SDK/samples/plugintemplate-compose/app/src/main/java/com/atakmap/android/plugintemplate/PluginTemplateDropDownReceiver.kt).
+[2025-08-06 23:11:21.847 WARN  1214]
+Multiple definitions found for class com.atakmap.android.plugintemplate.PluginTemplateMapComponent (/app/plugin-src/SkyFi-ATAK-Plugin-v2/sdk/ATAK-CIV-5.4.0.18-SDK/samples/PluginTemplateLegacy/app/src/main/java/com/atakmap/android/plugintemplate/PluginTemplateMapComponent.java and /app/plugin-src/SkyFi-ATAK-Plugin-v2/sdk/ATAK-CIV-5.4.0.18-SDK/samples/plugintemplate-compose/app/src/main/java/com/atakmap/android/plugintemplate/PluginTemplateMapComponent.java).
+[2025-08-06 23:11:21.855 WARN  1214]
+Multiple definitions found for class com.atakmap.android.plugintemplate.plugin.PluginNativeLoader (/app/plugin-src/SkyFi-ATAK-Plugin-v2/sdk/ATAK-CIV-5.4.0.18-SDK/samples/PluginTemplateLegacy/app/src/main/java/com/atakmap/android/plugintemplate/plugin/PluginNativeLoader.java and /app/plugin-src/SkyFi-ATAK-Plugin-v2/sdk/ATAK-CIV-5.4.0.18-SDK/samples/plugintemplate-compose/app/src/main/java/com/atakmap/android/plugintemplate/plugin/PluginNativeLoader.java).
+[2025-08-06 23:11:21.862 WARN  1214]
+Multiple definitions found for class com.atakmap.android.plugintemplate.plugin.PluginTemplateLifecycle (/app/plugin-src/SkyFi-ATAK-Plugin-v2/sdk/ATAK-CIV-5.4.0.18-SDK/samples/PluginTemplateLegacy/app/src/main/java/com/atakmap/android/plugintemplate/plugin/PluginTemplateLifecycle.java and /app/plugin-src/SkyFi-ATAK-Plugin-v2/sdk/ATAK-CIV-5.4.0.18-SDK/samples/plugintemplate-compose/app/src/main/java/com/atakmap/android/plugintemplate/plugin/PluginTemplateLifecycle.java).
+[2025-08-06 23:11:21.867 WARN  1214]
+Multiple definitions found for class com.atakmap.android.plugintemplate.plugin.PluginTemplateTool (/app/plugin-src/SkyFi-ATAK-Plugin-v2/sdk/ATAK-CIV-5.4.0.18-SDK/samples/PluginTemplateLegacy/app/src/main/java/com/atakmap/android/plugintemplate/plugin/PluginTemplateTool.java and /app/plugin-src/SkyFi-ATAK-Plugin-v2/sdk/ATAK-CIV-5.4.0.18-SDK/samples/plugintemplate-compose/app/src/main/java/com/atakmap/android/plugintemplate/plugin/PluginTemplateTool.java).
+[2025-08-06 23:12:22.547 INFO  1455]
+Configuration analysis complete
+[2025-08-06 23:13:57.972 INFO  1458]
+Rendering 435 results
+[2025-08-06 23:14:15.684 INFO  1459]
+Analysis completed in 02:43
