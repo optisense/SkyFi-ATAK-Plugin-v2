@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<menu>
+    <!-- SkyFi menu entry for rectangles/polygons -->
+    <entry class="shape" 
+           id="skyfi_aoi_save" 
+           icon="asset://icons/skyfi_logo.png" 
+           text="SkyFi AOI" 
+           action="broadcast" 
+           intent="com.skyfi.atak.RADIAL_MENU_ACTION"/>
+           
+    <!-- SkyFi menu entry for circles -->
+    <entry class="circle" 
+           id="skyfi_aoi_save_circle" 
+           icon="asset://icons/skyfi_logo.png" 
+           text="SkyFi AOI" 
+           action="broadcast" 
+           intent="com.skyfi.atak.RADIAL_MENU_ACTION"/>
+           
+    <!-- SkyFi menu entry for ellipses -->
+    <entry class="ellipse" 
+           id="skyfi_aoi_save_ellipse" 
+           icon="asset://icons/skyfi_logo.png" 
+           text="SkyFi AOI" 
+           action="broadcast" 
+           intent="com.skyfi.atak.RADIAL_MENU_ACTION"/>
+           
+    <!-- SkyFi menu entry for drawing shapes -->
+    <entry class="u-d-r" 
+           id="skyfi_aoi_save_drawing" 
+           icon="asset://icons/skyfi_logo.png" 
+           text="SkyFi AOI" 
+           action="broadcast" 
+           intent="com.skyfi.atak.RADIAL_MENU_ACTION"/>
+           
+    <!-- SkyFi menu entry for freehand drawings -->
+    <entry class="u-d-f" 
+           id="skyfi_aoi_save_freehand" 
+           icon="asset://icons/skyfi_logo.png" 
+           text="SkyFi AOI" 
+           action="broadcast" 
+           intent="com.skyfi.atak.RADIAL_MENU_ACTION"/>
+</menu>

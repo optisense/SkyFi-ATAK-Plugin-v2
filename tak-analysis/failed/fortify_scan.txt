@@ -1,0 +1,8 @@
+[2025-08-05 13:16:36.746 INFO  1451]
+Analyzing 58 source file(s)
+[2025-08-05 13:17:13.073 INFO  1455]
+Configuration analysis complete
+[2025-08-05 13:17:44.222 INFO  1458]
+Rendering 105 results
+[2025-08-05 13:17:49.161 INFO  1459]
+Analysis completed in 01:07

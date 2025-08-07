@@ -26,6 +26,7 @@ import com.atakmap.coremap.maps.coords.GeoPoint;
 import com.skyfi.atak.plugin.skyfiapi.Order;
 import com.skyfi.atak.plugin.skyfiapi.OrderResponse;
 import com.skyfi.atak.plugin.skyfiapi.SkyFiAPI;
+import com.skyfi.atak.plugin.cog.AddCOGDialog;
 
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
@@ -72,6 +73,7 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
 
     Button nextButton;
     Button previousButton;
+    Button testCogButton;
     SwipeRefreshLayout updateOrders;
 
     public Orders(MapView mapView, Context context) {
@@ -89,6 +91,7 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
 
         nextButton = mainView.findViewById(R.id.next_button);
         previousButton = mainView.findViewById(R.id.previous_button);
+        testCogButton = mainView.findViewById(R.id.test_cog_button);
 
         nextButton.setOnClickListener(view -> {
             pageNumber++;
@@ -98,6 +101,13 @@ public class Orders extends DropDownReceiver implements DropDown.OnStateListener
         previousButton.setOnClickListener(view -> {
             pageNumber--;
             getOrders();
+        });
+        
+        // Test COG button - opens dialog to add COG layers
+        testCogButton.setOnClickListener(view -> {
+            Log.d(LOGTAG, "Opening COG test dialog");
+            AddCOGDialog cogDialog = new AddCOGDialog(context, getMapView());
+            cogDialog.showAddDialog();
         });
 
         updateOrders = mainView.findViewById(R.id.pull_to_refresh);

@@ -11,6 +11,7 @@ import android.widget.Button;
 import com.atakmap.android.ipc.DocumentedExtra;
 import com.atakmap.android.maps.MapEvent;
 import com.atakmap.android.maps.MapEventDispatcher;
+import com.atakmap.android.maps.MapItem;
 import com.atakmap.coremap.log.Log;
 import com.atakmap.coremap.conversions.CoordinateFormat;
 import com.atakmap.coremap.conversions.CoordinateFormatUtilities;
@@ -73,6 +74,9 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
     private ImageryPreviewManager previewManager;
     private SkyFiDrawingToolsHandler drawingHandler;
     private AOIVisualizationManager aoiVisualizationManager;
+    private SkyFiMapComponent mapComponent;
+    private SkyFiRadialMenuReceiver radialMenuReceiver;
+    private ShapeSelectionTool shapeSelectionTool;
     private View currentView;
     private View dashboardView;
 
@@ -160,6 +164,19 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
             aoiVisualizationManager = new AOIVisualizationManager(pluginContext, mapView);
             // Connect the visualization manager to drawing handler
             drawingHandler.setAOIVisualizationManager(aoiVisualizationManager);
+            
+            // Initialize map component for radial menu integration
+            mapComponent = new SkyFiMapComponent();
+            mapComponent.onCreate(pluginContext, null, mapView);
+            
+            // Initialize radial menu receiver directly
+            radialMenuReceiver = new SkyFiRadialMenuReceiver(pluginContext, mapView);
+            radialMenuReceiver.initialize();
+            
+            // Initialize shape selection tool
+            shapeSelectionTool = new ShapeSelectionTool(pluginContext, mapView);
+            
+            Log.d(LOGTAG, "Radial menu integration and shape selection tool initialized");
         }
     }
     
@@ -220,6 +237,26 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
         // Cleanup AOI visualization
         if (aoiVisualizationManager != null) {
             aoiVisualizationManager.dispose();
+        }
+        
+        // Cleanup shape selection tool with proper lifecycle management
+        if (shapeSelectionTool != null) {
+            try {
+                if (shapeSelectionTool.isActive()) {
+                    shapeSelectionTool.stopShapeSelection();
+                    Log.d(LOGTAG, "Shape selection tool deactivated during plugin stop");
+                }
+                // Additional cleanup if needed
+                shapeSelectionTool = null;
+                Log.d(LOGTAG, "Shape selection tool cleanup completed");
+            } catch (Exception e) {
+                Log.e(LOGTAG, "Error during shape selection tool cleanup", e);
+            }
+        }
+        
+        // Cleanup radial menu receiver
+        if (radialMenuReceiver != null) {
+            radialMenuReceiver.dispose();
         }
     }
 
@@ -391,7 +428,82 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
     }
 
     /**
-     * Start ATAK's built-in drawing tools for AOI creation
+     * Start our custom polygon drawing tool for AOI creation
+     */
+    private void startCustomDrawing() {
+        PolygonDrawingHandler customDrawingHandler = new PolygonDrawingHandler(pluginContext, mapView);
+        
+        customDrawingHandler.startPolygonDrawing(new PolygonDrawingHandler.PolygonCompleteListener() {
+            @Override
+            public void onPolygonComplete(List<com.atakmap.coremap.maps.coords.GeoPoint> points, double areaSqKm) {
+                try {
+                    AOIManager aoiManager = new AOIManager(pluginContext);
+                    
+                    // Show AOI naming dialog
+                    showAOINameDialog(points, areaSqKm, aoiManager);
+                    
+                } catch (Exception e) {
+                    Log.e(LOGTAG, "Failed to handle polygon completion", e);
+                    Toast.makeText(pluginContext, "Failed to save AOI: " + e.getMessage(), 
+                        Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onPolygonCancelled() {
+                Toast.makeText(pluginContext, "Drawing cancelled", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    
+    /**
+     * Show dialog to name the AOI and offer to create a tasking order
+     */
+    private void showAOINameDialog(List<com.atakmap.coremap.maps.coords.GeoPoint> points, double areaSqKm, AOIManager aoiManager) {
+        EditText nameInput = new EditText(MapView.getMapView().getContext());
+        nameInput.setHint("AOI Name");
+        nameInput.setText("AOI_" + System.currentTimeMillis());
+        
+        new AlertDialog.Builder(MapView.getMapView().getContext())
+            .setTitle("Name Your AOI")
+            .setMessage(String.format("Area: %.2f sq km", areaSqKm))
+            .setView(nameInput)
+            .setPositiveButton("Save", (dialog, which) -> {
+                String aoiName = nameInput.getText().toString().trim();
+                if (aoiName.isEmpty()) {
+                    aoiName = "AOI_" + System.currentTimeMillis();
+                }
+                
+                try {
+                    AOIManager.AOI aoi = aoiManager.createAOI(aoiName, points, areaSqKm, "optical");
+                    String aoiId = aoi.id;
+                    
+                    // Show success and offer to create order
+                    new AlertDialog.Builder(MapView.getMapView().getContext())
+                        .setTitle("AOI Created")
+                        .setMessage(String.format("AOI '%s' saved successfully!\n\nArea: %.2f sq km\n\nWould you like to create a tasking order?", aoiName, areaSqKm))
+                        .setPositiveButton("Create Order", (d, w) -> {
+                            // Launch tasking order with the AOI
+                            Intent intent = new Intent();
+                            intent.setAction(TaskingOrderFragment.ACTION);
+                            intent.putExtra("aoi_id", aoiId);
+                            AtakBroadcast.getInstance().sendBroadcast(intent);
+                        })
+                        .setNegativeButton("Later", null)
+                        .show();
+                        
+                } catch (Exception e) {
+                    Log.e(LOGTAG, "Failed to save AOI", e);
+                    Toast.makeText(pluginContext, "Failed to save AOI: " + e.getMessage(), 
+                        Toast.LENGTH_SHORT).show();
+                }
+            })
+            .setNegativeButton("Cancel", null)
+            .show();
+    }
+
+    /**
+     * Start ATAK's built-in drawing tools for AOI creation (legacy method)
      */
     private void startATAKDrawing() {
         if (drawingHandler != null) {
@@ -987,7 +1099,7 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
                 switch (which) {
                     case 0: // Draw on Map
                         uiService.closePane(templatePane);
-                        startATAKDrawing();
+                        startCustomDrawing();
                         break;
                     case 1: // From GPS Location
                         showGPSAOIDialog();
@@ -996,8 +1108,7 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
                         showCoordinateInputDialog();
                         break;
                     case 3: // From Existing Shape
-                        Toast.makeText(pluginContext, "Select a shape on the map", Toast.LENGTH_LONG).show();
-                        uiService.closePane(templatePane);
+                        startFromExistingShape();
                         break;
                 }
             })
@@ -1132,5 +1243,323 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
         points.add(new com.atakmap.coremap.maps.coords.GeoPoint(lat + deltaLat, lon - deltaLon)); // NW
         
         return points;
+    }
+    
+    /**
+     * Start the "From Existing Shape" workflow
+     */
+    private void startFromExistingShape() {
+        try {
+            // Verify prerequisites
+            if (mapView == null) {
+                Toast.makeText(pluginContext, "Map not available", Toast.LENGTH_SHORT).show();
+                Log.e(LOGTAG, "Cannot start shape selection - MapView is null");
+                return;
+            }
+            
+            if (shapeSelectionTool == null) {
+                Log.w(LOGTAG, "ShapeSelectionTool is null, attempting to reinitialize");
+                try {
+                    shapeSelectionTool = new ShapeSelectionTool(pluginContext, mapView);
+                } catch (Exception e) {
+                    Log.e(LOGTAG, "Failed to initialize ShapeSelectionTool", e);
+                    Toast.makeText(pluginContext, "Shape selection tool initialization failed", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            }
+            
+            // Check if tool is already active
+            if (shapeSelectionTool.isActive()) {
+                Log.w(LOGTAG, "Shape selection tool is already active");
+                Toast.makeText(pluginContext, "Shape selection already in progress", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            
+            // Validate tool prerequisites before proceeding
+            if (!validateToolPrerequisites()) {
+                return;
+            }
+            
+            // Close the pane first
+            if (uiService != null && templatePane != null && uiService.isPaneVisible(templatePane)) {
+                uiService.closePane(templatePane);
+            }
+            
+            Log.d(LOGTAG, "Starting shape selection workflow");
+            
+            // Start shape selection with callback
+            shapeSelectionTool.startShapeSelection(new ShapeSelectionTool.ShapeSelectionListener() {
+                @Override
+                public void onShapeSelected(MapItem shape, List<com.atakmap.coremap.maps.coords.GeoPoint> points, double areaSqKm) {
+                    // Handle on main thread with proper error handling
+                    if (mapView != null) {
+                        mapView.post(() -> {
+                            try {
+                                handleSelectedShape(shape, points, areaSqKm);
+                            } catch (Exception e) {
+                                Log.e(LOGTAG, "Error handling selected shape", e);
+                                Toast.makeText(pluginContext, "Error processing selected shape: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    } else {
+                        Log.e(LOGTAG, "MapView is null during shape selection callback");
+                    }
+                }
+                
+                @Override
+                public void onSelectionCancelled() {
+                    Log.d(LOGTAG, "Shape selection cancelled by user");
+                    if (mapView != null) {
+                        mapView.post(() -> Toast.makeText(pluginContext, "Shape selection cancelled", Toast.LENGTH_SHORT).show());
+                    }
+                }
+            });
+            
+        } catch (Exception e) {
+            Log.e(LOGTAG, "Error starting shape selection workflow", e);
+            Toast.makeText(pluginContext, "Failed to start shape selection: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+    
+    /**
+     * Handle a shape that was selected by the user
+     */
+    private void handleSelectedShape(MapItem shape, List<com.atakmap.coremap.maps.coords.GeoPoint> points, double areaSqKm) {
+        // Safely get shape info with defensive access
+        String shapeType = safeGetMapItemType(shape);
+        String shapeUID = safeGetMapItemUID(shape);
+        
+        Log.d(LOGTAG, "Shape selected: " + shapeType + " (UID: " + shapeUID + ") with " + points.size() + " points, area: " + areaSqKm + " sq km");
+        
+        try {
+            // Validate input parameters
+            if (shape == null) {
+                Toast.makeText(pluginContext, "Invalid shape selection", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            
+            if (points == null || points.isEmpty()) {
+                Toast.makeText(pluginContext, "No valid coordinates found in selected shape", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            
+            if (areaSqKm <= 0) {
+                Toast.makeText(pluginContext, "Invalid area calculated for selected shape", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            
+            // Validate minimum area requirements
+            AOIManager aoiManager = new AOIManager(pluginContext);
+            double minArea = 0.25; // Default minimum area
+            
+            try {
+                // Try to get sensor-specific minimum area
+                minArea = AOIManager.getMinimumAreaForPoint(
+                    new com.atakmap.coremap.maps.coords.GeoPoint(
+                        points.get(0).getLatitude(), points.get(0).getLongitude()
+                    ), "default");
+            } catch (Exception e) {
+                Log.w(LOGTAG, "Could not determine sensor-specific minimum area, using default", e);
+            }
+            
+            if (areaSqKm < minArea) {
+                Log.w(LOGTAG, String.format("Selected shape area (%.3f sq km) is below minimum (%.3f sq km)", areaSqKm, minArea));
+                
+                // Show area warning via feedback system if available
+                if (shapeSelectionTool != null) {
+                    ShapeSelectionFeedback feedback = new ShapeSelectionFeedback(pluginContext, mapView);
+                    feedback.showAreaTooSmallFeedback(areaSqKm, minArea);
+                }
+                
+                new AlertDialog.Builder(MapView.getMapView().getContext())
+                    .setTitle("Area Below Minimum")
+                    .setMessage(String.format("Selected shape area: %.3f sq km\nMinimum required: %.3f sq km\n\nThis may result in reduced satellite availability or higher costs.\n\nWould you like to proceed anyway?", areaSqKm, minArea))
+                    .setPositiveButton("Proceed", (dialog, which) -> {
+                        showShapeAOIDialog(shape, points, areaSqKm);
+                    })
+                    .setNegativeButton("Cancel", (dialog, which) -> {
+                        Log.d(LOGTAG, "User cancelled due to area too small");
+                    })
+                    .show();
+            } else {
+                // Area is acceptable, show naming dialog
+                showShapeAOIDialog(shape, points, areaSqKm);
+            }
+            
+        } catch (OutOfMemoryError e) {
+            Log.e(LOGTAG, "Out of memory handling selected shape", e);
+            Toast.makeText(pluginContext, "Selected shape too complex - insufficient memory", Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            Log.e(LOGTAG, "Error handling selected shape", e);
+            Toast.makeText(pluginContext, "Error processing selected shape: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+    
+    /**
+     * Show dialog to name the AOI from selected shape
+     */
+    private void showShapeAOIDialog(MapItem shape, List<com.atakmap.coremap.maps.coords.GeoPoint> points, double areaSqKm) {
+        EditText nameInput = new EditText(MapView.getMapView().getContext());
+        
+        // Generate a default name based on the shape
+        String shapeType = safeGetMapItemType(shape);
+        String defaultName = "AOI_from_" + shapeType.replaceAll("[^a-zA-Z0-9]", "_") + "_" + System.currentTimeMillis();
+        
+        // If the shape already has a title, use that as default
+        String shapeTitle = safeGetMapItemTitle(shape);
+        if (shapeTitle != null && !shapeTitle.isEmpty() && !"unknown".equals(shapeTitle)) {
+            defaultName = "AOI_from_" + shapeTitle.replaceAll("[^a-zA-Z0-9\\s]", "").trim().replaceAll("\\s+", "_");
+        }
+        
+        nameInput.setText(defaultName);
+        nameInput.selectAll();
+        
+        final String finalDefaultName = defaultName;
+        
+        new AlertDialog.Builder(MapView.getMapView().getContext())
+            .setTitle("Create AOI from Shape")
+            .setMessage(String.format("Shape Type: %s\nArea: %.2f sq km\nPoints: %d\n\nEnter AOI name:", 
+                safeGetMapItemType(shape), areaSqKm, points.size()))
+            .setView(nameInput)
+            .setPositiveButton("Create AOI", (dialog, which) -> {
+                String aoiName = nameInput.getText().toString().trim();
+                if (aoiName.isEmpty()) {
+                    aoiName = finalDefaultName;
+                }
+                
+                try {
+                    // Create the AOI
+                    AOIManager aoiManager = new AOIManager(pluginContext);
+                    AOIManager.AOI aoi = aoiManager.createAOI(aoiName, points, areaSqKm, "from_shape");
+                    
+                    // Add metadata linking back to the original shape
+                    shape.setMetaString("skyfi_aoi_id", aoi.id);
+                    shape.setMetaString("skyfi_converted_to_aoi", "true");
+                    
+                    // Visualize the AOI
+                    if (aoiVisualizationManager != null) {
+                        aoiVisualizationManager.displayAOI(aoi);
+                    }
+                    
+                    // Show success and options
+                    showAOICreatedDialog(aoi, shape);
+                    
+                    Log.d(LOGTAG, "Successfully created AOI '" + aoiName + "' from shape " + shape.getUID());
+                    
+                } catch (Exception e) {
+                    Log.e(LOGTAG, "Failed to create AOI from shape", e);
+                    Toast.makeText(pluginContext, "Failed to create AOI: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            })
+            .setNegativeButton("Cancel", null)
+            .show();
+    }
+    
+    /**
+     * Show dialog after AOI is successfully created from shape
+     */
+    private void showAOICreatedDialog(AOIManager.AOI aoi, MapItem originalShape) {
+        String[] options = {
+            "Create Tasking Order",
+            "View Archive Imagery", 
+            "Done"
+        };
+        
+        new AlertDialog.Builder(MapView.getMapView().getContext())
+            .setTitle("AOI Created Successfully")
+            .setMessage(String.format("AOI '%s' created from %s\nArea: %.2f sq km\n\nWhat would you like to do next?", 
+                aoi.name, safeGetMapItemType(originalShape), aoi.areaSqKm))
+            .setItems(options, (dialog, which) -> {
+                switch (which) {
+                    case 0: // Create Tasking Order
+                        Intent taskingIntent = new Intent();
+                        taskingIntent.setAction(TaskingOrderFragment.ACTION);
+                        taskingIntent.putExtra("aoi_id", aoi.id);
+                        AtakBroadcast.getInstance().sendBroadcast(taskingIntent);
+                        break;
+                        
+                    case 1: // View Archive Imagery
+                        // Calculate bounds for archive search
+                        double minLat = Double.MAX_VALUE, maxLat = Double.MIN_VALUE;
+                        double minLon = Double.MAX_VALUE, maxLon = Double.MIN_VALUE;
+                        
+                        for (com.atakmap.coremap.maps.coords.GeoPoint point : aoi.points) {
+                            minLat = Math.min(minLat, point.getLatitude());
+                            maxLat = Math.max(maxLat, point.getLatitude());
+                            minLon = Math.min(minLon, point.getLongitude());
+                            maxLon = Math.max(maxLon, point.getLongitude());
+                        }
+                        
+                        Intent archiveIntent = new Intent("com.skyfi.atak.SHOW_ARCHIVE_SEARCH");
+                        archiveIntent.putExtra("min_lat", minLat);
+                        archiveIntent.putExtra("max_lat", maxLat);
+                        archiveIntent.putExtra("min_lon", minLon);
+                        archiveIntent.putExtra("max_lon", maxLon);
+                        AtakBroadcast.getInstance().sendBroadcast(archiveIntent);
+                        break;
+                        
+                    case 2: // Done
+                        // Just close the dialog
+                        break;
+                }
+            })
+            .show();
+    }
+    
+    /**
+     * Validate prerequisites for tool operation
+     */
+    private boolean validateToolPrerequisites() {
+        if (mapView == null) {
+            Log.e(LOGTAG, "MapView is null - cannot start tool");
+            Toast.makeText(pluginContext, "Map not available", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        
+        if (pluginContext == null) {
+            Log.e(LOGTAG, "Plugin context is null - cannot start tool");
+            return false;
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Safely get MapItem type with error handling
+     */
+    private String safeGetMapItemType(MapItem item) {
+        try {
+            String type = item.getType();
+            return type != null ? type : "unknown";
+        } catch (Exception e) {
+            Log.w(LOGTAG, "Failed to get MapItem type", e);
+            return "unknown";
+        }
+    }
+    
+    /**
+     * Safely get MapItem UID with error handling
+     */
+    private String safeGetMapItemUID(MapItem item) {
+        try {
+            String uid = item.getUID();
+            return uid != null ? uid : "unknown";
+        } catch (Exception e) {
+            Log.w(LOGTAG, "Failed to get MapItem UID", e);
+            return "unknown";
+        }
+    }
+    
+    /**
+     * Safely get MapItem title with error handling
+     */
+    private String safeGetMapItemTitle(MapItem item) {
+        try {
+            String title = item.getTitle();
+            return title != null ? title : "unknown";
+        } catch (Exception e) {
+            Log.w(LOGTAG, "Failed to get MapItem title", e);
+            return "unknown";
+        }
     }
 }
