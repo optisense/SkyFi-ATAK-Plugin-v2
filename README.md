@@ -40,14 +40,24 @@ SkyFi ATAK Plugin v2 integrates satellite imagery and geospatial intelligence ca
 _________________________________________________________________
 ## STATUS
 
-**Current Status**: In Development - Beta Release  
-**Target Release**: Space Force deployment  
+**Current Status**: Beta Release 🎉  
+**Latest Release**: v2.0-beta (August 2025)  
 **Version**: 2.0  
 **ATAK Compatibility**: 5.4.0 (CIV and MIL variants)
 
+### 🆕 Beta Release Available!
+The official v2.0 beta is now available! This release includes:
+- ✅ All TAK v1 feedback features integrated
+- ✅ Enhanced UI with SkyFi branding
+- ✅ Stable AOI management and tasking
+- ✅ Built with Java 17 for improved performance
+- 📥 [Download Beta APK](https://github.com/optisense/SkyFi-ATAK-Plugin-v2/releases/tag/v2.0-beta)
+
 ### Recent Updates
-- Removed NATSEC priority functionality (not yet available)
-- Updated tasking order UI with radio button priority selection
+- Integrated TAK v1 user feedback into v2
+- Enhanced stability and performance
+- Fixed UI/UX issues from field testing
+- Added comprehensive AOI management features
 - GitHub Actions CI/CD pipeline implemented
 - Automated build and release process
 - Multi-flavor support (CIV/MIL)
