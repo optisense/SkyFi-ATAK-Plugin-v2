@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Background -->
+    <item android:id="@android:id/background">
+        <shape android:shape="rectangle">
+            <corners android:radius="2dp" />
+            <solid android:color="@color/skyfi_divider" />
+        </shape>
+    </item>
+    
+    <!-- Secondary Progress -->
+    <item android:id="@android:id/secondaryProgress">
+        <clip>
+            <shape android:shape="rectangle">
+                <corners android:radius="2dp" />
+                <solid android:color="@color/skyfi_surface_variant" />
+            </shape>
+        </clip>
+    </item>
+    
+    <!-- Progress -->
+    <item android:id="@android:id/progress">
+        <clip>
+            <shape android:shape="rectangle">
+                <corners android:radius="2dp" />
+                <gradient
+                    android:startColor="@color/skyfi_accent"
+                    android:endColor="#6BB6FF"
+                    android:angle="0" />
+            </shape>
+        </clip>
+    </item>
+</layer-list>

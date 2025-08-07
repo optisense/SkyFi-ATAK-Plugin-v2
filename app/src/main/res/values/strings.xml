@@ -69,12 +69,12 @@
     <string name="min_overlap_ratio_error">Minimum Overlap Ratio must be a decimal between 0–1</string>
     <string name="search">Search</string>
     <string name="skyfi_archives">SkyFi / Archives</string>
-    <string name="cloud_coverage">Cloud Coverage: %.2f%%</string>
-    <string name="price_per_sqkm">Price Per KM²: $%.2f</string>
+    <string name="cloud_coverage" formatted="false">Cloud Coverage: %.2f%%</string>
+    <string name="price_per_sqkm" formatted="false">Price Per KM²: $%.2f</string>
     <string name="place_order">Place Order</string>
     <string name="are_you_sure">Are you sure you want to place this order?</string>
     <string name="order_placed">Order Placed Successfully</string>
-    <string name="order_failed">Failed to place order: %s</string>
+    <string name="order_failed" formatted="false">Failed to place order: %s</string>
     <string name="error_placing_order">Error Placing Order</string>
     <string name="skyfi_tasking_pricing">SkyFi / Tasking Order Pricing</string>
     <string name="skyfi_tasking_order">SkyFi / Tasking Order</string>
@@ -82,9 +82,9 @@
     <string name="task_priority">Task Priority</string>
     <string name="when_available">WHEN AVAILABLE</string>
     <string name="priority_tasking">PRIORITY</string>
-    <string name="priority_extra_cost">+$%.2f</string>
-    <string name="assured_tasking_extra_cost">+$%.2f</string>
-    <string name="total_price">Total Price: $%.2f</string>
+    <string name="priority_extra_cost" formatted="false">+$%.2f</string>
+    <string name="assured_tasking_extra_cost" formatted="false">+$%.2f</string>
+    <string name="total_price" formatted="false">Total Price: $%.2f</string>
     <string name="get_pricing_failed">Failed to get pricing</string>
     <string name="new_archive_order_my_location">New Archive Order From My Location</string>
     <string name="new_tasking_order_my_location">New Tasking Order From My Location</string>
@@ -98,12 +98,12 @@
     <string name="window_start_error">The start window is required and must be at least 36 hours in the future</string>
     <string name="window_end_error">The ending window is required and should be after the start window</string>
     <string name="my_profile_header">SkyFi / My Profile</string>
-    <string name="name">Name: %s %s</string>
-    <string name="email">Email: %s</string>
-    <string name="budget_usage">Budget Usage: $%d</string>
-    <string name="total_budget">Total Budget: $%d</string>
-    <string name="budget_remaining">Budget Remaining: $%d</string>
-    <string name="cc_on_file">Credit Card On File: %s</string>
+    <string name="name" formatted="false">Name: %s %s</string>
+    <string name="email" formatted="false">Email: %s</string>
+    <string name="budget_usage" formatted="false">Budget Usage: $%d</string>
+    <string name="total_budget" formatted="false">Total Budget: $%d</string>
+    <string name="budget_remaining" formatted="false">Budget Remaining: $%d</string>
+    <string name="cc_on_file" formatted="false">Credit Card On File: %s</string>
     <string name="my_profile">My Profile</string>
     <string name="profile_error">Error retrieving profile, check you API key and try again</string>
     <string name="no">No</string>
@@ -160,9 +160,9 @@
     
     <!-- Feasibility functionality -->
     <string name="feasibility_title">Satellite Pass Feasibility</string>
-    <string name="expected_passes">Expected Passes: %d</string>
-    <string name="feasibility_level">Feasibility: %s</string>
-    <string name="feasibility_explanation">%s</string>
+    <string name="expected_passes" formatted="false">Expected Passes: %d</string>
+    <string name="feasibility_level" formatted="false">Feasibility: %s</string>
+    <string name="feasibility_explanation" formatted="false">%s</string>
     <string name="feasibility_unknown">Select sensor type and dates to see feasibility</string>
     <string name="excellent_feasibility">Excellent</string>
     <string name="good_feasibility">Good</string>

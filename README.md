@@ -40,13 +40,15 @@ SkyFi ATAK Plugin v2 integrates satellite imagery and geospatial intelligence ca
 _________________________________________________________________
 ## STATUS
 
-**Current Status**: Stable Release ✅  
-**Latest Release**: v2.0 (August 2025)  
-**Version**: 2.0 Stable  
-**ATAK Compatibility**: 5.4.0 (CIV and MIL variants)
+**Current Status**: Beta Release 🚀  
+**Latest Release**: v2.0-beta3 (August 6, 2025)  
+**Version**: 2.0 Beta 3 - Dark Theme UI  
+**ATAK Compatibility**: 5.4.0+ (CIV and MIL variants)
 
-### 🎯 Stable Release Available!
-The official v2.0 stable release is now available! This thoroughly tested version includes:
+### 🎨 Beta 3 - Dark Theme UI Release!
+The v2.0-beta3 release introduces a stunning dark theme UI makeover! This release includes:
+- ✅ Complete dark theme matching SkyFi.com aesthetic
+- ✅ Custom UI components with animations
 - ✅ All TAK v1 feedback features integrated
 - ✅ Enhanced UI with SkyFi branding throughout
 - ✅ Comprehensive AOI management and tasking

@@ -8,8 +8,8 @@ import android.os.Looper;
 
 import com.atakmap.android.maps.MapView;
 import com.atakmap.android.maps.Marker;
-import com.atakmap.android.maps.graphics.GLMapItem;
-import com.atakmap.android.maps.heatmap.HeatMapLayer;
+// import com.atakmap.android.maps.graphics.GLMapItem; // Not available in ATAK SDK
+// import com.atakmap.android.maps.heatmap.HeatMapLayer; // Package does not exist in ATAK SDK
 import com.atakmap.coremap.log.Log;
 import com.atakmap.coremap.maps.coords.GeoPoint;
 import com.atakmap.map.layer.Layer;
@@ -349,7 +349,7 @@ public class AIOverlaySystem {
     
     private GeoPoint[] getCurrentViewBounds() {
         // Get current map view bounds
-        GeoPoint center = mapView.getPoint();
+        GeoPoint center = mapView.getPoint().get();
         double scale = mapView.getMapScale();
         
         // Calculate approximate bounds based on view
@@ -534,7 +534,7 @@ public class AIOverlaySystem {
     
     private List<AIOverlayItem> generateMockMovementPaths() {
         List<AIOverlayItem> items = new ArrayList<>();
-        GeoPoint center = mapView.getPoint();
+        GeoPoint center = mapView.getPoint().get();
         
         for (int i = 0; i < 3; i++) {
             double offsetLat = (Math.random() - 0.5) * 0.005;

@@ -1,13 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     
-    <!-- SkyFi Modern Theme -->
-    <style name="SkyFiTheme" parent="@android:style/Theme.Holo.Light">
+    <!-- SkyFi Modern Dark Theme -->
+    <style name="SkyFiTheme" parent="@android:style/Theme.Holo">
         <item name="android:windowBackground">@color/skyfi_background</item>
         <item name="android:colorBackground">@color/skyfi_background</item>
         <item name="android:textColor">@color/skyfi_text_primary</item>
         <item name="android:textColorPrimary">@color/skyfi_text_primary</item>
         <item name="android:textColorSecondary">@color/skyfi_text_secondary</item>
+        <item name="android:windowNoTitle">false</item>
+        <item name="android:windowActionBar">true</item>
+        <item name="android:actionBarStyle">@style/SkyFiActionBar</item>
+    </style>
+    
+    <!-- Action Bar Style -->
+    <style name="SkyFiActionBar" parent="@android:style/Widget.Holo.ActionBar">
+        <item name="android:background">@color/skyfi_surface</item>
+        <item name="android:titleTextStyle">@style/SkyFiActionBarTitle</item>
+    </style>
+    
+    <style name="SkyFiActionBarTitle" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/skyfi_text_primary</item>
     </style>
     
     <!-- Typography Styles -->
@@ -50,7 +63,7 @@
     <!-- Button Styles -->
     <style name="SkyFiButtonPrimary" parent="@android:style/Widget.Button">
         <item name="android:background">@drawable/skyfi_button_primary</item>
-        <item name="android:textColor">@color/white</item>
+        <item name="android:textColor">@color/button_primary_text</item>
         <item name="android:textSize">16sp</item>
         <item name="android:fontFamily">sans-serif-medium</item>
         <item name="android:textAllCaps">false</item>
@@ -63,7 +76,7 @@
     
     <style name="SkyFiButtonSecondary" parent="@android:style/Widget.Button">
         <item name="android:background">@drawable/skyfi_button_secondary</item>
-        <item name="android:textColor">@color/skyfi_primary</item>
+        <item name="android:textColor">@color/button_secondary_text</item>
         <item name="android:textSize">16sp</item>
         <item name="android:fontFamily">sans-serif-medium</item>
         <item name="android:textAllCaps">false</item>
@@ -85,15 +98,124 @@
     </style>
     
     <!-- Dialog Styles -->
-    <style name="SkyFiDialog" parent="@android:style/Theme.Holo.Light.Dialog">
+    <style name="SkyFiDialog" parent="@android:style/Theme.Holo.Dialog">
         <item name="android:windowBackground">@drawable/skyfi_dialog_bg</item>
         <item name="android:windowTitleStyle">@style/SkyFiDialogTitle</item>
+        <item name="android:textColor">@color/skyfi_text_primary</item>
+        <item name="android:textColorPrimary">@color/skyfi_text_primary</item>
     </style>
     
     <style name="SkyFiDialogTitle">
         <item name="android:textSize">20sp</item>
         <item name="android:textColor">@color/skyfi_text_primary</item>
         <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+    
+    <!-- Input Field Styles -->
+    <style name="SkyFiEditText" parent="@android:style/Widget.EditText">
+        <item name="android:background">@drawable/skyfi_input_bg</item>
+        <item name="android:textColor">@color/input_text</item>
+        <item name="android:textColorHint">@color/input_hint</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:minHeight">48dp</item>
+    </style>
+    
+    <!-- Accent Button Style -->
+    <style name="SkyFiButtonAccent" parent="@android:style/Widget.Button">
+        <item name="android:background">@drawable/skyfi_button_accent</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:paddingTop">12dp</item>
+        <item name="android:paddingBottom">12dp</item>
+        <item name="android:paddingLeft">24dp</item>
+        <item name="android:paddingRight">24dp</item>
+        <item name="android:minHeight">48dp</item>
+    </style>
+    
+    <!-- Divider Style -->
+    <style name="SkyFiDivider">
+        <item name="android:background">@drawable/skyfi_divider_horizontal</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+    </style>
+    
+    <!-- Progress Bar Style -->
+    <style name="SkyFiProgressBar" parent="@android:style/Widget.ProgressBar.Horizontal">
+        <item name="android:progressDrawable">@drawable/skyfi_progress_bar</item>
+        <item name="android:minHeight">4dp</item>
+        <item name="android:maxHeight">4dp</item>
+    </style>
+    
+    <!-- Switch Style -->
+    <style name="SkyFiSwitch" parent="@android:style/Widget.CompoundButton">
+        <item name="android:textColor">@color/skyfi_text_primary</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+    
+    <!-- Animation Styles (API 21+) -->
+    <style name="SkyFiButtonPrimary.Animated" parent="SkyFiButtonPrimary">
+        <item name="android:stateListAnimator">@animator/button_state_list_animator</item>
+        <item name="android:elevation">2dp</item>
+        <item name="android:translationZ">0dp</item>
+    </style>
+    
+    <style name="SkyFiButtonSecondary.Animated" parent="SkyFiButtonSecondary">
+        <item name="android:stateListAnimator">@animator/button_state_list_animator</item>
+        <item name="android:elevation">2dp</item>
+        <item name="android:translationZ">0dp</item>
+    </style>
+    
+    <style name="SkyFiButtonAccent.Animated" parent="SkyFiButtonAccent">
+        <item name="android:stateListAnimator">@animator/button_state_list_animator</item>
+        <item name="android:elevation">2dp</item>
+        <item name="android:translationZ">0dp</item>
+    </style>
+    
+    <style name="SkyFiCard.Animated" parent="SkyFiCard">
+        <item name="android:stateListAnimator">@animator/card_lift_animator</item>
+        <item name="android:elevation">4dp</item>
+        <item name="android:translationZ">0dp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+    </style>
+    
+    <!-- FAB Style with Animations -->
+    <style name="SkyFiFab">
+        <item name="android:background">@drawable/skyfi_fab</item>
+        <item name="android:layout_width">56dp</item>
+        <item name="android:layout_height">56dp</item>
+        <item name="android:elevation">16dp</item>
+        <item name="android:translationZ">0dp</item>
+        <item name="android:stateListAnimator">@animator/fab_elevation_animator</item>
+        <item name="android:scaleType">center</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+    </style>
+    
+    <!-- Icon Button Style -->
+    <style name="SkyFiIconButton">
+        <item name="android:background">@drawable/skyfi_ripple_borderless</item>
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:scaleType">center</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+    </style>
+    
+    <!-- Circular Icon Button Style -->
+    <style name="SkyFiIconButton.Circular">
+        <item name="android:background">@drawable/skyfi_ripple_circular</item>
+    </style>
+    
+    <!-- Dialog Animation Style -->
+    <style name="SkyFiDialog.Animated" parent="SkyFiDialog">
+        <item name="android:windowEnterAnimation">@anim/dialog_enter</item>
+        <item name="android:windowExitAnimation">@anim/dialog_exit</item>
     </style>
     
 </resources>

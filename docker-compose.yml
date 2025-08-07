@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+  # Main build service
+  atak-builder:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    volumes:
+      - ./build-cache:/root/.gradle
+      - ./outputs:/output
+    environment:
+      - GRADLE_OPTS=-Xmx8g -XX:MaxMetaspaceSize=2g -XX:+UseParallelGC -XX:ParallelGCThreads=8
+      - GRADLE_USER_HOME=/root/.gradle
+    cpus: 8
+    mem_limit: 16g
+    command: ./gradlew clean assembleCivDebug assembleMilDebug --parallel --max-workers=8 --build-cache
+
+  # Parallel civilian build
+  civ-builder:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    volumes:
+      - ./build-cache-civ:/root/.gradle
+      - ./outputs/civ:/output
+    environment:
+      - GRADLE_OPTS=-Xmx6g -XX:MaxMetaspaceSize=1g -XX:+UseParallelGC
+    cpus: 4
+    mem_limit: 8g
+    command: ./gradlew assembleCivDebug assembleCivRelease --parallel --max-workers=4 --build-cache
+
+  # Parallel military build  
+  mil-builder:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    volumes:
+      - ./build-cache-mil:/root/.gradle
+      - ./outputs/mil:/output
+    environment:
+      - GRADLE_OPTS=-Xmx6g -XX:MaxMetaspaceSize=1g -XX:+UseParallelGC
+    cpus: 4
+    mem_limit: 8g
+    command: ./gradlew assembleMilDebug assembleMilRelease --parallel --max-workers=4 --build-cache
+
+  # Test runner
+  test-runner:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    volumes:
+      - ./test-results:/app/app/build/test-results
+      - ./build-cache-test:/root/.gradle
+    environment:
+      - GRADLE_OPTS=-Xmx4g -XX:MaxMetaspaceSize=1g
+    cpus: 2
+    mem_limit: 4g
+    command: ./gradlew test --parallel --max-workers=4
+
+  # Cache warmer - pre-downloads dependencies
+  cache-warmer:
+    build:
+      context: .
+      dockerfile: Dockerfile.cache
+    volumes:
+      - ./build-cache:/root/.gradle
+    command: ./gradlew dependencies --no-daemon

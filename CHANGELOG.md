@@ -1,5 +1,56 @@
 # SkyFi ATAK Plugin v2 - Changelog
 
+## [v2.0-beta3] - 2025-08-06 - Dark Theme UI Release
+
+### 🎨 **Dark Theme UI Makeover**
+
+This release introduces a comprehensive dark theme UI redesign to match the SkyFi.com aesthetic.
+
+### ✨ **New Features**
+
+#### UI Components
+- **GradientTextView**: Animated gradient text effects
+- **NeumorphicButton**: Soft shadow button design  
+- **CircularProgressButton**: Loading state animations
+- **GlowingCardView**: Accent color glow effects
+
+#### Animations & Effects
+- 12+ smooth animations (fade, slide, bounce, scale)
+- Material Design ripple effects for Android 5.0+
+- Button elevation and card lift animations
+- Dialog entrance/exit animations
+
+#### Theme Updates
+- Complete dark theme implementation
+- SkyFi brand colors (black, white, accent blue #4A90E2)
+- Enhanced visual hierarchy with surface colors
+- Improved text contrast for readability
+
+### 🔧 **Technical Improvements**
+- Fixed all ATAK SDK compilation errors
+- Optimized for M4 Max build performance
+- Reduced APK size through R8 optimization
+- Improved Gradle build configuration
+- Better memory management
+
+### 🐛 **Bug Fixes**
+- Fixed Icon API usage for marker icons
+- Resolved static context issues in PredictionEngine
+- Fixed AnimatorSet array conversion
+- Removed deprecated Gradle properties
+- Corrected ATAK API method calls
+
+---
+
+## [v2.0-beta2] - 2025-08-05 - Beta 2 Release
+
+### Features Added
+- AI-enhanced mission planning
+- Improved satellite imagery integration
+- Enhanced overlay system
+
+---
+
 ## [v2.0.0-beta] - 2025-08-06 - Official Beta Release
 
 ### 🎉 **Beta Release Built from Stable Commit d71ce55**

@@ -4,13 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#1a1a1a">
+    android:background="@color/skyfi_background">
 
     <!-- Compact Header with Stats -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#2196F3"
+        android:background="@color/skyfi_accent"
         android:orientation="horizontal"
         android:padding="8dp"
         android:gravity="center_vertical">
@@ -25,7 +25,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="SkyFi"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/skyfi_text_primary"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -34,7 +34,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Connected"
-                android:textColor="#CCFFFFFF"
+                android:textColor="@color/skyfi_text_secondary"
                 android:textSize="10sp" />
         </LinearLayout>
 
@@ -50,7 +50,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/skyfi_text_primary"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -58,7 +58,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text=" sats"
-                android:textColor="#CCFFFFFF"
+                android:textColor="@color/skyfi_text_secondary"
                 android:textSize="12sp" />
         </LinearLayout>
 
@@ -73,7 +73,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0%"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/skyfi_text_primary"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -81,7 +81,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text=" cov"
-                android:textColor="#CCFFFFFF"
+                android:textColor="@color/skyfi_text_secondary"
                 android:textSize="12sp" />
         </LinearLayout>
 
@@ -95,7 +95,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/skyfi_text_primary"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
@@ -103,7 +103,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text=" orders"
-                android:textColor="#CCFFFFFF"
+                android:textColor="@color/skyfi_text_secondary"
                 android:textSize="12sp" />
         </LinearLayout>
     </LinearLayout>
@@ -113,13 +113,13 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#37474F" />
+        android:background="@color/skyfi_divider" />
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:background="#0D1117"
+        android:background="@color/skyfi_background"
         android:padding="4dp">
 
         <LinearLayout
@@ -136,7 +136,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?android:attr/selectableItemBackground"
-                app:cardBackgroundColor="#00C853"
+                app:cardBackgroundColor="@color/skyfi_success"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="8dp">
 
@@ -150,7 +150,7 @@
                         android:layout_width="56dp"
                         android:layout_height="56dp"
                         android:src="@drawable/satellite_icon"
-                        android:tint="#FFFFFF" />
+                        android:tint="@color/skyfi_text_primary" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -163,7 +163,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="New Tasking Order"
-                            android:textColor="#FFFFFF"
+                            android:textColor="@color/skyfi_text_primary"
                             android:textSize="18sp"
                             android:textStyle="bold" />
 
@@ -171,7 +171,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Draw or select area for satellite imagery"
-                            android:textColor="#CCFFFFFF"
+                            android:textColor="@color/skyfi_text_secondary"
                             android:textSize="14sp" />
                     </LinearLayout>
                 </LinearLayout>
@@ -186,7 +186,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?android:attr/selectableItemBackground"
-                app:cardBackgroundColor="#2196F3"
+                app:cardBackgroundColor="@color/skyfi_accent"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="8dp">
 
@@ -200,7 +200,7 @@
                         android:layout_width="56dp"
                         android:layout_height="56dp"
                         android:src="@drawable/orders_icon"
-                        android:tint="#FFFFFF" />
+                        android:tint="@color/skyfi_text_primary" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -213,7 +213,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="View Orders"
-                            android:textColor="#FFFFFF"
+                            android:textColor="@color/skyfi_text_primary"
                             android:textSize="18sp"
                             android:textStyle="bold" />
 
@@ -221,7 +221,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Track status and download imagery"
-                            android:textColor="#CCFFFFFF"
+                            android:textColor="@color/skyfi_text_secondary"
                             android:textSize="14sp" />
                     </LinearLayout>
                 </LinearLayout>
@@ -236,7 +236,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?android:attr/selectableItemBackground"
-                app:cardBackgroundColor="#7C4DFF"
+                app:cardBackgroundColor="@color/skyfi_surface_variant"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="8dp">
 
@@ -250,7 +250,7 @@
                         android:layout_width="56dp"
                         android:layout_height="56dp"
                         android:src="@drawable/aoi_icon"
-                        android:tint="#FFFFFF" />
+                        android:tint="@color/skyfi_text_primary" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -263,7 +263,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Manage AOIs"
-                            android:textColor="#FFFFFF"
+                            android:textColor="@color/skyfi_text_primary"
                             android:textSize="18sp"
                             android:textStyle="bold" />
 
@@ -271,7 +271,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="View and edit saved areas of interest"
-                            android:textColor="#CCFFFFFF"
+                            android:textColor="@color/skyfi_text_secondary"
                             android:textSize="14sp" />
                     </LinearLayout>
                 </LinearLayout>
@@ -286,7 +286,7 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?android:attr/selectableItemBackground"
-                app:cardBackgroundColor="#546E7A"
+                app:cardBackgroundColor="@color/skyfi_surface"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="8dp">
 
@@ -300,7 +300,7 @@
                         android:layout_width="56dp"
                         android:layout_height="56dp"
                         android:src="@drawable/settings_icon"
-                        android:tint="#FFFFFF" />
+                        android:tint="@color/skyfi_text_primary" />
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -313,7 +313,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Settings"
-                            android:textColor="#FFFFFF"
+                            android:textColor="@color/skyfi_text_primary"
                             android:textSize="18sp"
                             android:textStyle="bold" />
 
@@ -321,7 +321,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="API key and preferences"
-                            android:textColor="#CCFFFFFF"
+                            android:textColor="@color/skyfi_text_secondary"
                             android:textSize="14sp" />
                     </LinearLayout>
                 </LinearLayout>

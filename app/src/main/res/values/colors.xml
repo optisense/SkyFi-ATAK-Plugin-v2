@@ -1,8 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     
-    <color name="white">#ffffff</color>
+    <!-- Core Colors -->
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    
+    <!-- SkyFi Brand Colors - Dark Theme -->
+    <color name="skyfi_primary">#FFFFFF</color>
+    <color name="skyfi_primary_dark">#E0E0E0</color>
+    <color name="skyfi_accent">#4A90E2</color>
+    <color name="skyfi_background">#0D0D0D</color>
+    <color name="skyfi_surface">#1A1A1A</color>
+    <color name="skyfi_surface_variant">#252525</color>
+    <color name="skyfi_text_primary">#FFFFFF</color>
+    <color name="skyfi_text_secondary">#B3B3B3</color>
+    <color name="skyfi_text_disabled">#666666</color>
+    <color name="skyfi_divider">#333333</color>
+    <color name="skyfi_error">#FF5252</color>
+    <color name="skyfi_success">#4CAF50</color>
+    <color name="skyfi_warning">#FFC107</color>
+    <color name="skyfi_info">#2196F3</color>
+    
+    <!-- Card and Shadow Colors -->
+    <color name="card_shadow">#80000000</color>
+    <color name="card_background">#1F1F1F</color>
+    <color name="card_hover">#2A2A2A</color>
+    
+    <!-- Button Colors -->
+    <color name="button_primary_bg">#FFFFFF</color>
+    <color name="button_primary_text">#000000</color>
+    <color name="button_primary_pressed">#E0E0E0</color>
+    <color name="button_secondary_bg">#1A1A1A</color>
+    <color name="button_secondary_text">#FFFFFF</color>
+    <color name="button_secondary_border">#333333</color>
+    <color name="button_disabled_bg">#0D0D0D</color>
+    <color name="button_disabled_text">#666666</color>
+    
+    <!-- Input Field Colors -->
+    <color name="input_bg">#1A1A1A</color>
+    <color name="input_border">#333333</color>
+    <color name="input_border_focused">#FFFFFF</color>
+    <color name="input_text">#FFFFFF</color>
+    <color name="input_hint">#808080</color>
+    
+    <!-- Status Bar Colors -->
+    <color name="status_bar_color">#000000</color>
+    <color name="navigation_bar_color">#0D0D0D</color>
+    
+    <!-- Overlay Colors -->
+    <color name="overlay_dark">#CC000000</color>
+    <color name="overlay_light">#33FFFFFF</color>
+    
+    <!-- Legacy Colors (kept for compatibility) -->
     <color name="darker_gray">#121212</color>
-    <color name="heading_yellow">#dfb228</color>
+    <color name="heading_yellow">#FFC107</color>
 
 </resources>

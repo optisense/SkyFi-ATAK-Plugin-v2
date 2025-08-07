@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Borderless ripple for icon buttons and transparent clickable areas -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/skyfi_text_secondary" />

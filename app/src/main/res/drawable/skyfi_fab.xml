@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <layer-list>
+            <!-- Shadow -->
+            <item>
+                <shape android:shape="oval">
+                    <solid android:color="#40000000" />
+                    <padding
+                        android:left="2dp"
+                        android:top="2dp"
+                        android:right="2dp"
+                        android:bottom="4dp" />
+                </shape>
+            </item>
+            <!-- Button -->
+            <item>
+                <shape android:shape="oval">
+                    <solid android:color="@color/button_primary_pressed" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+    <item>
+        <layer-list>
+            <!-- Shadow -->
+            <item>
+                <shape android:shape="oval">
+                    <solid android:color="#60000000" />
+                    <padding
+                        android:left="2dp"
+                        android:top="2dp"
+                        android:right="2dp"
+                        android:bottom="4dp" />
+                </shape>
+            </item>
+            <!-- Button -->
+            <item>
+                <shape android:shape="oval">
+                    <solid android:color="@color/button_primary_bg" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+</selector>

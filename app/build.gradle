@@ -8,7 +8,7 @@
 
 buildscript {
 
-    ext.PLUGIN_VERSION = "2.0"
+    ext.PLUGIN_VERSION = "2.0-beta3"
     ext.ATAK_VERSION = "5.4.0"
 
     def takdevVersion = '2.+'
@@ -96,7 +96,6 @@ def supportedFlavors =
 
 android {
     compileSdk 33
-    namespace 'com.skyfi.atak.plugin'
 
     buildFeatures {
         buildConfig = true
@@ -237,6 +236,7 @@ android {
     }
 
     defaultConfig {
+        applicationId "com.skyfi.atak.plugin"
         minSdkVersion 21
         targetSdkVersion 33
 
@@ -305,6 +305,10 @@ dependencies {
     implementation('androidx.swiperefreshlayout:swiperefreshlayout:1.1.0')
     implementation('androidx.cardview:cardview:1.0.0')
     // Removed Material Design - use standard Android/ATAK components instead
+    
+    // Additional ATAK dependencies for GL and map components
+    compileOnly fileTree(dir: "${rootDir}/sdk/ATAK-CIV-5.4.0.18-SDK", include: 'gdal.jar')
+    compileOnly fileTree(dir: "${rootDir}/sdk/ATAK-CIV-5.4.0.18-SDK", include: 'api-prerelease-*.jar')
     
     // AI and Machine Learning dependencies
     implementation('com.google.code.gson:gson:2.10.1') // JSON processing for AI models

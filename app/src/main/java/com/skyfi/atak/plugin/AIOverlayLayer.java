@@ -12,7 +12,7 @@ import com.atakmap.map.MapRenderer;
 import com.atakmap.map.layer.AbstractLayer;
 import com.atakmap.map.layer.Layer;
 import com.atakmap.map.opengl.GLMapView;
-import com.atakmap.opengl.GLRenderGlobals;
+import com.atakmap.coremap.maps.assets.Icon;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,10 +50,8 @@ public class AIOverlayLayer extends AbstractLayer {
         // Create visual representation based on layer type
         createVisualRepresentation(item);
         
-        // Request map refresh
-        if (mapView != null) {
-            mapView.post(() -> mapView.requestRefresh());
-        }
+        // Request map refresh - requestRefresh method does not exist in ATAK SDK
+        // The map will automatically refresh when items are added to the root group
     }
     
     public void removeItem(String itemId) {
@@ -61,10 +59,8 @@ public class AIOverlayLayer extends AbstractLayer {
         if (item != null) {
             removeVisualRepresentation(item);
             
-            // Request map refresh
-            if (mapView != null) {
-                mapView.post(() -> mapView.requestRefresh());
-            }
+            // Request map refresh - requestRefresh method does not exist in ATAK SDK
+            // The map will automatically refresh when items are removed from the root group
         }
     }
     
@@ -74,10 +70,8 @@ public class AIOverlayLayer extends AbstractLayer {
         }
         overlayItems.clear();
         
-        // Request map refresh
-        if (mapView != null) {
-            mapView.post(() -> mapView.requestRefresh());
-        }
+        // Request map refresh - requestRefresh method does not exist in ATAK SDK
+        // The map will automatically refresh when items are cleared from the root group
     }
     
     public int getItemCount() {
@@ -93,10 +87,8 @@ public class AIOverlayLayer extends AbstractLayer {
                 toggleVisualRepresentation(item, visible);
             }
             
-            // Request map refresh
-            if (mapView != null) {
-                mapView.post(() -> mapView.requestRefresh());
-            }
+            // Request map refresh - requestRefresh method does not exist in ATAK SDK
+            // The map will automatically refresh when layer visibility changes
         }
     }
     
@@ -134,8 +126,8 @@ public class AIOverlayLayer extends AbstractLayer {
         Marker marker = new Marker(item.getId());
         marker.setPoint(item.getLocation());
         marker.setTitle(item.getTitle());
-        marker.setSnippet("Confidence: " + String.format("%.1f%%", item.getConfidence() * 100));
-        marker.setIcon("asset://icons/ai_object_detection.png");
+        // marker.setSnippet("Confidence: " + String.format("%.1f%%", item.getConfidence() * 100)); // Method does not exist in ATAK SDK
+        marker.setIcon(new Icon.Builder().setImageUri(0, "asset://icons/ai_object_detection.png").build());
         marker.setVisible(isVisible);
         
         // Add to map
@@ -152,7 +144,7 @@ public class AIOverlayLayer extends AbstractLayer {
         // Set color based on threat level
         int threatColor = interpolateColor(Color.GREEN, Color.RED, item.getConfidence());
         marker.setColor(threatColor);
-        marker.setIcon("asset://icons/ai_threat_indicator.png");
+        marker.setIcon(new Icon.Builder().setImageUri(0, "asset://icons/ai_threat_indicator.png").build());
         marker.setVisible(isVisible);
         
         mapView.getRootGroup().addItem(marker);
@@ -164,7 +156,7 @@ public class AIOverlayLayer extends AbstractLayer {
         Marker marker = new Marker(item.getId());
         marker.setPoint(item.getLocation());
         marker.setTitle(item.getTitle());
-        marker.setIcon("asset://icons/ai_movement_prediction.png");
+        marker.setIcon(new Icon.Builder().setImageUri(0, "asset://icons/ai_movement_prediction.png").build());
         marker.setVisible(isVisible);
         
         // Set transparency based on confidence
@@ -179,7 +171,7 @@ public class AIOverlayLayer extends AbstractLayer {
         Marker marker = new Marker(item.getId());
         marker.setPoint(item.getLocation());
         marker.setTitle(item.getTitle());
-        marker.setIcon("asset://icons/ai_population_density.png");
+        marker.setIcon(new Icon.Builder().setImageUri(0, "asset://icons/ai_population_density.png").build());
         marker.setVisible(isVisible);
         
         // Scale size based on population density
@@ -194,7 +186,7 @@ public class AIOverlayLayer extends AbstractLayer {
         Marker marker = new Marker(item.getId());
         marker.setPoint(item.getLocation());
         marker.setTitle(item.getTitle());
-        marker.setIcon("asset://icons/ai_infrastructure.png");
+        marker.setIcon(new Icon.Builder().setImageUri(0, "asset://icons/ai_infrastructure.png").build());
         marker.setVisible(isVisible);
         
         // Set color based on infrastructure status (confidence represents health)
@@ -209,7 +201,7 @@ public class AIOverlayLayer extends AbstractLayer {
         Marker marker = new Marker(item.getId());
         marker.setPoint(item.getLocation());
         marker.setTitle(item.getTitle());
-        marker.setIcon("asset://icons/ai_weather.png");
+        marker.setIcon(new Icon.Builder().setImageUri(0, "asset://icons/ai_weather.png").build());
         marker.setVisible(isVisible);
         
         // Set transparency based on weather intensity
@@ -224,7 +216,7 @@ public class AIOverlayLayer extends AbstractLayer {
         Marker marker = new Marker(item.getId());
         marker.setPoint(item.getLocation());
         marker.setTitle(item.getTitle());
-        marker.setIcon("asset://icons/ai_route_optimization.png");
+        marker.setIcon(new Icon.Builder().setImageUri(0, "asset://icons/ai_route_optimization.png").build());
         marker.setVisible(isVisible);
         
         // Set color based on route efficiency

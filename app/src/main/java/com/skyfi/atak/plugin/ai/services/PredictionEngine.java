@@ -260,7 +260,7 @@ public class PredictionEngine {
                 
                 prediction.setPredictedValue(Math.random() * 100); // Activity level
                 prediction.setProbability(0.7 + (Math.random() * 0.3));
-                prediction.setRiskLevel(determineRiskLevel(prediction.getProbability()));
+                prediction.setRiskLevel(determineRiskLevelStatic(prediction.getProbability()));
                 prediction.setDescription("Predicted movement pattern for hour " + hour);
                 
                 // Add confidence interval
@@ -464,6 +464,12 @@ public class PredictionEngine {
     }
     
     private PredictionResponse.Prediction.RiskLevel determineRiskLevel(double probability) {
+        if (probability > 0.8) return PredictionResponse.Prediction.RiskLevel.HIGH;
+        if (probability > 0.6) return PredictionResponse.Prediction.RiskLevel.MEDIUM;
+        return PredictionResponse.Prediction.RiskLevel.LOW;
+    }
+    
+    private static PredictionResponse.Prediction.RiskLevel determineRiskLevelStatic(double probability) {
         if (probability > 0.8) return PredictionResponse.Prediction.RiskLevel.HIGH;
         if (probability > 0.6) return PredictionResponse.Prediction.RiskLevel.MEDIUM;
         return PredictionResponse.Prediction.RiskLevel.LOW;
