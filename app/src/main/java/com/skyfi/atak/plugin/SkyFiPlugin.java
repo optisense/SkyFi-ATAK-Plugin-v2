@@ -47,7 +47,7 @@ import gov.tak.api.engine.map.coords.GeoCalculations;
 import gov.tak.api.engine.map.coords.GeoPoint;
 import gov.tak.api.engine.map.coords.IGeoPoint;
 import gov.tak.api.plugin.IPlugin;
-import gov.tak.api.plugin.IServiceController;
+// import gov.tak.api.plugin.IServiceController; // Not available in ATAK 5.4.0.16
 import gov.tak.api.ui.IHostUIService;
 import gov.tak.api.ui.Pane;
 import gov.tak.api.ui.PaneBuilder;
@@ -61,7 +61,7 @@ import retrofit2.Response;
 public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickListener {
 
     private static final String LOGTAG = "SkyFiPlugin";
-    IServiceController serviceController;
+    // IServiceController serviceController; // Not available in ATAK 5.4.0.16
     Context pluginContext;
     IHostUIService uiService;
     ToolbarItem toolbarItem;
@@ -82,6 +82,7 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
 
     public SkyFiPlugin() {}
 
+    /* Commented out for ATAK 5.4.0.16 compatibility - IServiceController not available
     public SkyFiPlugin(IServiceController serviceController) {
         this.serviceController = serviceController;
         final PluginContextProvider ctxProvider = serviceController
@@ -94,9 +95,8 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
         // obtain the UI service
         uiService = serviceController.getService(IHostUIService.class);
 
-        try {
-            Looper.prepare();
-        } catch (Exception e) {}
+        // Note: Do NOT call Looper.prepare() - plugins run on main thread with existing Looper
+        // Calling Looper.prepare() will cause initialization failures
 
         // initialize the toolbar button for the plugin
 
@@ -123,34 +123,45 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
                         pluginContext.getResources().getDrawable(R.drawable.icon_transparent),
                         new PreferencesFragment(pluginContext)));
 
-        apiClient = new APIClient().getApiClient();
-        apiClient.ping().enqueue(new Callback<Pong>() {
-            @Override
-            public void onResponse(Call<Pong> call, Response<Pong> response) {
-                Log.d(LOGTAG, "Successfully pinged API");
-            }
-
-            @Override
-            public void onFailure(Call<Pong> call, Throwable throwable) {
-                Log.e(LOGTAG, "Failed to ping API", throwable);
-            }
-        });
-
-        // Defer dropdown receiver registration until MapView is available
+        // Defer API client initialization to onStart() to avoid premature service access
+        // apiClient will be initialized in onStart() method
         
         // Don't add toolbar item here - it will be added in onStart()
         // This prevents duplicate icons
-        Log.d(LOGTAG, "Toolbar item created, will be added in onStart()");
-    }
+        Log.d(LOGTAG, "Plugin constructor completed, initialization will continue in onStart()");
+    } */
 
 
     @Override
     public void onStart() {
+        Log.d(LOGTAG, "Plugin onStart() called");
+        
         // the plugin is starting, add the button to the toolbar
-        if (uiService == null)
+        if (uiService == null) {
+            Log.e(LOGTAG, "UI service is null in onStart()");
             return;
+        }
 
         uiService.addToolbarItem(toolbarItem);
+        Log.d(LOGTAG, "Added toolbar item in onStart()");
+        
+        // Initialize API client now that plugin is fully loaded
+        try {
+            apiClient = new APIClient().getApiClient();
+            apiClient.ping().enqueue(new Callback<Pong>() {
+                @Override
+                public void onResponse(Call<Pong> call, Response<Pong> response) {
+                    Log.d(LOGTAG, "Successfully pinged API");
+                }
+
+                @Override
+                public void onFailure(Call<Pong> call, Throwable throwable) {
+                    Log.e(LOGTAG, "Failed to ping API", throwable);
+                }
+            });
+        } catch (Exception e) {
+            Log.e(LOGTAG, "Failed to initialize API client", e);
+        }
         
         // Get MapView and register dropdown receivers  
         mapView = MapView.getMapView();

@@ -75,16 +75,38 @@ _________________________________________________________________
 _________________________________________________________________
 ## 🚀 INSTALLATION GUIDE
 
-### For Production Use (Recommended)
+### ⚠️ Prerequisites: Install ATAK First
+
+**IMPORTANT**: You must have ATAK installed before using this plugin.
+
+#### Getting ATAK:
+1. **Official Source**: Go to [TAK.gov](https://tak.gov/products/atak)
+2. **Register/Login**: Create a free account (US persons only)
+3. **Download Options**:
+   - **Play Store Version**: Search "ATAK-CIV" on Google Play Store
+   - **SDK Version**: Download ATAK CIV SDK 5.4.0.16 or 5.4.0.18 from TAK.gov
+   - The SDK includes the ATAK APK in the main directory
+4. **Install ATAK**: Install the APK on your Android device
+
+> **Note**: ATAK is US Government software. Distribution is restricted to authorized users only. We cannot provide ATAK APKs directly.
+
+### Installing the SkyFi Plugin
+
+#### For Production Use (Recommended)
 Download the **[stable v2.0-beta release](https://github.com/optisense/SkyFi-ATAK-Plugin-v2/releases/tag/v2.0-beta)** for production deployments.
 
-### For Beta Testing
+#### For Beta Testing
 Download the **[latest v2.0-beta4 release](https://github.com/optisense/SkyFi-ATAK-Plugin-v2/releases/tag/v2.0-beta4)** to test new features.
 
 ### Quick Start Guide
 
-#### Option 1: Download Pre-built APK (Recommended)
-1. On your Android phone, download the latest beta APK from:
+#### Step 1: Install ATAK (if not already installed)
+1. Download ATAK from TAK.gov or Play Store (see above)
+2. Install ATAK on your device
+3. Launch ATAK and complete initial setup
+
+#### Step 2: Install SkyFi Plugin
+1. Download the SkyFi plugin APK from:
    - [GitHub Releases Page](https://github.com/optisense/SkyFi-ATAK-Plugin-v2/releases)
    - Download the appropriate APK file (e.g., `skyfi-atak-plugin-v2.0-beta-civ-debug.apk`)
 
@@ -223,6 +245,44 @@ adb install -r path/to/skyfi-plugin.apk
 # Or use the quick install script
 ./quick-install.sh
 ```
+
+_________________________________________________________________
+## 👨‍💻 DEVELOPER SETUP
+
+### Prerequisites for Development
+
+1. **Download ATAK SDK from TAK.gov**:
+   - Go to [TAK.gov](https://tak.gov/products/atak)
+   - Download ATAK CIV SDK 5.4.0.16 or 5.4.0.18
+   - Extract to `sdk/` directory
+   - The SDK includes:
+     - ATAK APK for testing (in main SDK directory)
+     - Development libraries and documentation
+     - Sample plugins and code examples
+
+2. **Install Development Tools**:
+   - Android Studio (latest version)
+   - Java 17 (for local builds)
+   - Java 8 (for TAK.gov compatibility)
+   - Android SDK (API level 33)
+
+3. **Clone and Setup**:
+   ```bash
+   git clone https://github.com/optisense/SkyFi-ATAK-Plugin-v2.git
+   cd SkyFi-ATAK-Plugin-v2
+   
+   # Extract ATAK SDK (after downloading from TAK.gov)
+   unzip ~/Downloads/ATAK-CIV-5.4.0.18-SDK.zip -d sdk/
+   
+   # Build the plugin
+   ./gradlew assembleCivDebug
+   ```
+
+### ⚠️ Important Legal Note
+- **Never commit ATAK APKs to version control**
+- ATAK is US Government software with distribution restrictions
+- Only share plugin APKs, not ATAK itself
+- Direct users to TAK.gov for official ATAK downloads
 
 _________________________________________________________________
 ## DEVELOPER NOTES

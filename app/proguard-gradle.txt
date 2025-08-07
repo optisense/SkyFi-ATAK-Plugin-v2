@@ -139,6 +139,27 @@
 -keep class sun.misc.Unsafe { *; }
 -keep class com.google.gson.stream.** { *; }
 
+## SkyFi Plugin specific rules
+-keep class com.skyfi.atak.plugin.SkyFiPlugin { *; }
+-keep class com.skyfi.atak.plugin.SkyFiMapComponent { *; }
+-keepclassmembers class com.skyfi.atak.plugin.** implements gov.tak.api.plugin.IPlugin {
+    public void onStart();
+    public void onStop();
+}
+
+## AndroidX rules to prevent crashes
+-keep class androidx.** { *; }
+-keep interface androidx.** { *; }
+-dontwarn androidx.**
+
+## JTS Geometry library - prevent AWT warnings
+-dontwarn java.awt.**
+-dontwarn javax.swing.**
+
+## WebSocket support
+-dontwarn javax.websocket.**
+-keep class org.java_websocket.** { *; }
+
 # Prevent proguard from stripping interface information from TypeAdapterFactory,
 # JsonSerializer, JsonDeserializer instances (so they can be used in @JsonAdapter)
 -keep class * implements com.google.gson.TypeAdapterFactory

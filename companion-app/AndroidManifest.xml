@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.skyfi.atak.companion">
+
+    <!-- Required permissions for ATAK communication and SkyFi functionality -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    
+    <!-- Permissions for ATAK integration -->
+    <uses-permission android:name="com.atakmap.app.permission.RECEIVE_COT" />
+    <uses-permission android:name="com.atakmap.app.permission.SEND_COT" />
+    
+    <!-- Permission to start activities in other apps (ATAK) -->
+    <uses-permission android:name="android.permission.INTERACT_ACROSS_USERS" 
+        tools:ignore="ProtectedPermissions" />
+
+    <application
+        android:name=".SkyFiCompanionApplication"
+        android:allowBackup="true"
+        android:icon="@drawable/ic_skyfi_companion"
+        android:label="@string/app_name"
+        android:theme="@style/Theme.SkyFiCompanion"
+        android:exported="true">
+
+        <!-- Main Activity - Entry point for users -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.SkyFiCompanion.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            
+            <!-- Intent filter for ATAK integration -->
+            <intent-filter>
+                <action android:name="com.skyfi.atak.companion.LAUNCH" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="skyfi" />
+            </intent-filter>
+            
+            <!-- Intent filter for location-based launches -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="geo" />
+            </intent-filter>
+        </activity>
+
+        <!-- Order Activity - Handle satellite imagery orders -->
+        <activity
+            android:name=".SkyFiOrderActivity"
+            android:exported="true"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/Theme.SkyFiCompanion">
+            
+            <!-- Intent filter for order requests from ATAK -->
+            <intent-filter>
+                <action android:name="com.skyfi.atak.companion.ORDER_REQUEST" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!-- Map Activity - Integrated mapping interface -->
+        <activity
+            android:name=".SkyFiMapActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/Theme.SkyFiCompanion.NoActionBar" />
+
+        <!-- Settings Activity -->
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/Theme.SkyFiCompanion" />
+
+        <!-- Service for background communication with ATAK -->
+        <service
+            android:name=".ATAKCommunicationService"
+            android:exported="true"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="com.skyfi.atak.companion.ATAK_BRIDGE" />
+            </intent-filter>
+        </service>
+
+        <!-- Background service for SkyFi operations -->
+        <service
+            android:name=".SkyFiBackgroundService"
+            android:exported="false"
+            android:enabled="true" />
+
+        <!-- Broadcast receiver for CoT events from ATAK -->
+        <receiver
+            android:name=".CoTEventReceiver"
+            android:exported="true"
+            android:enabled="true">
+            <intent-filter android:priority="1000">
+                <action android:name="com.atakmap.app.EXTERNAL_COT_EVENT" />
+                <action android:name="com.skyfi.atak.companion.COT_EVENT" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Broadcast receiver for location updates -->
+        <receiver
+            android:name=".LocationUpdateReceiver"
+            android:exported="false"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="com.skyfi.atak.companion.LOCATION_UPDATE" />
+            </intent-filter>
+        </receiver>
+
+        <!-- Content provider for sharing data with ATAK -->
+        <provider
+            android:name=".SkyFiContentProvider"
+            android:authorities="com.skyfi.atak.companion.provider"
+            android:exported="true"
+            android:readPermission="com.skyfi.atak.companion.READ_DATA"
+            android:writePermission="com.skyfi.atak.companion.WRITE_DATA" />
+
+        <!-- File provider for sharing imagery files -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.skyfi.atak.companion.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
+    </application>
+
+    <!-- Queries declaration for Android 11+ package visibility -->
+    <queries>
+        <!-- ATAK variants -->
+        <package android:name="com.atakmap.app" />
+        <package android:name="com.atakmap.app.civ" />
+        <package android:name="com.atakmap.app.mil" />
+        
+        <!-- Intent queries for launching other apps -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="geo" />
+        </intent>
+        
+        <intent>
+            <action android:name="com.atakmap.app.EXTERNAL_COT_EVENT" />
+        </intent>
+    </queries>
+
+</manifest>

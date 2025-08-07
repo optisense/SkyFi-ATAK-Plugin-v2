@@ -6,6 +6,13 @@
 *.ap_
 *.aab
 
+# IMPORTANT: Never commit ATAK APKs (US Government restricted software)
+ATAK-*.apk
+atak-*.apk
+*ATAK-CIV*.apk
+*atak-civ*.apk
+*atakmap*.apk
+
 # But allow APKs in builds directory
 !builds/**/*.apk
 
