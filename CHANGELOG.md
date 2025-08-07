@@ -1,5 +1,26 @@
 # SkyFi ATAK Plugin v2 - Changelog
 
+## [v2.0.0-beta] - 2025-08-06 - Official Beta Release
+
+### 🎉 **Beta Release Built from Stable Commit d71ce55**
+
+This release integrates all TAK v1 user feedback and has been thoroughly tested. Includes comprehensive regression testing to ensure stability.
+
+### ✅ **Key Features**
+- **AOI Management**: Draw, rename, and auto-size AOIs
+- **Multiple Input Methods**: Pindrop, Lat/Long, MGRS, GPS location
+- **Image Management**: Caching, archiving, favorites, opacity control
+- **Enhanced UI**: SkyFi branding and improved user experience
+- **Stable Performance**: Built with Java 17, optimized with ProGuard
+
+### 🛡️ **Regression Testing**
+- Comprehensive test suite implemented
+- All v1 features verified working
+- Backwards compatibility maintained
+- Performance benchmarks established
+
+---
+
 ## [v2.1.0] - 2025-08-02 - Major Compatibility Fixes & Device Testing Success
 
 ### 🎯 **MILESTONE ACHIEVED: Plugin Successfully Loads in ATAK 5.4**

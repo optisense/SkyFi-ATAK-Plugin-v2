@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# Pre-commit hook for SkyFi ATAK Plugin v2
+# Runs quick regression checks before allowing commits
+
+echo "🔍 Running pre-commit checks..."
+
+# Check for large files
+for file in $(git diff --cached --name-only); do
+    if [ -f "$file" ]; then
+        size=$(du -k "$file" | cut -f1)
+        if [ $size -gt 10000 ]; then  # 10MB limit
+            echo "❌ Error: $file is larger than 10MB"
+            echo "Consider using Git LFS for large files"
+            exit 1
+        fi
+    fi
+done
+
+# Check for sensitive data
+if git diff --cached | grep -E "(api[_-]?key|password|secret|token)" -i; then
+    echo "⚠️  Warning: Possible sensitive data detected"
+    echo "Please review your changes for exposed credentials"
+    read -p "Continue anyway? (y/n) " -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        exit 1
+    fi
+fi
+
+# Run quick unit tests (only for modified files)
+MODIFIED_JAVA=$(git diff --cached --name-only | grep "\.java$")
+if [ ! -z "$MODIFIED_JAVA" ]; then
+    echo "Running quick tests for modified Java files..."
+    ./gradlew test --tests "*Test" --parallel --max-workers=4 || {
+        echo "❌ Tests failed! Please fix before committing."
+        exit 1
+    }
+fi
+
+echo "✅ Pre-commit checks passed"
