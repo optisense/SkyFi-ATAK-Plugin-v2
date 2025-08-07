@@ -40,13 +40,19 @@ SkyFi ATAK Plugin v2 integrates satellite imagery and geospatial intelligence ca
 _________________________________________________________________
 ## STATUS
 
-**Current Status**: Beta Release 🚀  
-**Latest Release**: v2.0-beta3 (August 6, 2025)  
-**Version**: 2.0 Beta 3 - Dark Theme UI  
+**Current Status**: Production Ready (Stable Release) ✅  
+**Stable Release**: [v2.0-beta](https://github.com/optisense/SkyFi-ATAK-Plugin-v2/releases/tag/v2.0-beta) (Recommended for production use)  
+**Latest Beta**: [v2.0-beta4](https://github.com/optisense/SkyFi-ATAK-Plugin-v2/releases/tag/v2.0-beta4) (For testing new features)  
 **ATAK Compatibility**: 5.4.0+ (CIV and MIL variants)
 
-### 🎨 Beta 3 - Dark Theme UI Release!
-The v2.0-beta3 release introduces a stunning dark theme UI makeover! This release includes:
+### 🎉 Latest Updates
+**v2.0-beta4** (Testing Release - August 7, 2025):
+- Enhanced shape selection from existing ATAK shapes
+- COG (Cloud Optimized GeoTIFF) integration
+- Improved order processing UI
+- Bug fixes and stability improvements
+
+**v2.0-beta** (Stable Release - Recommended):
 - ✅ Complete dark theme matching SkyFi.com aesthetic
 - ✅ Custom UI components with animations
 - ✅ All TAK v1 feedback features integrated
@@ -67,9 +73,15 @@ The v2.0-beta3 release introduces a stunning dark theme UI makeover! This releas
 - Comprehensive testing framework
 
 _________________________________________________________________
-## 🚀 BETA TESTING ON ANDROID PHONES
+## 🚀 INSTALLATION GUIDE
 
-### Quick Start for Beta Testers
+### For Production Use (Recommended)
+Download the **[stable v2.0-beta release](https://github.com/optisense/SkyFi-ATAK-Plugin-v2/releases/tag/v2.0-beta)** for production deployments.
+
+### For Beta Testing
+Download the **[latest v2.0-beta4 release](https://github.com/optisense/SkyFi-ATAK-Plugin-v2/releases/tag/v2.0-beta4)** to test new features.
+
+### Quick Start Guide
 
 #### Option 1: Download Pre-built APK (Recommended)
 1. On your Android phone, download the latest beta APK from:
