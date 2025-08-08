@@ -31,14 +31,21 @@ cp gradlew.bat "$OUTPUT_DIR/"
 echo "Including atak-gradle-takdev.jar..."
 cp atak-gradle-takdev.jar "$OUTPUT_DIR/"
 
-# Use the TAK.gov compatible build.gradle
-if [ -f "app/build.gradle.takgov-compat" ]; then
+# Use the final working build.gradle based on successful test template
+if [ -f "app/build.gradle.final" ]; then
+    echo "Using final working build configuration..."
+    cp app/build.gradle.final "$OUTPUT_DIR/app/build.gradle"
+elif [ -f "app/build.gradle.takgov-compat" ]; then
     echo "Using TAK.gov compatible build configuration..."
     cp app/build.gradle.takgov-compat "$OUTPUT_DIR/app/build.gradle"
 elif [ -f "app/build.gradle.takgov" ]; then
     echo "Using TAK.gov specific build configuration..."
     cp app/build.gradle.takgov "$OUTPUT_DIR/app/build.gradle"
 fi
+
+# Update gradle wrapper to match successful test plugin
+echo "Updating gradle wrapper to match working test configuration..."
+sed -i.bak 's/gradle-7\.4\.2.*\.zip/gradle-7.6.1-all.zip/g' "$OUTPUT_DIR/gradle/wrapper/gradle-wrapper.properties"
 
 # Create local.properties for TAK.gov
 echo "Creating local.properties for TAK.gov..."
