@@ -100,6 +100,16 @@
 -dontwarn okhttp3.**
 -dontwarn retrofit2.**
 
+# Keep SkyFi plugin classes
+-keep class com.skyfi.atak.plugin.SkyFiPluginWrapper {
+    public <init>(gov.tak.api.plugin.IServiceController);
+    public void onStart();
+    public void onStop();
+}
+-keep class com.skyfi.atak.plugin.SkyFiMapComponent { *; }
+-keep class com.skyfi.atak.plugin.SkyFiPlugin { *; }
+-keep class com.skyfi.atak.plugin.** { *; }
+
 
 ## keep Enum in Response Objects
 -keepclassmembers enum com.android.services.** { *; }
@@ -140,12 +150,33 @@
 -keep class com.google.gson.stream.** { *; }
 
 ## SkyFi Plugin specific rules
--keep class com.skyfi.atak.plugin.SkyFiPlugin { *; }
--keep class com.skyfi.atak.plugin.SkyFiMapComponent { *; }
--keepclassmembers class com.skyfi.atak.plugin.** implements gov.tak.api.plugin.IPlugin {
-    public void onStart();
-    public void onStop();
-}
+-keep class com.skyfi.atak.plugin.** { *; }
+-keep class com.skyfi.atak.plugin.compat.** { *; }
+-keep class com.skyfi.atak.plugin.skyfiapi.** { *; }
+-keep class com.skyfi.atak.plugin.cog.** { *; }
+
+## Keep all plugin entry points
+-keep class * extends com.atakmap.android.dropdown.DropDownMapComponent { *; }
+-keep class * extends com.atakmap.android.dropdown.DropDownReceiver { *; }
+-keep class * extends com.atakmap.android.maps.MapComponent { *; }
+
+## Keep menu action handlers
+-keep class * extends com.atakmap.android.menu.PluginMenuParser$PluginMenuFactory { *; }
+-keep class com.skyfi.atak.plugin.MenuAction { *; }
+
+## Optional APIs - don't warn if not present (for compatibility)
+-dontwarn gov.tak.api.plugin.IServiceController
+-dontwarn gov.tak.api.ui.IHostUIService
+-dontwarn gov.tak.api.ui.Pane
+-dontwarn gov.tak.api.ui.PaneBuilder
+-dontwarn gov.tak.api.ui.ToolbarItem
+-dontwarn gov.tak.api.ui.ToolbarItemAdapter
+-dontwarn gov.tak.platform.marshal.MarshalManager
+
+## Keep compatibility interfaces if they exist
+-keep class gov.tak.api.plugin.IPlugin { *; }
+-keep class gov.tak.api.plugin.IServiceController { *; }
+-keep class gov.tak.api.ui.** { *; }
 
 ## AndroidX rules to prevent crashes
 -keep class androidx.** { *; }

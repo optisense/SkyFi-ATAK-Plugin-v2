@@ -8,8 +8,10 @@
 
 buildscript {
 
-    ext.PLUGIN_VERSION = "2.0-beta3"
-    ext.ATAK_VERSION = "5.4.0"
+    ext.PLUGIN_VERSION = "2.0-beta5"
+    ext.ATAK_VERSION = "5.3.0"  // Compile against older SDK for broader compatibility
+    ext.MIN_ATAK_VERSION = "5.3.0"
+    ext.MAX_ATAK_VERSION = "5.4.0.19"
 
     def takdevVersion = '2.+'
 
@@ -59,7 +61,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.4.2'
+        classpath 'com.android.tools.build:gradle:7.2.2'
         if(isDevKitEnabled()) {
             classpath "com.atakmap.gradle:atak-gradle-takdev:${takdevVersion}"
         } else {
@@ -112,22 +114,9 @@ android {
     //}
 
     // this is required and should not be removed otherwise the TAK
-    // inner signing check will fail and the plugin will not load
-    bundle {
-        storeArchive {
-            enable = false
-        }
-        // Explicitly disable AAB generation - plugins must be APKs
-        abi {
-            enableSplit = false
-        }
-        density {
-            enableSplit = false
-        }
-        language {
-            enableSplit = false
-        }
-    }
+    // inner signing check will fail and the plugin will not load  
+    // ATAK plugins must be APKs, not AABs
+    // Note: bundle configuration removed as it's not needed for APK-only builds
 
     // this is required and should not be removed otherwise the
     // plugin will not be able to use native libraries
@@ -140,15 +129,15 @@ android {
 
     signingConfigs {
         debug {
-            // Use the SDK keystore for local debug builds
-            storeFile file("${rootDir}/sdk/ATAK-CIV-5.4.0.18-SDK/android_keystore")
+            // Use the TAK.gov provided keystore at build/android_keystore
+            storeFile file("${buildDir}/android_keystore")
             storePassword "tnttnt"
             keyAlias "wintec_mapping"
             keyPassword "tnttnt"
         }
         release {
-            // Use the SDK keystore for local release builds
-            storeFile file("${rootDir}/sdk/ATAK-CIV-5.4.0.18-SDK/android_keystore")
+            // Use the TAK.gov provided keystore at build/android_keystore
+            storeFile file("${buildDir}/android_keystore")
             storePassword "tnttnt"
             keyAlias "wintec_mapping"
             keyPassword "tnttnt"
@@ -320,8 +309,9 @@ def getCommandFlavor() {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: '*.jar')
-    compileOnly fileTree(dir: "${rootDir}/sdk/ATAK-CIV-5.4.0.18-SDK", include: 'main.jar')
-    implementation fileTree(dir: "${rootDir}/sdk/ATAK-CIV-5.4.0.18-SDK", include: '*.jar', exclude: 'main.jar')
+    
+    // ATAK dependencies are provided automatically by TAK.gov repository
+    // Local SDK paths removed for TAK.gov compatibility
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
     implementation('com.squareup.retrofit2:retrofit:2.11.0')
@@ -333,8 +323,7 @@ dependencies {
     // Removed Material Design - use standard Android/ATAK components instead
     
     // Additional ATAK dependencies for GL and map components
-    compileOnly fileTree(dir: "${rootDir}/sdk/ATAK-CIV-5.4.0.18-SDK", include: 'gdal.jar')
-    compileOnly fileTree(dir: "${rootDir}/sdk/ATAK-CIV-5.4.0.18-SDK", include: 'api-prerelease-*.jar')
+    // These are provided automatically by TAK.gov repository
     
     // AI and Machine Learning dependencies
     implementation('com.google.code.gson:gson:2.10.1') // JSON processing for AI models

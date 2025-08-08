@@ -46,26 +46,20 @@ import androidx.recyclerview.widget.RecyclerView;
 import gov.tak.api.engine.map.coords.GeoCalculations;
 import gov.tak.api.engine.map.coords.GeoPoint;
 import gov.tak.api.engine.map.coords.IGeoPoint;
-import gov.tak.api.plugin.IPlugin;
-// import gov.tak.api.plugin.IServiceController; // Not available in ATAK 5.4.0.16
-import gov.tak.api.ui.IHostUIService;
-import gov.tak.api.ui.Pane;
-import gov.tak.api.ui.PaneBuilder;
-import gov.tak.api.ui.ToolbarItem;
-import gov.tak.api.ui.ToolbarItemAdapter;
-import gov.tak.platform.marshal.MarshalManager;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickListener {
+/**
+ * SkyFi Plugin - Main plugin class
+ * This class is instantiated by SkyFiMapComponent for compatibility with all ATAK versions
+ */
+public class SkyFiPlugin implements MainRecyclerViewAdapter.ItemClickListener {
 
     private static final String LOGTAG = "SkyFiPlugin";
-    // IServiceController serviceController; // Not available in ATAK 5.4.0.16
+    private static SkyFiPlugin instance;
+    
     Context pluginContext;
-    IHostUIService uiService;
-    ToolbarItem toolbarItem;
-    Pane templatePane;
     SkyFiAPI apiClient;
     View mainView;
     MainRecyclerViewAdapter mainRecyclerViewAdapter;
@@ -79,71 +73,71 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
     private ShapeSelectionTool shapeSelectionTool;
     private View currentView;
     private View dashboardView;
+    private View settingsView;
+    private boolean isInitialized = false;
 
-    public SkyFiPlugin() {}
-
-    /* Commented out for ATAK 5.4.0.16 compatibility - IServiceController not available
-    public SkyFiPlugin(IServiceController serviceController) {
-        this.serviceController = serviceController;
-        final PluginContextProvider ctxProvider = serviceController
-                .getService(PluginContextProvider.class);
-        if (ctxProvider != null) {
-            pluginContext = ctxProvider.getPluginContext();
-            pluginContext.setTheme(R.style.ATAKPluginTheme);
+    /**
+     * Get the singleton instance of SkyFiPlugin
+     */
+    public static synchronized SkyFiPlugin getInstance() {
+        if (instance == null) {
+            instance = new SkyFiPlugin();
         }
-
-        // obtain the UI service
-        uiService = serviceController.getService(IHostUIService.class);
-
-        // Note: Do NOT call Looper.prepare() - plugins run on main thread with existing Looper
-        // Calling Looper.prepare() will cause initialization failures
-
-        // initialize the toolbar button for the plugin
-
-        // create the button
-        toolbarItem = new ToolbarItem.Builder(
-                pluginContext.getString(R.string.app_name),
-                MarshalManager.marshal(
-                        pluginContext.getResources().getDrawable(R.drawable.icon_transparent),
-                        android.graphics.drawable.Drawable.class,
-                        gov.tak.api.commons.graphics.Bitmap.class))
-                .setListener(new ToolbarItemAdapter() {
-                    @Override
-                    public void onClick(ToolbarItem item) {
-                        showPane();
-                    }
-                })
-                .build();
-
-        ToolsPreferenceFragment.register(
-                new ToolsPreferenceFragment.ToolPreference(
-                        pluginContext.getString(R.string.preferences_title),
-                        pluginContext.getString(R.string.preferences_summary),
-                        pluginContext.getString(R.string.preferences_title),
-                        pluginContext.getResources().getDrawable(R.drawable.icon_transparent),
-                        new PreferencesFragment(pluginContext)));
-
-        // Defer API client initialization to onStart() to avoid premature service access
-        // apiClient will be initialized in onStart() method
+        return instance;
+    }
+    
+    /**
+     * Private constructor for singleton pattern
+     */
+    private SkyFiPlugin() {
+        Log.d(LOGTAG, "SkyFiPlugin constructor called");
+    }
+    
+    /**
+     * Initialize the plugin with context and map view
+     * Called from SkyFiMapComponent.onCreate()
+     */
+    public void initialize(Context context, MapView mapView) {
+        if (isInitialized) {
+            Log.d(LOGTAG, "Plugin already initialized, skipping");
+            return;
+        }
         
-        // Don't add toolbar item here - it will be added in onStart()
-        // This prevents duplicate icons
-        Log.d(LOGTAG, "Plugin constructor completed, initialization will continue in onStart()");
-    } */
+        this.pluginContext = context;
+        this.mapView = mapView;
+        
+        // Set theme
+        pluginContext.setTheme(R.style.ATAKPluginTheme);
+        
+        // Register preferences
+        try {
+            ToolsPreferenceFragment.register(
+                    new ToolsPreferenceFragment.ToolPreference(
+                            pluginContext.getString(R.string.preferences_title),
+                            pluginContext.getString(R.string.preferences_summary),
+                            pluginContext.getString(R.string.preferences_title),
+                            pluginContext.getResources().getDrawable(R.drawable.icon_transparent),
+                            new PreferencesFragment(pluginContext)));
+        } catch (Exception e) {
+            Log.e(LOGTAG, "Failed to register preferences", e);
+        }
+        
+        isInitialized = true;
+        Log.d(LOGTAG, "Plugin initialized successfully");
+        
+        // Start the plugin
+        onStart();
+    }
 
 
-    @Override
+    /**
+     * Start the plugin - called after initialization
+     */
     public void onStart() {
         Log.d(LOGTAG, "Plugin onStart() called");
         
-        // the plugin is starting, add the button to the toolbar
-        if (uiService == null) {
-            Log.e(LOGTAG, "UI service is null in onStart()");
-            return;
-        }
-
-        uiService.addToolbarItem(toolbarItem);
-        Log.d(LOGTAG, "Added toolbar item in onStart()");
+        // For compatibility with Play Store version, we don't use IServiceController
+        // The toolbar integration is handled through menu.xml in assets
         
         // Initialize API client now that plugin is fully loaded
         try {
@@ -227,13 +221,11 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
         AtakBroadcast.getInstance().registerReceiver(orderUtility, filter);
     }
 
-    @Override
+    /**
+     * Stop the plugin - called from SkyFiMapComponent.onDestroyImpl()
+     */
     public void onStop() {
-        // the plugin is stopping, remove the button from the toolbar
-        if (uiService == null)
-            return;
-
-        uiService.removeToolbarItem(toolbarItem);
+        // Cleanup is handled, toolbar removal not needed with menu.xml approach
         
         // Cleanup preview manager
         if (previewManager != null) {
@@ -271,38 +263,16 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
         }
     }
 
-    private void showPane() {
-        // instantiate the plugin view if necessary
-        if(templatePane == null) {
-            // Remember to use the PluginLayoutInflator if you are actually inflating a custom view
-            // In this case, using it is not necessary - but I am putting it here to remind
-            // developers to look at this Inflator
-
-            dashboardView = PluginLayoutInflater.inflate(pluginContext, R.layout.skyfi_dashboard, null);
-            mainView = dashboardView;
-            currentView = dashboardView;
-
-            templatePane = new PaneBuilder(mainView)
-                    // relative location is set to default; pane will switch location dependent on
-                    // current orientation of device screen
-                    .setMetaValue(Pane.RELATIVE_LOCATION, Pane.Location.Default)
-                    // pane will take up 50% of screen width in landscape mode
-                    .setMetaValue(Pane.PREFERRED_WIDTH_RATIO, 0.5D)
-                    // pane will take up 50% of screen height in portrait mode
-                    .setMetaValue(Pane.PREFERRED_HEIGHT_RATIO, 0.5D)
-                    .build();
-        }
-
-        // if the plugin pane is not visible, show it!
-        if(!uiService.isPaneVisible(templatePane)) {
-            uiService.showPane(templatePane, null);
-        }
-
-        // Initialize dashboard UI
-        initializeDashboard();
-        
-        // Update metrics
-        updateDashboardMetrics();
+    /**
+     * Show the main plugin dashboard
+     * Called from menu action or other entry points
+     */
+    public void showDashboard() {
+        // For compatibility, we'll use dropdown receivers instead of Pane API
+        // Launch the main dashboard as a dropdown
+        Intent intent = new Intent();
+        intent.setAction("com.skyfi.atak.SHOW_DASHBOARD");
+        AtakBroadcast.getInstance().sendBroadcast(intent);
     }
 
     @Override
@@ -408,8 +378,7 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
                     } else {
                         previewManager.enablePreviewMode();
                     }
-                    // Refresh the menu to update the toggle text
-                    showPane();
+                    // Toggle state is shown via Toast
                 }
                 break;
             case 6:
@@ -518,12 +487,9 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
      */
     private void startATAKDrawing() {
         if (drawingHandler != null) {
-            // Hide the main pane
-            if (uiService != null && templatePane != null && uiService.isPaneVisible(templatePane)) {
-                // Close the pane by showing a different one or using back action
-                Intent intent = new Intent("com.atakmap.android.maps.UNFOCUS");
-                AtakBroadcast.getInstance().sendBroadcast(intent);
-            }
+            // Close any open UI elements
+            Intent intent = new Intent("com.atakmap.android.maps.UNFOCUS");
+            AtakBroadcast.getInstance().sendBroadcast(intent);
             
             // Start drawing with callback
             drawingHandler.startPolygonDrawing(new SkyFiDrawingToolsHandler.ShapeCompleteListener() {
@@ -622,7 +588,7 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
         return null;
     }
     
-    private void showAOIManagementDialog() {
+    public void showAOIManagementDialog() {
         AOIManager aoiManager = new AOIManager(pluginContext);
         List<AOIManager.AOI> aois = aoiManager.getAllAOIs();
         
@@ -1001,26 +967,15 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
         });
     }
     
-    private void showSettingsMenu() {
-        // Inflate settings menu layout
-        View settingsView = PluginLayoutInflater.inflate(pluginContext, R.layout.settings_menu, null);
+    public void showSettingsMenu() {
+        // Inflate settings view if not already done
+        if (settingsView == null) {
+            settingsView = PluginLayoutInflater.inflate(pluginContext, R.layout.settings_menu, null);
+        }
         
-        // Update the pane with settings view
-        currentView = settingsView;
-        templatePane = new PaneBuilder(settingsView)
-                .setMetaValue(Pane.RELATIVE_LOCATION, Pane.Location.Default)
-                .setMetaValue(Pane.PREFERRED_WIDTH_RATIO, 0.5D)
-                .setMetaValue(Pane.PREFERRED_HEIGHT_RATIO, 0.5D)
-                .build();
-        
-        uiService.showPane(templatePane, null);
-        
-        // Set up back button
-        ImageView backButton = settingsView.findViewById(R.id.back_button);
-        backButton.setOnClickListener(v -> {
-            // Return to dashboard
-            showPane();
-        });
+        // Settings are shown via dropdown receiver
+        Intent intent = new Intent("com.skyfi.atak.SHOW_SETTINGS");
+        AtakBroadcast.getInstance().sendBroadcast(intent);
         
         // Set up API key setting
         CardView apiKeySetting = settingsView.findViewById(R.id.api_key_setting);
@@ -1096,7 +1051,7 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
             .show();
     }
     
-    private void showNewOrderOptions() {
+    public void showNewOrderOptions() {
         String[] options = {
             "Draw on Map",
             "From GPS Location",
@@ -1109,7 +1064,9 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
             .setItems(options, (dialog, which) -> {
                 switch (which) {
                     case 0: // Draw on Map
-                        uiService.closePane(templatePane);
+                        // Close any UI elements
+                        Intent unfocusIntent = new Intent("com.atakmap.android.maps.UNFOCUS");
+                        AtakBroadcast.getInstance().sendBroadcast(unfocusIntent);
                         startCustomDrawing();
                         break;
                     case 1: // From GPS Location
@@ -1291,10 +1248,9 @@ public class SkyFiPlugin implements IPlugin, MainRecyclerViewAdapter.ItemClickLi
                 return;
             }
             
-            // Close the pane first
-            if (uiService != null && templatePane != null && uiService.isPaneVisible(templatePane)) {
-                uiService.closePane(templatePane);
-            }
+            // Close any open UI elements
+            Intent unfocusIntent = new Intent("com.atakmap.android.maps.UNFOCUS");
+            AtakBroadcast.getInstance().sendBroadcast(unfocusIntent);
             
             Log.d(LOGTAG, "Starting shape selection workflow");
             

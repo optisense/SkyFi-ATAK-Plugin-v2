@@ -1,0 +1,145 @@
+// TAK.gov Compatible Build Configuration
+// This version is specifically designed to work with TAK.gov's build environment
+// which uses Gradle 7.4.2 and older Android Gradle Plugin versions
+
+apply plugin: 'com.android.application'
+apply plugin: 'atak-takdev-plugin'
+
+android {
+    compileSdk 33
+    namespace 'com.skyfi.atak.plugin'
+
+    buildFeatures {
+        buildConfig = true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    // IMPORTANT: No bundle configuration for TAK.gov compatibility
+    // The bundle block is not compatible with AGP 7.2.2
+    // ATAK plugins are always built as APKs, not AABs
+
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging = true
+        }
+        resources {
+            excludes += ['META-INF/INDEX.LIST']
+        }
+    }
+
+    signingConfigs {
+        // TAK.gov will apply their own signing
+        // Empty config to prevent build errors
+    }
+
+    buildTypes {
+        debug {
+            debuggable true
+            matchingFallbacks = ['sdk']
+        }
+        release {
+            minifyEnabled false  // Disable ProGuard for TAK.gov build
+            matchingFallbacks = ['odk']
+        }
+    }
+
+    flavorDimensions "application"
+
+    def supportedFlavors = [
+        [ name : 'civ', default: true ],
+        [ name : 'mil' ],
+        [ name : 'gov' ]
+    ]
+
+    productFlavors {
+        supportedFlavors.each { flav ->
+            "${flav.name}" {
+                if (flav.containsKey('default')) {
+                    getIsDefault().set(flav.default)
+                }
+                dimension "application"
+                
+                if (!flav.name.equals("civ") && !flav.name.equals("mil")) {
+                    applicationIdSuffix = ".${flav.name}"
+                }
+                
+                matchingFallbacks = ['civ']
+                
+                def pluginApiFlavor = flav.name.equals('gov') ? 'CIV' : "${flav.name.toUpperCase()}"
+                manifestPlaceholders = [atakApiVersion: "com.atakmap.app@5.3.0.${pluginApiFlavor}"]
+            }
+        }
+    }
+
+    sourceSets {
+        main {
+            setProperty("archivesBaseName", "ATAK-Plugin-SkyFi-ATAK-Plugin-v2-2.0-beta5--5.3.0")
+            defaultConfig.versionCode = 205
+            defaultConfig.versionName = "2.0-beta5"
+        }
+    }
+
+    defaultConfig {
+        applicationId "com.skyfi.atak.plugin"
+        minSdkVersion 21
+        targetSdkVersion 33
+        
+        ndk {
+            abiFilters "armeabi-v7a", "arm64-v8a"
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+        checkReleaseBuilds false
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: '*.jar')
+    
+    // ATAK dependencies provided by TAK.gov repository
+    
+    // Required third-party libraries
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+    implementation('com.squareup.retrofit2:retrofit:2.11.0')
+    implementation('com.squareup.retrofit2:converter-gson:2.11.0')
+    implementation('androidx.recyclerview:recyclerview:1.3.2')
+    implementation('org.locationtech.jts:jts-core:1.16.1')
+    implementation('androidx.swiperefreshlayout:swiperefreshlayout:1.1.0')
+    implementation('androidx.cardview:cardview:1.0.0')
+    implementation('com.google.code.gson:gson:2.10.1')
+    implementation('javax.websocket:javax.websocket-api:1.1')
+    implementation('org.java-websocket:Java-WebSocket:1.5.4')
+}
+
+// Resolution strategy for androidx conflicts
+configurations.all {
+    resolutionStrategy.eachDependency { details ->
+        if (details.requested.group == 'androidx.core') {
+            details.useVersion "1.15.0"
+        }
+        if (details.requested.group == 'androidx.lifecycle') {
+            details.useVersion "2.8.7"
+        }
+        if (details.requested.group == 'androidx.fragment') {
+            details.useVersion "1.8.5"
+        }
+    }
+}
+
+configurations.implementation {
+    exclude group: 'androidx.core', module: 'core-ktx'
+    exclude group: 'androidx.core', module: 'core'
+    exclude group: 'androidx.fragment', module: 'fragment'
+    exclude group: 'androidx.lifecycle', module: 'lifecycle'
+    exclude group: 'androidx.lifecycle', module: 'lifecycle-process'
+    exclude group: 'androidx.tracing', module: 'tracing'
+    exclude group: 'androidx.tracing', module: 'tracing-ktx'
+    exclude group: 'androidx.annotation', module: 'annotation'
+}

@@ -196,3 +196,18 @@ tmp/
 # OS files
 .DS_Store
 Thumbs.db
+
+# ATAK SDK Files (DO NOT COMMIT - Terms of Service)
+sdk/
+SDK/
+*SDK*/
+tak-submission-*/
+tak-final-submission-*/
+tak-analysis/
+
+# Test submission packages (keep final zips only)
+SkyFi-Test-Plugin-*.zip
+!SkyFi-ATAK-Plugin-v2-TAKGOV-*.zip
+
+# ATAK build tools (check license before committing)
+# atak-gradle-takdev.jar is kept for build purposes

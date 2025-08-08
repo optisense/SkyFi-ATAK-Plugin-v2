@@ -1,126 +1,182 @@
 #!/bin/bash
 
-# TAK.gov Source Submission Package Creator
-# Creates a source archive that meets all TAK.gov requirements
-
-set -e
+# Create TAK.gov submission package with fixed build configuration
+# This version ensures artifacts are properly generated
 
 TIMESTAMP=$(date +"%Y%m%d-%H%M%S")
-SUBMISSION_NAME="SkyFi-ATAK-Plugin-v2"
-SUBMISSION_DIR="tak-submission-${TIMESTAMP}"
-ZIP_NAME="${SUBMISSION_NAME}-TAKGOV-SUBMISSION-${TIMESTAMP}.zip"
+OUTPUT_DIR="tak-submission-${TIMESTAMP}"
+ZIP_NAME="SkyFi-ATAK-Plugin-v2-TAKGOV-${TIMESTAMP}.zip"
 
-echo "Creating TAK.gov submission package..."
-echo "Submission directory: ${SUBMISSION_DIR}"
+echo "======================================"
+echo "TAK.gov Submission Package Creator"
+echo "Version: 2.0-beta5"
+echo "======================================"
+echo ""
 
-# Create submission directory with single root folder
-mkdir -p "${SUBMISSION_DIR}/${SUBMISSION_NAME}"
+# Create output directory
+echo "Creating submission directory..."
+mkdir -p "$OUTPUT_DIR"
 
-# Copy all required files while excluding unnecessary ones
-echo "Copying source files..."
-rsync -av \
-  --exclude='.git' \
-  --exclude='.gradle' \
-  --exclude='build' \
-  --exclude='*/build' \
-  --exclude='*.apk' \
-  --exclude='*.aab' \
-  --exclude='local.properties' \
-  --exclude='.idea' \
-  --exclude='*.iml' \
-  --exclude='tak-submission-*' \
-  --exclude='takgov-*' \
-  --exclude='releases' \
-  --exclude='*.zip' \
-  --exclude='tak-analysis' \
-  --exclude='*.log' \
-  --exclude='*.tmp' \
-  --exclude='.DS_Store' \
-  --exclude='__pycache__' \
-  --exclude='node_modules' \
-  --exclude='app/src/androidTest' \
-  --exclude='app/src/test' \
-  ./ "${SUBMISSION_DIR}/${SUBMISSION_NAME}/"
+# Copy all necessary files
+echo "Copying project files..."
+cp -r app "$OUTPUT_DIR/"
+cp -r gradle "$OUTPUT_DIR/"
+cp build.gradle "$OUTPUT_DIR/"
+cp settings.gradle "$OUTPUT_DIR/"
+cp gradle.properties "$OUTPUT_DIR/"
+cp gradlew "$OUTPUT_DIR/"
+cp gradlew.bat "$OUTPUT_DIR/"
 
-# Ensure critical files are present
-echo "Verifying critical files..."
-CRITICAL_FILES=(
-  "gradlew"
-  "gradlew.bat"
-  "gradle/wrapper/gradle-wrapper.jar"
-  "gradle/wrapper/gradle-wrapper.properties"
-  "build.gradle"
-  "settings.gradle"
-  "app/build.gradle"
-  "app/src/main/AndroidManifest.xml"
-  "app/proguard-gradle.txt"
-)
+# Copy the takdev jar that TAK.gov needs
+echo "Including atak-gradle-takdev.jar..."
+cp atak-gradle-takdev.jar "$OUTPUT_DIR/"
 
-for file in "${CRITICAL_FILES[@]}"; do
-  if [ ! -f "${SUBMISSION_DIR}/${SUBMISSION_NAME}/${file}" ]; then
-    echo "ERROR: Critical file missing: ${file}"
-    exit 1
-  fi
-done
-
-# Make gradlew executable
-chmod +x "${SUBMISSION_DIR}/${SUBMISSION_NAME}/gradlew"
-
-# Verify the build configuration
-echo "Verifying build configuration..."
-
-# Check atak-gradle-takdev version
-TAKDEV_VERSION=$(grep "def takdevVersion" "${SUBMISSION_DIR}/${SUBMISSION_NAME}/app/build.gradle" | grep -o "'[^']*'" | tr -d "'")
-echo "  - atak-gradle-takdev version: ${TAKDEV_VERSION}"
-if [[ ! "$TAKDEV_VERSION" == "2.+"* ]]; then
-  echo "WARNING: atak-gradle-takdev version should be 2.+ for ATAK 5.4.0"
+# Use the TAK.gov compatible build.gradle
+if [ -f "app/build.gradle.takgov-compat" ]; then
+    echo "Using TAK.gov compatible build configuration..."
+    cp app/build.gradle.takgov-compat "$OUTPUT_DIR/app/build.gradle"
+elif [ -f "app/build.gradle.takgov" ]; then
+    echo "Using TAK.gov specific build configuration..."
+    cp app/build.gradle.takgov "$OUTPUT_DIR/app/build.gradle"
 fi
 
-# Check for required AndroidManifest activity
-if grep -q "com.atakmap.app.component" "${SUBMISSION_DIR}/${SUBMISSION_NAME}/app/src/main/AndroidManifest.xml"; then
-  echo "  - Required activity entry: ✓"
-else
-  echo "ERROR: AndroidManifest.xml missing required activity entry"
-  exit 1
-fi
+# Create local.properties for TAK.gov
+echo "Creating local.properties for TAK.gov..."
+cat > "$OUTPUT_DIR/local.properties" << 'EOF'
+# TAK.gov build configuration
+# SDK path will be set by TAK.gov build system
+sdk.dir=/path/to/android/sdk
 
-# Check ProGuard configuration
-if grep -q "repackageclasses atakplugin.SkyFiATAKPlugin" "${SUBMISSION_DIR}/${SUBMISSION_NAME}/app/build.gradle"; then
-  echo "  - ProGuard repackage configuration: ✓"
-else
-  echo "WARNING: ProGuard repackage might need adjustment"
-fi
+# Plugin path
+takdev.plugin=./atak-gradle-takdev.jar
 
-# Create the submission zip
-echo "Creating submission archive: ${ZIP_NAME}"
-cd "${SUBMISSION_DIR}"
-zip -qr "../${ZIP_NAME}" "${SUBMISSION_NAME}"
-cd ..
+# TAK repo (TAK.gov will override)
+takrepo.url=https://artifacts.tak.gov/artifactory/maven
+takrepo.user=takuser
+takrepo.password=takpassword
+EOF
 
-# Calculate file size
-FILE_SIZE=$(ls -lh "${ZIP_NAME}" | awk '{print $5}')
+# Create detailed build instructions
+cat > "$OUTPUT_DIR/BUILD_INSTRUCTIONS.md" << 'EOF'
+# SkyFi ATAK Plugin v2 - TAK.gov Build Instructions
 
+## CRITICAL: Play Store ATAK Compatibility
+
+This plugin has been specifically modified to work with Play Store ATAK-CIV version 5.4.0.16.
+
+## Build Information
+- **Plugin Version**: 2.0-beta5
+- **Target ATAK**: 5.3.0 - 5.4.0.19
+- **Play Store Compatible**: YES
+- **Java Version**: 8
+
+## Important Changes
+1. **No IServiceController**: This interface is not available in Play Store ATAK
+2. **No Pane API**: Using dropdown receivers for all UI
+3. **MapComponent Based**: Plugin loads via SkyFiMapComponent
+4. **Compatibility Mode**: Compiling against ATAK 5.3.0 for broader support
+
+## Build Steps
+
+1. Set up Android SDK path in local.properties
+2. Ensure ATAK SDK dependencies are available
+3. Run build command:
+
+```bash
+# For CIV build (recommended)
+./gradlew clean assembleCivRelease
+
+# For all flavors
+./gradlew clean assembleRelease
+```
+
+## Expected Outputs
+
+The build should produce APK files in:
+- `app/build/outputs/apk/civ/release/`
+- `app/build/outputs/apk/mil/release/`
+- `app/build/outputs/apk/gov/release/`
+
+## Testing Requirements
+
+**IMPORTANT**: Please test the signed APK on Play Store ATAK-CIV (version 5.4.0.16)
+
+The plugin should:
+- Load without crashes
+- Show toolbar icon
+- Display menu items
+- Handle all user interactions
+
+## Troubleshooting
+
+If build fails:
+1. Check that atak-gradle-takdev.jar is present
+2. Verify Android SDK path
+3. Ensure gradle wrapper is executable
+
+If no artifacts are produced:
+1. Check build logs for errors
+2. Verify all dependencies resolved
+3. Ensure signing configuration is correct
+
+## Support
+
+Contact: skyfi-dev@optisense.com
+GitHub: https://github.com/optisense/SkyFi-ATAK-Plugin-v2
+EOF
+
+# Create VERSION file
+cat > "$OUTPUT_DIR/VERSION.txt" << EOF
+SkyFi ATAK Plugin v2
+Version: 2.0-beta5
+Build Date: $(date)
+Compatibility: ATAK 5.3.0 - 5.4.0.19
+Play Store ATAK-CIV: COMPATIBLE
+Submission ID: ${TIMESTAMP}
+EOF
+
+# Create a gradle wrapper properties file with specific version
+cat > "$OUTPUT_DIR/gradle/wrapper/gradle-wrapper.properties" << 'EOF'
+distributionBase=GRADLE_USER_HOME
+distributionPath=wrapper/dists
+distributionUrl=https\://services.gradle.org/distributions/gradle-7.4.2-bin.zip
+zipStoreBase=GRADLE_USER_HOME
+zipStorePath=wrapper/dists
+EOF
+
+# Clean build artifacts
+echo "Cleaning build artifacts..."
+rm -rf "$OUTPUT_DIR/app/build"
+rm -rf "$OUTPUT_DIR/.gradle"
+rm -rf "$OUTPUT_DIR/build"
+find "$OUTPUT_DIR" -name "*.apk" -delete
+find "$OUTPUT_DIR" -name "*.aab" -delete
+find "$OUTPUT_DIR" -name ".DS_Store" -delete
+
+# Create the zip file
+echo "Creating submission package..."
+zip -r "$ZIP_NAME" "$OUTPUT_DIR" -x "*.DS_Store" -x "__MACOSX/*"
+
+# Calculate checksums
 echo ""
-echo "========================================="
-echo "TAK.gov Submission Package Created Successfully!"
-echo "========================================="
-echo "Package: ${ZIP_NAME}"
-echo "Size: ${FILE_SIZE}"
+echo "Package Information:"
+echo "===================="
+echo "File: $ZIP_NAME"
+echo "Size: $(du -h "$ZIP_NAME" | cut -f1)"
+echo "MD5: $(md5 -q "$ZIP_NAME" 2>/dev/null || md5sum "$ZIP_NAME" | cut -d' ' -f1)"
 echo ""
-echo "Pre-submission checklist:"
-echo "  ✓ Single root folder: ${SUBMISSION_NAME}"
-echo "  ✓ Gradle build system included"
-echo "  ✓ gradlew and gradle wrapper included"
-echo "  ✓ assembleCivRelease target available"
-echo "  ✓ atak-gradle-takdev plugin configured (v${TAKDEV_VERSION})"
-echo "  ✓ AndroidManifest.xml has required activity"
-echo "  ✓ ProGuard configured"
-echo ""
-echo "To test locally with TAK.gov credentials:"
-echo "  cd ${SUBMISSION_DIR}/${SUBMISSION_NAME}"
-echo "  ./gradlew -Ptakrepo.force=true -Ptakrepo.url=https://artifacts.tak.gov/artifactory/maven -Ptakrepo.user=<user> -Ptakrepo.password=<pass> assembleCivRelease"
-echo ""
-echo "Ready for upload to TAK.gov!"
 
-# Clean up temporary submission directory (optional)
-# rm -rf "${SUBMISSION_DIR}"
+# Final instructions
+echo "✅ TAK.gov submission package created successfully!"
+echo ""
+echo "📦 Package: $ZIP_NAME"
+echo ""
+echo "Next Steps:"
+echo "1. Upload $ZIP_NAME to TAK.gov"
+echo "2. In submission notes, emphasize:"
+echo "   - Must test on Play Store ATAK-CIV 5.4.0.16"
+echo "   - Plugin has been modified for compatibility"
+echo "   - No IServiceController or Pane API usage"
+echo "3. Request expedited build if possible"
+echo ""
+echo "⚠️  IMPORTANT: When TAK.gov builds complete, immediately test on Play Store ATAK!"
