@@ -1,4 +1,4 @@
-# 🛰️ SkyFi ATAK Plugin v2
+# SkyFi ATAK Plugin v2
 
 ```
  ____  _          ______ _       ___  _____ ___  _  __
@@ -16,13 +16,13 @@
 [![ATAK](https://img.shields.io/badge/ATAK-5.4.0-blue.svg)](https://tak.gov)
 [![Java](https://img.shields.io/badge/Java-11-orange.svg)](https://openjdk.java.net/projects/jdk/11/)
 
-> **🆕 New to ATAK?** Check out our [Complete Onboarding Guide](ONBOARDING_GUIDE.md) for step-by-step setup and tutorials!
+> **New to ATAK?** Check out our [Complete Onboarding Guide](ONBOARDING_GUIDE.md) for step-by-step setup and tutorials!
 
-## 🚀 Quick Links
-- 📥 [Download Latest Release](https://github.com/optisense/SkyFi-ATAK-Plugin-v2/releases)
-- 📖 [Complete Onboarding Guide](ONBOARDING_GUIDE.md) - **Start here for setup!**
-- 🐛 [Report Issues](https://github.com/optisense/SkyFi-ATAK-Plugin-v2/issues)
-- 🤝 [Contributing Guide](CONTRIBUTING.md)
+## Quick Links
+- [Download Latest Release](https://github.com/optisense/SkyFi-ATAK-Plugin-v2/releases)
+- [Complete Onboarding Guide](ONBOARDING_GUIDE.md) - **Start here for setup!**
+- [Report Issues](https://github.com/optisense/SkyFi-ATAK-Plugin-v2/issues)
+- [Report Issues](https://github.com/optisense/SkyFi-ATAK-Plugin-v2/issues)
 
 ---
 
@@ -40,12 +40,12 @@ SkyFi ATAK Plugin v2 integrates satellite imagery and geospatial intelligence ca
 _________________________________________________________________
 ## STATUS
 
-**Current Status**: Production Ready (Stable Release) ✅  
+**Current Status**: Production Ready (Stable Release)  
 **Stable Release**: [v2.0-beta](https://github.com/optisense/SkyFi-ATAK-Plugin-v2/releases/tag/v2.0-beta) (Recommended for production use)  
 **Latest Beta**: [v2.0-beta4](https://github.com/optisense/SkyFi-ATAK-Plugin-v2/releases/tag/v2.0-beta4) (For testing new features)  
 **ATAK Compatibility**: 5.4.0+ (CIV and MIL variants)
 
-### 🎉 Latest Updates
+### Latest Updates
 **v2.0-beta4** (Testing Release - August 7, 2025):
 - Enhanced shape selection from existing ATAK shapes
 - COG (Cloud Optimized GeoTIFF) integration
@@ -53,14 +53,14 @@ _________________________________________________________________
 - Bug fixes and stability improvements
 
 **v2.0-beta** (Stable Release - Recommended):
-- ✅ Complete dark theme matching SkyFi.com aesthetic
-- ✅ Custom UI components with animations
-- ✅ All TAK v1 feedback features integrated
-- ✅ Enhanced UI with SkyFi branding throughout
-- ✅ Comprehensive AOI management and tasking
-- ✅ Built with Java 17 for optimal performance
-- ✅ Field-tested and verified on physical devices
-- 📥 [Download Stable Release](https://github.com/optisense/SkyFi-ATAK-Plugin-v2/releases/latest)
+- Complete dark theme matching SkyFi.com aesthetic
+- Custom UI components with animations
+- All TAK v1 feedback features integrated
+- Enhanced UI with SkyFi branding throughout
+- Comprehensive AOI management and tasking
+- Built with Java 17 for optimal performance
+- Field-tested and verified on physical devices
+- [Download Stable Release](https://github.com/optisense/SkyFi-ATAK-Plugin-v2/releases/latest)
 
 ### Recent Updates
 - Integrated TAK v1 user feedback into v2
@@ -73,9 +73,9 @@ _________________________________________________________________
 - Comprehensive testing framework
 
 _________________________________________________________________
-## 🚀 INSTALLATION GUIDE
+## INSTALLATION GUIDE
 
-### ⚠️ Prerequisites: Install ATAK First
+### Prerequisites: Install ATAK First
 
 **IMPORTANT**: You must have ATAK installed before using this plugin.
 
@@ -247,7 +247,7 @@ adb install -r path/to/skyfi-plugin.apk
 ```
 
 _________________________________________________________________
-## 👨‍💻 DEVELOPER SETUP
+## DEVELOPER SETUP
 
 ### Prerequisites for Development
 
@@ -278,7 +278,7 @@ _________________________________________________________________
    ./gradlew assembleCivDebug
    ```
 
-### ⚠️ Important Legal Note
+### Important Legal Note
 - **Never commit ATAK APKs to version control**
 - ATAK is US Government software with distribution restrictions
 - Only share plugin APKs, not ATAK itself

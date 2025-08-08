@@ -4,51 +4,51 @@
 **Build:** 44f121e9  
 **ATAK Compatibility:** 5.4.0+
 
-## 🎨 What's New in Beta 3 - Complete UI Overhaul & Advanced Features
+## What's New in Beta 3 - Complete UI Overhaul & Advanced Features
 
 This release introduces a comprehensive dark theme UI redesign, radial menu integration, enhanced drawing tools, and advanced shape selection capabilities.
 
 ### Major Updates
 
-#### **🎨 Dark Theme Implementation**
+#### **Dark Theme Implementation**
 - Complete UI overhaul with black/dark backgrounds
 - SkyFi brand colors integration (black, white, accent blue #4A90E2)
 - Enhanced visual hierarchy with proper surface colors
 - Improved text contrast for better readability
 
-#### **🎛️ Radial Menu Integration**
+#### **Radial Menu Integration**
 - **SkyFi Icon in Shape Menus** - Tap any shape → See SkyFi option in radial menu
 - **Direct AOI Conversion** - Convert shapes to AOIs with one tap
 - **Context-Aware Options** - Save AOI, create tasking order, view archives, calculate feasibility
 - **Cross-Platform Support** - Works with squares, rectangles, polygons, and more
 
-#### **✏️ Enhanced Drawing Tools**
+#### **Enhanced Drawing Tools**
 - **Custom Polygon Drawing** - Tap-to-draw interface with visual feedback
 - **Smart Area Validation** - Real-time area calculation and minimum size checking
 - **AOI Naming Dialog** - Name AOIs immediately after drawing
 - **Seamless Workflow** - Direct integration with tasking order creation
 
-#### **🎯 Advanced Shape Selection - "From Existing Shape"**
+#### **Advanced Shape Selection - "From Existing Shape"**
 - **Universal Shape Support** - Select rectangles, circles, polygons, freehand drawings
 - **Visual Feedback** - Shape highlighting and selection confirmation
 - **Smart Geometry Extraction** - Handles all ATAK shape types with proper coordinate conversion
 - **Error Handling** - Comprehensive validation and user-friendly error messages
 - **Background Processing** - Thread-safe operations with progress indicators
 
-#### **🎨 Custom UI Components**
+#### **Custom UI Components**
 - **GradientTextView** - Animated gradient text effects
 - **NeumorphicButton** - Soft shadow button design
 - **CircularProgressButton** - Loading state animations
 - **GlowingCardView** - Accent color glow effects
 
-#### **⚡ Smooth Animations**
+#### **Smooth Animations**
 - 12+ animation files (fade, slide, bounce, scale)
 - Material Design ripple effects (Android 5.0+)
 - Button elevation animations
 - Card lift interactions
 - Dialog entrance/exit animations
 
-#### **🎨 Enhanced Styles**
+#### **Enhanced Styles**
 - Modern button styles (primary, secondary, accent)
 - Improved input field styling
 - Card backgrounds with subtle shadows

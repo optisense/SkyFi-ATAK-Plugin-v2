@@ -38,27 +38,27 @@ The following status checks must pass before merging to `main`:
 ### Branch Protection Settings
 
 #### Required Settings:
-- ✅ **Require a pull request before merging**
+- **Require a pull request before merging**
   - Require approvals: 1
   - Dismiss stale PR approvals when new commits are pushed
   - Require review from code owners
 
-- ✅ **Require status checks to pass before merging**
+- **Require status checks to pass before merging**
   - Require branches to be up to date before merging
   - Required status checks (listed above)
 
-- ✅ **Require conversation resolution before merging**
+- **Require conversation resolution before merging**
 
-- ✅ **Require signed commits**
+- **Require signed commits**
 
-- ✅ **Require linear history**
+- **Require linear history**
 
-- ✅ **Include administrators**
+- **Include administrators**
   - Enforce all configured restrictions for administrators
 
 #### Optional Settings:
-- ⚠️ **Allow force pushes** (Disabled)
-- ⚠️ **Allow deletions** (Disabled)
+- **Allow force pushes** (Disabled)
+- **Allow deletions** (Disabled)
 
 ## Develop Branch Protection
 
@@ -72,15 +72,15 @@ For the `develop` branch, require:
 ### Branch Protection Settings
 
 #### Required Settings:
-- ✅ **Require a pull request before merging**
+- **Require a pull request before merging**
   - Require approvals: 1
   - Allow specified actors to bypass required pull requests (for hotfixes)
 
-- ✅ **Require status checks to pass before merging**
+- **Require status checks to pass before merging**
   - Require branches to be up to date before merging
   - Required status checks (listed above)
 
-- ✅ **Require conversation resolution before merging**
+- **Require conversation resolution before merging**
 
 ## Feature Branch Guidelines
 

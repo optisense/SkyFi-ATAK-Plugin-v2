@@ -26,9 +26,32 @@ cp -r gradle "${OUTPUT_DIR}/${PROJECT_NAME}/"
 cp gradlew "${OUTPUT_DIR}/${PROJECT_NAME}/"
 cp gradlew.bat "${OUTPUT_DIR}/${PROJECT_NAME}/"
 cp settings.gradle "${OUTPUT_DIR}/${PROJECT_NAME}/"
-cp build.gradle "${OUTPUT_DIR}/${PROJECT_NAME}/"
 
-# Copy the TAK.gov-specific build.gradle
+# Write a TAK.gov-compatible root build.gradle (AGP 7.4.2 works with Gradle 7.6.1)
+cat > "${OUTPUT_DIR}/${PROJECT_NAME}/build.gradle" << 'EOF'
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.4.2'
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+EOF
+
+# Copy the TAK.gov-specific app/build.gradle (minimal deps, no bundle block)
 mkdir -p "${OUTPUT_DIR}/${PROJECT_NAME}/app"
 cp app/build.gradle.takgov "${OUTPUT_DIR}/${PROJECT_NAME}/app/build.gradle"
 
@@ -45,6 +68,13 @@ android.enableJetifier=false
 # TAK.gov will provide credentials for their Maven repository
 systemProp.takrepo.force=true
 EOF
+
+# Include atak-gradle-takdev.jar for offline SDK resolution
+if [ -f "atak-gradle-takdev.jar" ]; then
+  cp atak-gradle-takdev.jar "${OUTPUT_DIR}/${PROJECT_NAME}/"
+else
+  echo "WARNING: atak-gradle-takdev.jar not found; TAK.gov will need network access to fetch SDK"
+fi
 
 # Copy app directory structure
 echo "Copying app source code..."

@@ -1,4 +1,4 @@
-# 🛰️ SkyFi ATAK Plugin v2 - Complete Onboarding Guide
+# SkyFi ATAK Plugin v2 - Complete Onboarding Guide
 
 ```
  ____  _          ______ _       ___  _____ ___  _  __
@@ -11,7 +11,7 @@
 
 Welcome to the SkyFi ATAK Plugin v2! This guide will get you up and running whether you're new to ATAK or a seasoned veteran.
 
-## 🎯 Quick Start (5 minutes)
+## Quick Start (5 minutes)
 
 **Already know ATAK?** Jump to [Installation](#installation)  
 **New to ATAK?** Start with [What is ATAK?](#what-is-atak)
@@ -33,17 +33,17 @@ Welcome to the SkyFi ATAK Plugin v2! This guide will get you up and running whet
 
 ## What SkyFi Adds to ATAK
 
-### 🛰️ Satellite Tasking
+### Satellite Tasking
 - **Point and Task**: Tap anywhere on the map to order satellite imagery
 - **Draw Areas**: Use ATAK's drawing tools to define areas of interest
 - **Smart Scheduling**: Real-time feasibility analysis shows when satellites can capture your area
 
-### 📡 Imagery Integration  
+### Imagery Integration  
 - **Offline Caching**: Download imagery for offline use in the field
 - **Archive Access**: Browse and search historical satellite imagery
 - **Overlay Management**: Control transparency and layering of satellite data
 
-### 🎯 Mission Planning
+### Mission Planning
 - **Priority Tasking**: Rush orders for time-critical intelligence
 - **Multi-Sensor Support**: Optical, SAR, and Hyperspectral imagery
 - **Coordinate Flexibility**: Works with Lat/Long, MGRS, and current location
@@ -115,10 +115,10 @@ adb install -r skyfi-atak-plugin-v2.0-beta-civ-debug.apk
 ## Understanding Your Orders
 
 ### Order Status Colors
-- 🟡 **PENDING**: Order submitted, waiting for satellite
-- 🔵 **PROCESSING**: Satellite captured, processing imagery  
-- 🟢 **COMPLETED**: Imagery ready for download
-- 🔴 **FAILED**: Issue with capture or processing
+- **PENDING**: Order submitted, waiting for satellite (Yellow)
+- **PROCESSING**: Satellite captured, processing imagery (Blue)
+- **COMPLETED**: Imagery ready for download (Green)
+- **FAILED**: Issue with capture or processing (Red)
 
 ### Priority Types
 - **WHEN_AVAILABLE**: Standard pricing, flexible timing
@@ -155,42 +155,42 @@ adb install -r skyfi-atak-plugin-v2.0-beta-civ-debug.apk
 ## Troubleshooting
 
 ### Plugin Won't Load
-- ✅ Verify ATAK version is 5.4.0+
-- ✅ Check Android version (minimum 5.0)
-- ✅ Restart ATAK after installation
-- ✅ Look in Settings → Tools for "SkyFi Plugin"
+- Verify ATAK version is 5.4.0+
+- Check Android version (minimum 5.0)
+- Restart ATAK after installation
+- Look in Settings → Tools for "SkyFi Plugin"
 
 ### Can't Connect to SkyFi
-- ✅ Verify API key is correct
-- ✅ Check internet connection
-- ✅ Try logging out/in from SkyFi website
-- ✅ Contact support if account issues persist
+- Verify API key is correct
+- Check internet connection
+- Try logging out/in from SkyFi website
+- Contact support if account issues persist
 
 ### Orders Not Working
-- ✅ Check area meets minimum size for sensor
-- ✅ Verify coordinates are valid
-- ✅ Ensure sufficient account credits
-- ✅ Check order status in "View Orders"
+- Check area meets minimum size for sensor
+- Verify coordinates are valid
+- Ensure sufficient account credits
+- Check order status in "View Orders"
 
 ### Images Won't Load
-- ✅ Check network connection
-- ✅ Clear image cache (Settings → Clear Cache)
-- ✅ Try refreshing the order list
-- ✅ Verify order status is COMPLETED
+- Check network connection
+- Clear image cache (Settings → Clear Cache)
+- Try refreshing the order list
+- Verify order status is COMPLETED
 
 ---
 
 ## Getting Help
 
 ### Documentation
-- 📖 [Technical Guide](ATAK_PLUGIN_DEVELOPMENT_GUIDE.md) - For developers
-- 📋 [Beta Testing Guide](BETA_TESTING_GUIDE.md) - For testers
-- 📊 [Changelog](CHANGELOG_V1_TO_V2.md) - What's new in v2
+- [Technical Guide](ATAK_PLUGIN_DEVELOPMENT_GUIDE.md) - For developers
+- [User Manual](USER_MANUAL.md) - Complete feature documentation
+- [Installation Guide](ATAK_INSTALLATION_GUIDE.md) - Detailed installation instructions
 
 ### Support Channels
-- 🐛 [GitHub Issues](https://github.com/optisense/SkyFi-ATAK-Plugin-v2/issues) - Bug reports
-- 💬 [SkyFi Support](https://skyfi.com/support) - Account and billing
-- 📧 Email: support@skyfi.com
+- [GitHub Issues](https://github.com/optisense/SkyFi-ATAK-Plugin-v2/issues) - Bug reports
+- [SkyFi Support](https://skyfi.com/support) - Account and billing
+- Email: support@skyfi.com
 
 ---
 
@@ -207,6 +207,6 @@ adb install -r skyfi-atak-plugin-v2.0-beta-civ-debug.apk
 
 ---
 
-**Ready to get started?** Install the plugin and task your first satellite! 🛰️
+**Ready to get started?** Install the plugin and task your first satellite!
 
 *Having issues? Check our [troubleshooting section](#troubleshooting) or [create an issue](https://github.com/optisense/SkyFi-ATAK-Plugin-v2/issues).*

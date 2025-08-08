@@ -6,8 +6,8 @@ The following versions of the SkyFi ATAK Plugin are currently supported with sec
 
 | Version | Supported          | ATAK Compatibility |
 | ------- | ------------------ | ------------------ |
-| 2.0.x   | ✅ Current        | 5.4.0+             |
-| 1.x.x   | ❌ Deprecated     | 5.3.x              |
+| 2.0.x   | Current          | 5.4.0+             |
+| 1.x.x   | Deprecated       | 5.3.x              |
 
 ## Security Classifications
 
@@ -66,18 +66,18 @@ Classified security issues must be reported through official military channels o
 ## Security Features
 
 ### Current Implementation
-- ✅ HTTPS-only API communications
-- ✅ Certificate pinning for critical connections
-- ✅ Input validation and sanitization
-- ✅ Secure local data storage
-- ✅ ProGuard code obfuscation (release builds)
-- ✅ Debug certificate isolation
+- HTTPS-only API communications
+- Certificate pinning for critical connections
+- Input validation and sanitization
+- Secure local data storage
+- ProGuard code obfuscation (release builds)
+- Debug certificate isolation
 
 ### Planned Enhancements
-- 🔄 Enhanced encryption for local data
-- 🔄 Multi-factor authentication support
-- 🔄 Advanced threat detection
-- 🔄 Compliance with latest DoD security standards
+- Enhanced encryption for local data
+- Multi-factor authentication support
+- Advanced threat detection
+- Compliance with latest DoD security standards
 
 ## Compliance
 

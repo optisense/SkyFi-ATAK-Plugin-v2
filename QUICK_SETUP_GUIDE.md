@@ -1,6 +1,6 @@
 # SkyFi ATAK Plugin - Quick Setup Guide
 
-## 🚀 Quick Start (Choose Your Path)
+## Quick Start (Choose Your Path)
 
 ### Path A: SDK ATAK Users (Developers/TAK.gov)
 ```bash
@@ -23,7 +23,7 @@ adb install -r sdk-compatible-ATAK-Plugin-*.apk
 # 4. Use from ATAK context menu or standalone
 ```
 
-## 📱 Installation Commands
+## Installation Commands
 
 ### Build All Variants
 ```bash
@@ -46,7 +46,7 @@ cd SkyFi-ATAK-Plugin-v2
 ./scripts/create-playstore-keystore.sh
 ```
 
-## 🔧 Troubleshooting
+## Troubleshooting
 
 | Problem | Solution |
 |---------|----------|
@@ -55,7 +55,7 @@ cd SkyFi-ATAK-Plugin-v2
 | No ATAK detected | Check companion app settings |
 | Permission denied | Enable "Unknown sources" |
 
-## 📞 Need Help?
+## Need Help?
 
 - **Full Guide**: [ATAK_INSTALLATION_GUIDE.md](./ATAK_INSTALLATION_GUIDE.md)
 - **Support**: support@skyfi.com
