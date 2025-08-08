@@ -251,14 +251,16 @@ _________________________________________________________________
 
 ### Prerequisites for Development
 
-1. **Download ATAK SDK from TAK.gov**:
-   - Go to [TAK.gov](https://tak.gov/products/atak)
-   - Download ATAK CIV SDK 5.4.0.16 or 5.4.0.18
-   - Extract to `sdk/` directory
+1. **⚠️ IMPORTANT: ATAK SDK Required** (NOT included in this repo):
+   - **New Developers**: Read [TAK.gov Developer Onboarding Guide](TAKGOV_DEVELOPER_ONBOARDING.md) first
+   - **Register at TAK.gov**: Go to [TAK.gov](https://tak.gov/products/atak) (U.S. persons only)
+   - **Download SDK**: ATAK CIV SDK 5.3.0 or later (requires TAK.gov login)
+   - **Extract to `sdk/` directory** in this project
+   - **SkyFi Internal**: Request access to private `skyfi-atak-sdk` repo for quick setup
    - The SDK includes:
      - ATAK APK for testing (in main SDK directory)
      - Development libraries and documentation
-     - Sample plugins and code examples
+     - Required `atak-gradle-takdev.jar` plugin
 
 2. **Install Development Tools**:
    - Android Studio (latest version)

@@ -198,9 +198,19 @@ tmp/
 Thumbs.db
 
 # ATAK SDK Files (DO NOT COMMIT - Terms of Service)
+# CRITICAL: SDK files are subject to distribution restrictions
+# They must NEVER be committed to public repositories
 sdk/
 SDK/
 *SDK*/
+ATAK-CIV-*-SDK/
+atak-gradle-takdev.jar
+pluginsdk.zip
+
+# TAK.gov submission files (may contain SDK components)
+tak-submission-*/
+tak-signing-*/
+*-TAKGOV-*.zip
 tak-submission-*/
 tak-final-submission-*/
 tak-analysis/
