@@ -32,14 +32,14 @@ validate:environment:
     - test -f gradlew || exit 1
     - test -f app/build.gradle || exit 1
     - test -f settings.gradle || exit 1
-    - test -f atak-gradle-takdev.jar || echo "Warning: Local TAK SDK not found, will use TAK.gov repository"
+    - test -f atak-gradle-takdev.jar || echo "Warning - Local TAK SDK not found, will use TAK.gov repository"
     - echo "Checking Gradle wrapper version..."
-    - ./gradlew --version | grep "Gradle 6.9.1" || echo "Warning: Gradle version mismatch"
+    - ./gradlew --version | grep "Gradle 6.9.1" || echo "Warning - Gradle version mismatch"
     - echo "Validating plugin.xml uses SkyFiPluginCompatWrapper..."
     - grep -q "SkyFiPluginCompatWrapper" app/src/main/assets/plugin.xml || exit 1
   artifacts:
-    reports:
-      dotenv: build.env
+    paths:
+      - build/
     expire_in: 1 hour
 
 # Build debug APK for testing
