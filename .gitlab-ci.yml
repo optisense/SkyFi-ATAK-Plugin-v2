@@ -1,5 +1,5 @@
 # TAK.gov GitLab CI/CD Pipeline for ATAK Plugin
-# Requirements: Gradle 8.9, JDK 17, ATAK SDK 5.5.0
+# Requirements: Gradle 8.10, JDK 17, ATAK SDK 5.5.0
 
 stages:
   - validate
@@ -65,7 +65,7 @@ validate:environment:
     - test -f settings.gradle || exit 1
     - test -f atak-gradle-takdev.jar || echo "Warning - Local TAK SDK not found, will use TAK.gov repository"
     - echo "Checking Gradle wrapper version..."
-    - ./gradlew --version | grep "Gradle 8.9" || echo "Warning - Gradle version mismatch"
+    - ./gradlew --version | grep "Gradle 8.10" || echo "Warning - Gradle version mismatch"
     - echo "Validating plugin.xml uses SkyFiPluginCompatWrapper..."
     - grep "SkyFiPluginCompatWrapper" app/src/main/assets/plugin.xml || (echo "ERROR - plugin.xml must use SkyFiPluginCompatWrapper" && exit 1)
   artifacts:
@@ -178,7 +178,7 @@ sign:prepare:
     - echo "" >> build/signing/SIGNING_REQUEST.md
     - echo "## Important Notes" >> build/signing/SIGNING_REQUEST.md
     - echo "- Plugin uses SkyFiPluginCompatWrapper (no IServiceController dependency)" >> build/signing/SIGNING_REQUEST.md
-    - echo "- Built with Gradle 8.9 and JDK 17" >> build/signing/SIGNING_REQUEST.md
+    - echo "- Built with Gradle 8.10 and JDK 17" >> build/signing/SIGNING_REQUEST.md
     - echo "- Tested for compatibility with ATAK-CIV 5.5.0" >> build/signing/SIGNING_REQUEST.md
     - echo "" >> build/signing/SIGNING_REQUEST.md
     - echo "## Requested Signatures" >> build/signing/SIGNING_REQUEST.md
