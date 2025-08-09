@@ -55,11 +55,30 @@ buildscript {
         maven {
             url "https://jitpack.io"
         }
+        // TAK.gov Maven Release repository
         maven {
-            url = takrepoUrl
+            url = "https://artifacts.tak.gov:443/artifactory/maven-release"
             credentials {
                 username = takrepoUser
                 password = takrepoPassword
+            }
+        }
+        // TAK.gov TAKX repository (snapshots)
+        maven {
+            url = "https://artifacts.tak.gov:443/artifactory/takx"
+            credentials {
+                username = takrepoUser
+                password = takrepoPassword
+            }
+        }
+        // Fallback to configured URL if different
+        if (!takrepoUrl.contains("localhost")) {
+            maven {
+                url = takrepoUrl
+                credentials {
+                    username = takrepoUser
+                    password = takrepoPassword
+                }
             }
         }
     }
@@ -81,9 +100,25 @@ allprojects {
         maven {
             url "https://jitpack.io"
         }
-        // TAK.gov repository for SDK dependencies
+        // TAK.gov Maven Release repository
         maven {
-            url = takrepoUrl
+            url = "https://artifacts.tak.gov:443/artifactory/maven-release"
+            credentials {
+                username = takrepoUser
+                password = takrepoPassword
+            }
+        }
+        // TAK.gov TAKX repository (snapshots)
+        maven {
+            url = "https://artifacts.tak.gov:443/artifactory/takx"
+            credentials {
+                username = takrepoUser
+                password = takrepoPassword
+            }
+        }
+        // TAK.gov Maven repository (general)
+        maven {
+            url = "https://artifacts.tak.gov:443/artifactory/maven"
             credentials {
                 username = takrepoUser
                 password = takrepoPassword

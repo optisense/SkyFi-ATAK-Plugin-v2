@@ -47,7 +47,7 @@ cache:
       echo "Setting up local.properties with SDK and TAK.gov credentials..."
       cat > local.properties << EOF
       sdk.dir=${ANDROID_HOME}
-      takrepo.url=https://artifacts.tak.gov/artifactory/maven
+      takrepo.url=https://artifacts.tak.gov:443/artifactory/maven-release
       takrepo.user=${TAKREPO_USER:-jfuginay}
       takrepo.password=${TAKREPO_PASSWORD:-glpat-EfxW36mJhsG7c_bJ3C7k}
       EOF
