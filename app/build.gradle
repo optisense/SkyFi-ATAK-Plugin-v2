@@ -320,11 +320,17 @@ android {
             excludes += ['META-INF/LICENSE.txt']
             excludes += ['META-INF/NOTICE']
             excludes += ['META-INF/NOTICE.txt']
+            excludes += ['META-INF/DEPENDENCIES.txt']
+            excludes += ['META-INF/LICENSE.md']
+            excludes += ['META-INF/NOTICE.md']
             pickFirsts += ['okhttp3/internal/publicsuffix/NOTICE']
         }
-
-        // Extract native libraries from the APK - required for plugin loading
-        jniLibs.useLegacyPackaging true
+        
+        // Handle duplicate classes by picking first
+        jniLibs {
+            pickFirsts += ['**/*.so']
+            useLegacyPackaging true
+        }
     }
 
     sourceSets {
@@ -415,8 +421,15 @@ dependencies {
     
     // ATAK dependencies are provided automatically by TAK.gov repository
     // Local SDK paths removed for TAK.gov compatibility
-    implementation("com.squareup.okhttp3:okhttp:4.12.0")
-    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+    
+    // OkHttp - exclude from ATAK to avoid duplicates
+    implementation("com.squareup.okhttp3:okhttp:4.12.0") {
+        exclude group: 'com.squareup.okio', module: 'okio'
+    }
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0") {
+        exclude group: 'com.squareup.okhttp3', module: 'okhttp'
+        exclude group: 'com.squareup.okio', module: 'okio'
+    }
     implementation('com.squareup.retrofit2:retrofit:2.11.0')
     implementation('com.squareup.retrofit2:converter-gson:2.11.0')
     implementation('androidx.recyclerview:recyclerview:1.3.2')
@@ -457,7 +470,15 @@ configurations.all {
         if (details.requested.group == 'androidx.fragment') {
             details.useVersion "1.8.5"
         }
+        // Force OkHttp version to avoid conflicts
+        if (details.requested.group == 'com.squareup.okhttp3') {
+            details.useVersion "4.12.0"
+        }
     }
+    
+    // Exclude OkHttp from ATAK dependencies to avoid duplicate classes
+    exclude group: 'com.squareup.okhttp', module: 'okhttp'
+    exclude group: 'com.squareup.okhttp', module: 'okhttp-urlconnection'
 }
 
 configurations.implementation {
