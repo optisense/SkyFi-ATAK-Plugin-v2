@@ -24,7 +24,9 @@ cache:
 # Setup Android SDK for all jobs
 .android_setup: &android_setup
   before_script:
-    - apt-get update && apt-get install -y wget unzip
+    - apt-get update && apt-get install -y wget unzip git
+    - git config --global user.email "ci@tak.gov"
+    - git config --global user.name "TAK CI"
     - echo "Setting up Android SDK..."
     - mkdir -p ${ANDROID_HOME}
     - cd ${ANDROID_HOME}

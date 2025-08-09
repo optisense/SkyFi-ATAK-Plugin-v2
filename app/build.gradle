@@ -89,12 +89,16 @@ allprojects {
                 password = takrepoPassword
             }
         }
-        // Add local SDK directories as fallback
-        flatDir {
-            dirs "${rootDir}/ATAK-CIV-LATEST-SDK"
+        // Only add local SDK directories if they exist
+        if (file("${rootDir}/ATAK-CIV-LATEST-SDK").exists()) {
+            flatDir {
+                dirs "${rootDir}/ATAK-CIV-LATEST-SDK"
+            }
         }
-        flatDir {
-            dirs "${rootDir}/ATAK-CIV-5.4.0.19-SDK"
+        if (file("${rootDir}/ATAK-CIV-5.4.0.19-SDK").exists()) {
+            flatDir {
+                dirs "${rootDir}/ATAK-CIV-5.4.0.19-SDK"
+            }
         }
     }
 }
