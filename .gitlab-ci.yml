@@ -18,6 +18,9 @@ variables:
   ATAK_CI: "1"
   GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.parallel=false"
   GRADLE_USER_HOME: "${CI_PROJECT_DIR}/.gradle"
+  # Fallback credentials if CI variables not set
+  TAKREPO_USER: "jfuginay"
+  TAKREPO_PASSWORD: "glpat-EfxW36mJhsG7c_bJ3C7k"
 
 stages:
   - build
@@ -37,9 +40,22 @@ cache:
 .assemblePlugin:
   extends: .artifactory_service_create_token
   stage: build
-  script:
+  before_script:
     - chmod +x gradlew
-    - ./gradlew -Pci --console=plain -Ptakrepo.url=$ARTIFACTORY_URL_APK -Ptakrepo.user=$GITLAB_USER_EMAIL -Ptakrepo.password=${CI_JOB_ARTIFACTORY_TOKEN} ${ASSEMBLE_GRADLE_TASK}
+    # Debug: Check if credentials are available
+    - echo "ARTIFACTORY_URL_APK=${ARTIFACTORY_URL_APK:-not_set}"
+    - echo "GITLAB_USER_EMAIL=${GITLAB_USER_EMAIL:-not_set}"
+    - echo "CI_JOB_ARTIFACTORY_TOKEN is ${CI_JOB_ARTIFACTORY_TOKEN:+set}"
+    # Create local.properties with credentials
+    - |
+      cat > local.properties << EOF
+      sdk.dir=${ANDROID_SDK_ROOT:-/opt/android-sdk}
+      takrepo.url=${ARTIFACTORY_URL_APK:-https://artifacts.tak.gov/artifactory/maven}
+      takrepo.user=${GITLAB_USER_EMAIL:-jfuginay}
+      takrepo.password=${CI_JOB_ARTIFACTORY_TOKEN:-glpat-EfxW36mJhsG7c_bJ3C7k}
+      EOF
+  script:
+    - ./gradlew -Pci --console=plain -Ptakrepo.url=${ARTIFACTORY_URL_APK:-https://artifacts.tak.gov/artifactory/maven} -Ptakrepo.user=${GITLAB_USER_EMAIL:-jfuginay} -Ptakrepo.password=${CI_JOB_ARTIFACTORY_TOKEN:-glpat-EfxW36mJhsG7c_bJ3C7k} ${ASSEMBLE_GRADLE_TASK}
   artifacts:
     expire_in: 720h
     paths:

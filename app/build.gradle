@@ -30,9 +30,14 @@ buildscript {
     }
 
     def getProperty = { name, defValue ->
-        def prop = project.properties[name] ?:
-                getValueFromPropertiesFile(project.rootProject.file('local.properties'), name)
-        return (null == prop) ? defValue : prop
+        // First check command line properties
+        def prop = project.hasProperty(name) ? project.property(name) : null
+        // Then check local.properties file
+        if (prop == null) {
+            prop = getValueFromPropertiesFile(project.rootProject.file('local.properties'), name)
+        }
+        // Finally use default value
+        return (prop == null || prop == '') ? defValue : prop
     }
 
     def urlKey = 'takrepo.url'
