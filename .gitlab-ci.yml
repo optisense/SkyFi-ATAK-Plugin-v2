@@ -1,17 +1,29 @@
 # TAK.gov GitLab CI/CD Pipeline for ATAK Plugin
-# Requirements: Gradle 8.10, JDK 17, ATAK SDK 5.5.0
+# Based on working HelloWorld sample configuration
 
-stages:
-  - validate
-  - build
-  - package
-  - sign
+default:
+  image: ${TAK_REGISTRY_HOST}/devsecops/android-builder-image:17-${ANDROID_BUILDER_TAG}
+
+include:
+  - project: 'devsecops/gitlab-ci-common'
+    ref: master
+    file: '/template/build_and_sign.yml'
+  - project: 'devsecops/gitlab-ci-common'
+    ref: master
+    file: '/template/artifactory_token_service.yml'
 
 variables:
+  GIT_DEPTH: 1
+  GIT_SUBMODULE_STRATEGY: recursive
+  ATAK_CI: "1"
   GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.parallel=false"
   GRADLE_USER_HOME: "${CI_PROJECT_DIR}/.gradle"
-  ANDROID_HOME: "${CI_PROJECT_DIR}/android-sdk"
-  ANDROID_SDK_ROOT: "${CI_PROJECT_DIR}/android-sdk"
+
+stages:
+  - build
+  - test
+  - package
+  - production
   
 # Cache Gradle dependencies
 cache:
@@ -21,192 +33,56 @@ cache:
     - build/
     - app/build/
 
-# Setup Android SDK for all jobs
-.android_setup: &android_setup
-  before_script:
-    - apt-get update && apt-get install -y wget unzip git
-    - git config --global user.email "ci@tak.gov"
-    - git config --global user.name "TAK CI"
-    - echo "Setting up Android SDK..."
-    - mkdir -p ${ANDROID_HOME}
-    - cd ${ANDROID_HOME}
-    - |
-      if [ ! -f "cmdline-tools/latest/bin/sdkmanager" ]; then
-        wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
-        unzip -q commandlinetools-linux-9477386_latest.zip
-        mkdir -p cmdline-tools/latest
-        mv cmdline-tools/* cmdline-tools/latest/ || true
-        rm commandlinetools-linux-9477386_latest.zip
-      fi
-    - export PATH=${ANDROID_HOME}/cmdline-tools/latest/bin:${PATH}
-    - yes | sdkmanager --licenses || true
-    - sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.0"
-    - cd ${CI_PROJECT_DIR}
+# Base job for building plugin using Artifactory token
+.assemblePlugin:
+  extends: .artifactory_service_create_token
+  stage: build
+  script:
     - chmod +x gradlew
-    - |
-      echo "Setting up local.properties with SDK and TAK.gov credentials..."
-      cat > local.properties << EOF
-      sdk.dir=${ANDROID_HOME}
-      takrepo.url=https://artifacts.tak.gov:443/artifactory/maven-release
-      takrepo.user=${TAKREPO_USER:-jfuginay}
-      takrepo.password=${TAKREPO_PASSWORD:-glpat-EfxW36mJhsG7c_bJ3C7k}
-      EOF
-
-# Validate environment and dependencies
-validate:environment:
-  stage: validate
-  image: openjdk:17-jdk-slim
-  <<: *android_setup
-  script:
-    - echo "Validating build environment..."
-    - java -version
-    - ./gradlew --version
-    - echo "Checking for required files..."
-    - test -f gradlew || exit 1
-    - test -f app/build.gradle || exit 1
-    - test -f settings.gradle || exit 1
-    - test -f atak-gradle-takdev.jar || echo "Warning - Local TAK SDK not found, will use TAK.gov repository"
-    - echo "Checking Gradle wrapper version..."
-    - ./gradlew --version | grep "Gradle 8.10" || echo "Warning - Gradle version mismatch"
-    - echo "Validating plugin.xml uses SkyFiPluginCompatWrapper..."
-    - grep "SkyFiPluginCompatWrapper" app/src/main/assets/plugin.xml || (echo "ERROR - plugin.xml must use SkyFiPluginCompatWrapper" && exit 1)
+    - ./gradlew -Pci --console=plain -Ptakrepo.url=$ARTIFACTORY_URL_APK -Ptakrepo.user=$GITLAB_USER_EMAIL -Ptakrepo.password=${CI_JOB_ARTIFACTORY_TOKEN} ${ASSEMBLE_GRADLE_TASK}
   artifacts:
+    expire_in: 720h
     paths:
-      - build/
-      - android-sdk/
-    expire_in: 1 hour
+      - app/build/outputs/
 
-# Build debug APK for testing
-build:debug:
-  stage: build
-  image: openjdk:17-jdk-slim
-  <<: *android_setup
-  script:
-    - echo "Building debug APK..."
-    - ./gradlew clean assembleCivDebug --stacktrace
-    - echo "Debug APK built successfully"
-    - ls -la app/build/outputs/apk/civ/debug/
-  artifacts:
-    paths:
-      - app/build/outputs/apk/civ/debug/*.apk
-      - app/build/reports/
-    expire_in: 1 week
-  only:
-    - main
-    - develop
-    - merge_requests
+# Build variants - matching HelloWorld pattern
+assembleMilSdk:
+  extends: .assemblePlugin
+  variables:
+    ASSEMBLE_GRADLE_TASK: assembleMilDebug
 
-# Build release APK (unsigned)
-build:release:
-  stage: build
-  image: openjdk:17-jdk-slim
-  <<: *android_setup
-  script:
-    - echo "Building unsigned release APK..."
-    - ./gradlew clean assembleCivRelease --stacktrace
-    - echo "Release APK built successfully (unsigned)"
-    - ls -la app/build/outputs/apk/civ/release/
-  artifacts:
-    paths:
-      - app/build/outputs/apk/civ/release/*.apk
-      - app/build/reports/
-    expire_in: 1 month
-  only:
-    - main
-    - tags
+assembleMilOdk:
+  extends: .assemblePlugin
+  variables:
+    ASSEMBLE_GRADLE_TASK: assembleMilRelease
+  
+assembleCivSdk:
+  extends: .assemblePlugin
+  variables:
+    ASSEMBLE_GRADLE_TASK: assembleCivDebug
 
-# Build all variants (CIV and MIL if configured)
-build:variants:
-  stage: build
-  image: openjdk:17-jdk-slim
-  <<: *android_setup
+assembleCivOdk:
+  extends: .assemblePlugin
+  variables:
+    ASSEMBLE_GRADLE_TASK: assembleCivRelease
+
+# Production build with signing
+assembleProduction:
+  rules:
+    - if: '$CI_COMMIT_BRANCH =~ /^maintenance/'
+      when: always
+    - if: '$CI_COMMIT_BRANCH !~ /^maintenance/'
+      when: manual
+      allow_failure: true 
+  stage: production
+  extends: .build_and_sign_jdk17
+
+# Test job
+testRelease:
+  extends: .artifactory_service_create_token
+  stage: test
   script:
-    - echo "Building all variants..."
-    - ./gradlew clean assemble --stacktrace
-    - echo "All variants built successfully"
-    - find app/build/outputs/apk -name "*.apk" -type f
-  artifacts:
-    paths:
-      - app/build/outputs/apk/**/*.apk
-    expire_in: 1 week
+    - chmod +x gradlew
+    - ./gradlew -Pci --console=plain -Ptakrepo.url=$ARTIFACTORY_URL_APK -Ptakrepo.user=$GITLAB_USER_EMAIL -Ptakrepo.password=${CI_JOB_ARTIFACTORY_TOKEN} :app:testCivRelease
   when: manual
-  only:
-    - main
 
-# Package source for TAK.gov submission
-package:source:
-  stage: package
-  image: alpine:latest
-  before_script:
-    - apk add --no-cache zip rsync
-  script:
-    - echo "Creating TAK.gov source submission package..."
-    - export TIMESTAMP=$(date +%Y%m%d-%H%M%S)
-    - export SUBMISSION_NAME="SkyFi-ATAK-Plugin-v2-TAKGOV-${TIMESTAMP}"
-    - mkdir -p build/submission/${SUBMISSION_NAME}
-    - rsync -av --exclude='.git*' --exclude='build/' --exclude='app/build/' --exclude='*.apk' --exclude='releases/' --exclude='.gradle/' --exclude='.idea/' ./ build/submission/${SUBMISSION_NAME}/
-    - cd build/submission
-    - zip -r ${SUBMISSION_NAME}.zip ${SUBMISSION_NAME}/
-    - echo "Source package created - ${SUBMISSION_NAME}.zip"
-    - ls -lh ${SUBMISSION_NAME}.zip
-  artifacts:
-    paths:
-      - build/submission/*.zip
-    expire_in: 1 month
-  only:
-    - main
-    - tags
-
-# Prepare for TAK.gov signing
-sign:prepare:
-  stage: sign
-  image: alpine:latest
-  dependencies:
-    - build:release
-  script:
-    - echo "Preparing APKs for TAK.gov signing..."
-    - mkdir -p build/signing
-    - cp app/build/outputs/apk/civ/release/*.apk build/signing/ || true
-    - echo "Creating signing request document..."
-    - echo "# TAK.gov Signing Request" > build/signing/SIGNING_REQUEST.md
-    - echo "" >> build/signing/SIGNING_REQUEST.md
-    - echo "Plugin - SkyFi ATAK Plugin v2" >> build/signing/SIGNING_REQUEST.md
-    - echo "Version - ${CI_COMMIT_TAG:-${CI_COMMIT_SHORT_SHA}}" >> build/signing/SIGNING_REQUEST.md
-    - echo "Target ATAK Version - 5.5.0" >> build/signing/SIGNING_REQUEST.md
-    - echo "" >> build/signing/SIGNING_REQUEST.md
-    - echo "## Files for Signing" >> build/signing/SIGNING_REQUEST.md
-    - echo "- SkyFi-debug.apk (for testing)" >> build/signing/SIGNING_REQUEST.md
-    - echo "- SkyFi-release-unsigned.apk (for production)" >> build/signing/SIGNING_REQUEST.md
-    - echo "" >> build/signing/SIGNING_REQUEST.md
-    - echo "## Important Notes" >> build/signing/SIGNING_REQUEST.md
-    - echo "- Plugin uses SkyFiPluginCompatWrapper (no IServiceController dependency)" >> build/signing/SIGNING_REQUEST.md
-    - echo "- Built with Gradle 8.10 and JDK 17" >> build/signing/SIGNING_REQUEST.md
-    - echo "- Tested for compatibility with ATAK-CIV 5.5.0" >> build/signing/SIGNING_REQUEST.md
-    - echo "" >> build/signing/SIGNING_REQUEST.md
-    - echo "## Requested Signatures" >> build/signing/SIGNING_REQUEST.md
-    - echo "- CIV signature for civilian ATAK distribution" >> build/signing/SIGNING_REQUEST.md
-    - echo "- MIL signature if applicable for military distribution" >> build/signing/SIGNING_REQUEST.md
-    - echo "Signing preparation complete"
-  artifacts:
-    paths:
-      - build/signing/
-    expire_in: 1 month
-  when: manual
-  only:
-    - main
-    - tags
-
-# Test job (optional, requires Android emulator or device)
-test:unit:
-  stage: build
-  image: openjdk:17-jdk-slim
-  <<: *android_setup
-  script:
-    - ./gradlew test --stacktrace
-  artifacts:
-    reports:
-      junit: app/build/test-results/test**/TEST-*.xml
-    paths:
-      - app/build/reports/tests/
-    expire_in: 1 week
-  when: manual
