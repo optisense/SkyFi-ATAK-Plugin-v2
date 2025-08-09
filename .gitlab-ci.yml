@@ -175,7 +175,24 @@ sign:prepare:
     - mkdir -p build/signing
     - cp app/build/outputs/apk/civ/release/*.apk build/signing/ || true
     - echo "Creating signing request document..."
-    - printf "# TAK.gov Signing Request\n\nPlugin: SkyFi ATAK Plugin v2\nVersion: ${CI_COMMIT_TAG:-${CI_COMMIT_SHORT_SHA}}\nTarget ATAK Version: 5.4.0.16\n\n## Files for Signing\n- SkyFi-debug.apk (for testing)\n- SkyFi-release-unsigned.apk (for production)\n\n## Important Notes\n- Plugin uses SkyFiPluginCompatWrapper (no IServiceController dependency)\n- Built with Gradle 6.9.1 and JDK 17\n- Tested for compatibility with ATAK-CIV 5.4.0.16\n\n## Requested Signatures\n- CIV signature for civilian ATAK distribution\n- MIL signature if applicable for military distribution\n" > build/signing/SIGNING_REQUEST.md
+    - echo "# TAK.gov Signing Request" > build/signing/SIGNING_REQUEST.md
+    - echo "" >> build/signing/SIGNING_REQUEST.md
+    - echo "Plugin - SkyFi ATAK Plugin v2" >> build/signing/SIGNING_REQUEST.md
+    - echo "Version - ${CI_COMMIT_TAG:-${CI_COMMIT_SHORT_SHA}}" >> build/signing/SIGNING_REQUEST.md
+    - echo "Target ATAK Version - 5.4.0.16" >> build/signing/SIGNING_REQUEST.md
+    - echo "" >> build/signing/SIGNING_REQUEST.md
+    - echo "## Files for Signing" >> build/signing/SIGNING_REQUEST.md
+    - echo "- SkyFi-debug.apk (for testing)" >> build/signing/SIGNING_REQUEST.md
+    - echo "- SkyFi-release-unsigned.apk (for production)" >> build/signing/SIGNING_REQUEST.md
+    - echo "" >> build/signing/SIGNING_REQUEST.md
+    - echo "## Important Notes" >> build/signing/SIGNING_REQUEST.md
+    - echo "- Plugin uses SkyFiPluginCompatWrapper (no IServiceController dependency)" >> build/signing/SIGNING_REQUEST.md
+    - echo "- Built with Gradle 6.9.1 and JDK 17" >> build/signing/SIGNING_REQUEST.md
+    - echo "- Tested for compatibility with ATAK-CIV 5.4.0.16" >> build/signing/SIGNING_REQUEST.md
+    - echo "" >> build/signing/SIGNING_REQUEST.md
+    - echo "## Requested Signatures" >> build/signing/SIGNING_REQUEST.md
+    - echo "- CIV signature for civilian ATAK distribution" >> build/signing/SIGNING_REQUEST.md
+    - echo "- MIL signature if applicable for military distribution" >> build/signing/SIGNING_REQUEST.md
     - echo "Signing preparation complete"
   artifacts:
     paths:
