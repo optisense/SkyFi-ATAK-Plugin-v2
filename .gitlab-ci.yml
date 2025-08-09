@@ -14,7 +14,7 @@ include:
 
 variables:
   GIT_DEPTH: 1
-  GIT_SUBMODULE_STRATEGY: recursive
+  GIT_SUBMODULE_STRATEGY: none  # No submodules needed
   ATAK_CI: "1"
   GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.parallel=false"
   GRADLE_USER_HOME: "${CI_PROJECT_DIR}/.gradle"
