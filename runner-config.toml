@@ -1,0 +1,84 @@
+[[runners]]
+  name = "tak-gov-runner"
+  url = "https://gitlab.tak.gov/"
+  token = "${RUNNER_TOKEN}"
+  executor = "kubernetes"
+  
+  [runners.kubernetes]
+    image = "openjdk:17-jdk-slim"
+    namespace = "gitlab-runner"
+    privileged = false
+    
+    # CPU and Memory limits
+    cpu_limit = "4000m"
+    cpu_request = "1000m"
+    memory_limit = "8Gi"
+    memory_request = "2Gi"
+    
+    # Service account
+    service_account = "gitlab-runner"
+    
+    # Pull policy
+    pull_policy = "if-not-present"
+    
+    # Node selector - remove or adjust based on your cluster
+    # Remove node affinity constraints that are causing issues
+    # [runners.kubernetes.node_selector]
+    #   "node-type" = "standard"
+    
+    # Tolerations for the application:critical taint
+    [[runners.kubernetes.node_tolerations]]
+      key = "application"
+      value = "critical"
+      effect = "NoSchedule"
+      operator = "Equal"
+    
+    # Additional tolerations if needed
+    [[runners.kubernetes.node_tolerations]]
+      key = "node.kubernetes.io/not-ready"
+      effect = "NoExecute"
+      operator = "Exists"
+      toleration_seconds = 300
+    
+    [[runners.kubernetes.node_tolerations]]
+      key = "node.kubernetes.io/unreachable"
+      effect = "NoExecute"
+      operator = "Exists"
+      toleration_seconds = 300
+    
+    # Helper image configuration
+    helper_image = "gitlab/gitlab-runner-helper:x86_64-latest"
+    helper_cpu_limit = "200m"
+    helper_cpu_request = "100m"
+    helper_memory_limit = "256Mi"
+    helper_memory_request = "128Mi"
+    
+    # Pod annotations
+    [runners.kubernetes.pod_annotations]
+      "scheduler.alpha.kubernetes.io/critical-pod" = "true"
+    
+    # Build container resources
+    [runners.kubernetes.build_container_overwrite_resources]
+      "openjdk:17-jdk-slim" = { cpu_request = "1000m", cpu_limit = "4000m", memory_request = "2Gi", memory_limit = "8Gi" }
+      "alpine:latest" = { cpu_request = "100m", cpu_limit = "500m", memory_request = "128Mi", memory_limit = "512Mi" }
+    
+    # Volumes for caching
+    [[runners.kubernetes.volumes.empty_dir]]
+      name = "gradle-cache"
+      mount_path = "/root/.gradle"
+      medium = "Memory"
+    
+    [[runners.kubernetes.volumes.empty_dir]]
+      name = "android-sdk"
+      mount_path = "/android-sdk"
+    
+  [runners.cache]
+    Type = "s3"
+    Path = "gitlab-runner"
+    Shared = true
+    
+    [runners.cache.s3]
+      ServerAddress = "s3.amazonaws.com"
+      BucketName = "tak-gov-runner-cache"
+      BucketLocation = "us-east-1"
+      Insecure = false

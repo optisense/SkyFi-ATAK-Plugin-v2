@@ -186,6 +186,12 @@ android {
     buildFeatures {
         buildConfig = true
     }
+    
+    // Disable DEX pre-optimization to avoid conflicts
+    dexOptions {
+        preDexLibraries false
+        javaMaxHeapSize "4g"
+    }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -432,10 +438,11 @@ dependencies {
     }
     implementation('com.squareup.retrofit2:retrofit:2.11.0')
     implementation('com.squareup.retrofit2:converter-gson:2.11.0')
-    implementation('androidx.recyclerview:recyclerview:1.3.2')
+    // Remove AndroidX UI components - use ATAK's built-in versions
+    // implementation('androidx.recyclerview:recyclerview:1.3.2')
+    // implementation('androidx.swiperefreshlayout:swiperefreshlayout:1.1.0')
+    // implementation('androidx.cardview:cardview:1.0.0')
     implementation('org.locationtech.jts:jts-core:1.16.1')
-    implementation('androidx.swiperefreshlayout:swiperefreshlayout:1.1.0')
-    implementation('androidx.cardview:cardview:1.0.0')
     // Removed Material Design - use standard Android/ATAK components instead
     
     // Additional ATAK dependencies for GL and map components
@@ -482,16 +489,24 @@ configurations.all {
 }
 
 configurations.implementation {
+    // Exclude ALL AndroidX libraries - ATAK provides its own
     exclude group: 'androidx.core', module: 'core-ktx'
     exclude group: 'androidx.core', module: 'core'
     exclude group: 'androidx.fragment', module: 'fragment'
+    exclude group: 'androidx.fragment', module: 'fragment-ktx'
     exclude group: 'androidx.lifecycle', module: 'lifecycle'
     exclude group: 'androidx.lifecycle', module: 'lifecycle-process'
+    exclude group: 'androidx.lifecycle', module: 'lifecycle-runtime'
+    exclude group: 'androidx.lifecycle', module: 'lifecycle-common'
     exclude group: 'androidx.tracing', module: 'tracing'
     exclude group: 'androidx.tracing', module: 'tracing-ktx'
     exclude group: 'androidx.annotation', module: 'annotation'
     exclude group: 'androidx.collection', module: 'collection'
     exclude group: 'androidx.customview', module: 'customview'
+    exclude group: 'androidx.activity', module: 'activity'
+    exclude group: 'androidx.savedstate', module: 'savedstate'
+    exclude group: 'androidx.loader', module: 'loader'
+    exclude group: 'androidx.viewpager', module: 'viewpager'
     exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib'
     exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-common'
 }
