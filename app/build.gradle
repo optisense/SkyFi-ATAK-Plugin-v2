@@ -55,7 +55,21 @@ buildscript {
         maven {
             url "https://jitpack.io"
         }
-        // TAK.gov Maven Release repository
+        // TAK.gov repositories for build dependencies
+        maven {
+            url = "https://artifacts.tak.gov:443/artifactory/maven-release-local"
+            credentials {
+                username = takrepoUser
+                password = takrepoPassword
+            }
+        }
+        maven {
+            url = "https://artifacts.tak.gov:443/artifactory/maven-takx-release-local"
+            credentials {
+                username = takrepoUser
+                password = takrepoPassword
+            }
+        }
         maven {
             url = "https://artifacts.tak.gov:443/artifactory/maven-release"
             credentials {
@@ -63,22 +77,11 @@ buildscript {
                 password = takrepoPassword
             }
         }
-        // TAK.gov TAKX repository (snapshots)
         maven {
             url = "https://artifacts.tak.gov:443/artifactory/takx"
             credentials {
                 username = takrepoUser
                 password = takrepoPassword
-            }
-        }
-        // Fallback to configured URL if different
-        if (!takrepoUrl.contains("localhost")) {
-            maven {
-                url = takrepoUrl
-                credentials {
-                    username = takrepoUser
-                    password = takrepoPassword
-                }
             }
         }
     }
@@ -100,7 +103,36 @@ allprojects {
         maven {
             url "https://jitpack.io"
         }
-        // TAK.gov Maven Release repository
+        // TAK.gov repositories from JFrog
+        maven {
+            url = "https://artifacts.tak.gov:443/artifactory/maven-release-local"
+            credentials {
+                username = takrepoUser
+                password = takrepoPassword
+            }
+        }
+        maven {
+            url = "https://artifacts.tak.gov:443/artifactory/maven-takx-release-local"
+            credentials {
+                username = takrepoUser
+                password = takrepoPassword
+            }
+        }
+        maven {
+            url = "https://artifacts.tak.gov:443/artifactory/maven-takui-local"
+            credentials {
+                username = takrepoUser
+                password = takrepoPassword
+            }
+        }
+        maven {
+            url = "https://artifacts.tak.gov:443/artifactory/maven-third-party-controlled-local"
+            credentials {
+                username = takrepoUser
+                password = takrepoPassword
+            }
+        }
+        // Original repositories
         maven {
             url = "https://artifacts.tak.gov:443/artifactory/maven-release"
             credentials {
@@ -108,7 +140,6 @@ allprojects {
                 password = takrepoPassword
             }
         }
-        // TAK.gov TAKX repository (snapshots)
         maven {
             url = "https://artifacts.tak.gov:443/artifactory/takx"
             credentials {
@@ -116,7 +147,6 @@ allprojects {
                 password = takrepoPassword
             }
         }
-        // TAK.gov Maven repository (general)
         maven {
             url = "https://artifacts.tak.gov:443/artifactory/maven"
             credentials {
