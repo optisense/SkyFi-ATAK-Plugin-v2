@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@color/skyfi_background"
+    android:padding="8dp">
+
+    <TextView
+        android:text="@string/skyfi_orders"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textColor="@color/skyfi_text_primary"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center|center_vertical"
+        android:orientation="horizontal"
+        android:background="@color/skyfi_surface"
+        android:padding="8dp"
+        android:layout_marginBottom="8dp">
+
+        <Button
+            android:id="@+id/previous_button"
+            android:visibility="gone"
+            android:text="@string/previous_page"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/skyfi_accent"
+            android:textColor="@color/skyfi_text_primary" />
+
+        <Button
+            android:id="@+id/next_button"
+            android:text="@string/next_page"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/skyfi_accent"
+            android:textColor="@color/skyfi_text_primary" />
+        
+        <Button
+            android:id="@+id/test_cog_button"
+            android:text="Test COG"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:backgroundTint="@color/skyfi_accent"
+            android:textColor="@color/skyfi_text_primary" />
+
+    </LinearLayout>
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/pull_to_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/skyfi_background">
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/order_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/skyfi_background" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+
+
+</LinearLayout>

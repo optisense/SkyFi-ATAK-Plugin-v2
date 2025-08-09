@@ -1,0 +1,103 @@
+######################################################################
+## Skip down to the 'User Section'
+## Messing with any items in the 'System Section' will void the warranty
+######################################################################
+
+
+######################################################################
+######################################################################
+## System Section
+######################################################################
+######################################################################
+
+
+-dontskipnonpubliclibraryclasses
+-dontshrink
+-dontoptimize
+
+############### ACRA specifics
+# we need line numbers in our stack traces otherwise they are pretty useless
+-renamesourcefileattribute SourceFile
+-keepattributes SourceFile,LineNumberTable
+
+-keepattributes *Annotation*
+-keepattributes Signature, InnerClasses
+
+-keep class * implements android.os.Parcelable {
+  public static final android.os.Parcelable$Creator *;
+}
+
+-keepclassmembers class **.R$* {
+    public static <fields>;
+}
+
+# For enumeration classes
+-keepclassmembers enum * {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
+
+# Preserve all native method names and the names of their classes.
+-keepclasseswithmembernames class * {
+    native <methods>;
+}
+
+-keep class * implements gov.tak.api.plugin.IPlugin {
+}
+
+-keep,allowobfuscation @interface gov.tak.api.annotation.DontObfuscate
+
+# Do not strip any method/class that is annotated with @DontObfuscate
+-keep @gov.tak.api.annotation.DontObfuscate class * {*;}
+-keepclassmembers class * {
+    @gov.tak.api.annotation.DontObfuscate *;
+}
+
+######################################################################
+## Messing with any settings above this line will void the Warranty
+######################################################################
+
+######################################################################
+######################################################################
+## User Section
+######################################################################
+######################################################################
+
+-dontobfuscate
+
+# Network libraries
+-dontwarn okio.**
+-dontwarn okhttp3.**
+-dontwarn retrofit2.**
+
+# Keep SkyFi plugin classes
+-keep class com.skyfi.atak.plugin.SkyFiPluginWrapper {
+    public <init>(gov.tak.api.plugin.IServiceController);
+    public void onStart();
+    public void onStop();
+}
+-keep class com.skyfi.atak.plugin.SkyFiMapComponent { *; }
+-keep class com.skyfi.atak.plugin.** { *; }
+
+# Retrofit rules
+-keepclasseswithmembers class * {
+    @retrofit2.http.* <methods>;
+}
+-keepattributes Signature
+-keepattributes Exceptions
+
+# Gson rules
+-keep class sun.misc.Unsafe { *; }
+-keep class com.google.gson.stream.** { *; }
+
+# Keep entry points
+-keep class * extends com.atakmap.android.dropdown.DropDownMapComponent { *; }
+-keep class * extends com.atakmap.android.dropdown.DropDownReceiver { *; }
+-keep class * extends com.atakmap.android.maps.MapComponent { *; }
+
+# AndroidX compatibility
+-dontwarn androidx.**
+
+# Geometry library - prevent AWT warnings
+-dontwarn java.awt.**
+-dontwarn javax.swing.**

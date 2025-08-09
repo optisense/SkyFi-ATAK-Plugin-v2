@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App -->
+    <string name="app_name">SkyFi</string>
+    <!-- description -->
+    <string name="app_desc">Download and display satellite imagery from SkyFi</string>
+    <string name="api_key">API Key</string>
+    <string name="preferences_title">SkyFi Preferences</string>
+    <string name="preferences_summary">Set your SkyFi API key here</string>
+    <string name="view_orders">View Orders</string>
+    <string name="settings">Settings</string>
+    <string name="km2">KM²: </string>
+    <string name="resolution">Resolution: </string>
+    <string name="status">"Status: "</string>
+    <string name="order_pending">This order is still processing, please check back later.</string>
+    <string name="order_pending_title">Order Pending</string>
+    <string name="ok">OK</string>
+    <string name="skyfi_orders">SkyFi / Orders</string>
+    <string name="next_page">Next Page</string>
+    <string name="previous_page">Previous Page</string>
+    <string name="provider">"Provider: "</string>
+    <string name="failed_to_get_orders">Failed to get orders</string>
+    <string name="orders_null">Order response body is empty. Check your API Key and try again.</string>
+    <string name="new_order">New Order</string>
+    <string name="new_order_message">Would you like to place a tasking or archive order?</string>
+    <string name="tasking_order">Tasking Order</string>
+    <string name="archive_order">Archive Order</string>
+    <string name="cancel">Cancel</string>
+    <string name="from">Starting Window</string>
+    <string name="from_summary">Must be at least 36 hours in the future</string>
+    <string name="to">Ending Window</string>
+    <string name="max_cloud_coverage">Max Cloud Coverage Percent</string>
+    <string name="max_off_nadir_angle">Max Off Nadir Angle</string>
+    <string name="low">LOW</string>
+    <string name="medium">MEDIUM</string>
+    <string name="high">High (&gt;50 cm ≤ 1 m/px)</string>
+    <string name="very_high">Very High (&gt;30 cm ≤ 50 cm/px)</string>
+    <string name="super_high">Super High (&gt;15 cm ≤ 30 cm/px)</string>
+    <string name="ultra_high">Ultra High (≤ 15 cm/px)</string>
+    <string name="sensor_types">Sensor Types</string>
+    <string name="asap">ASAP</string>
+    <string name="eo">EO</string>
+    <string name="ads_b">ADS-B</string>
+    <string name="product_types">Product Types</string>
+    <string name="day">DAY</string>
+    <string name="night">NIGHT</string>
+    <string name="video">VIDEO</string>
+    <string name="sar">SAR</string>
+    <string name="hyperspectral">HYPERSPECTRAL</string>
+    <string name="multispectral">MULTISPECTRAL</string>
+    <string name="stereo">STEREO</string>
+    <string name="providers">Providers</string>
+    <string name="siwei">SIWEI</string>
+    <string name="satellogic">SATELLOGIC</string>
+    <string name="umbra">UMBRA</string>
+    <string name="tailwind">TAILWIND</string>
+    <string name="geosat">GEOSAT</string>
+    <string name="sentinel2">SENTINEL2</string>
+    <string name="sentinel2_creodias">SENTINEL2_CREODIAS</string>
+    <string name="planet">PLANET</string>
+    <string name="impro">IMPRO</string>
+    <string name="urban_sky">URBAN_SKY</string>
+    <string name="nsl">NSL</string>
+    <string name="vexcel">VEXCEL</string>
+    <string name="open_data">Open Data</string>
+    <string name="min_overlap_ratio">Minimum Overlap Ratio</string>
+    <string name="max_cloud_coverage_error">Max Cloud Coverage must be between 0–100</string>
+    <string name="max_off_nadir_error">Max Off Nadir Angle must be between 0–50</string>
+    <string name="min_overlap_ratio_error">Minimum Overlap Ratio must be a decimal between 0–1</string>
+    <string name="search">Search</string>
+    <string name="skyfi_archives">SkyFi / Archives</string>
+    <string name="cloud_coverage" formatted="false">Cloud Coverage: %.2f%%</string>
+    <string name="price_per_sqkm" formatted="false">Price Per KM²: $%.2f</string>
+    <string name="place_order">Place Order</string>
+    <string name="are_you_sure">Are you sure you want to place this order?</string>
+    <string name="order_placed">Order Placed Successfully</string>
+    <string name="order_failed" formatted="false">Failed to place order: %s</string>
+    <string name="error_placing_order">Error Placing Order</string>
+    <string name="skyfi_tasking_pricing">SkyFi / Tasking Order Pricing</string>
+    <string name="skyfi_tasking_order">SkyFi / Tasking Order</string>
+    <string name="priority">Prioritize</string>
+    <string name="task_priority">Task Priority</string>
+    <string name="when_available">WHEN AVAILABLE</string>
+    <string name="priority_tasking">PRIORITY</string>
+    <string name="priority_extra_cost" formatted="false">+$%.2f</string>
+    <string name="assured_tasking_extra_cost" formatted="false">+$%.2f</string>
+    <string name="total_price" formatted="false">Total Price: $%.2f</string>
+    <string name="get_pricing_failed">Failed to get pricing</string>
+    <string name="new_archive_order_my_location">New Archive Order From My Location</string>
+    <string name="new_tasking_order_my_location">New Tasking Order From My Location</string>
+    <string name="set_api_key">Set API Key</string>
+    <string name="set_radius">Set the radius in kilometers</string>
+    <string name="error">Error</string>
+    <string name="no_gps">Make sure you have a GPS lock before placing an order from your location</string>
+    <string name="new_order_my_location">New Order From My Location</string>
+    <string name="draw_aoi">Draw AOI with ATAK</string>
+    <string name="order_error">Order Error</string>
+    <string name="window_start_error">The start window is required and must be at least 36 hours in the future</string>
+    <string name="window_end_error">The ending window is required and should be after the start window</string>
+    <string name="my_profile_header">SkyFi / My Profile</string>
+    <string name="name" formatted="false">Name: %s %s</string>
+    <string name="email" formatted="false">Email: %s</string>
+    <string name="budget_usage" formatted="false">Budget Usage: $%d</string>
+    <string name="total_budget" formatted="false">Total Budget: $%d</string>
+    <string name="budget_remaining" formatted="false">Budget Remaining: $%d</string>
+    <string name="cc_on_file" formatted="false">Credit Card On File: %s</string>
+    <string name="my_profile">My Profile</string>
+    <string name="profile_error">Error retrieving profile, check you API key and try again</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
+    <string name="set_diameter">Set diameter in kilometers</string>
+    <string name="reset_form">Reset Form</string>
+    <string name="cache_images">Cache</string>
+    <string name="caching_progress">Caching Images...</string>
+    <string name="cache_complete">Cache Complete</string>
+    <string name="cache_failed">Cache Failed</string>
+    <string name="no_images_to_cache">No images to cache</string>
+    <string name="aor_filter">Filter by AOR</string>
+    <string name="select_aor">Select Area of Responsibility</string>
+    <string name="all_aors">All AORs</string>
+    <string name="rename_aoi">Rename AOI</string>
+    <string name="aoi_name">AOI Name</string>
+    <string name="archive_image">Archive</string>
+    <string name="favorite_image">Favorite</string>
+    <string name="opacity">Opacity</string>
+    <string name="sort_by_date">Sort by Date</string>
+    <string name="sort_by_location">Sort by Location</string>
+    <string name="sort_by_source">Sort by Source</string>
+    <string name="filter_images">Filter Images</string>
+    <string name="assured_tasking">Assured Tasking</string>
+    <string name="coordinate_input">Coordinate Input</string>
+    <string name="latitude">Latitude</string>
+    <string name="longitude">Longitude</string>
+    <string name="mgrs_coordinates">MGRS Coordinates</string>
+    <string name="current_location">Current Location</string>
+    <string name="pindrop_tasking">Pindrop Tasking</string>
+    <string name="manage_aois">Manage AOIs</string>
+    <string name="aoi_management">AOI Management</string>
+    <string name="no_aois_available">No AOIs available</string>
+    <string name="delete_aoi">Delete AOI</string>
+    <string name="confirm_delete_aoi">Are you sure you want to delete this AOI?</string>
+    <string name="delete">Delete</string>
+    <string name="rename">Rename</string>
+    <string name="enter_new_name">Enter new name for AOI</string>
+    
+    <!-- Cache status messages -->
+    <string name="image_already_cached">Image already cached</string>
+    <string name="high_res_cached">High-res cached</string>
+    <string name="unarchive">Unarchive</string>
+    <string name="unfavorite">Unfavorite</string>
+    
+    <!-- Preview functionality -->
+    <string name="imagery_preview">Imagery Preview</string>
+    <string name="no_imagery_available">No imagery available at this location</string>
+    <string name="full_search">Full Search</string>
+    <string name="enable_preview_mode">Enable Preview Mode</string>
+    <string name="disable_preview_mode">Disable Preview Mode</string>
+    <string name="preview_mode_enabled">Preview mode enabled - tap map to see imagery</string>
+    <string name="preview_mode_disabled">Preview mode disabled</string>
+    
+    <!-- Feasibility functionality -->
+    <string name="feasibility_title">Satellite Pass Feasibility</string>
+    <string name="expected_passes" formatted="false">Expected Passes: %d</string>
+    <string name="feasibility_level" formatted="false">Feasibility: %s</string>
+    <string name="feasibility_explanation" formatted="false">%s</string>
+    <string name="feasibility_unknown">Select sensor type and dates to see feasibility</string>
+    <string name="excellent_feasibility">Excellent</string>
+    <string name="good_feasibility">Good</string>
+    <string name="fair_feasibility">Fair</string>
+    <string name="poor_feasibility">Poor</string>
+</resources>

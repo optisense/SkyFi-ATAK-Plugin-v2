@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Play Store ATAK Menu Configuration -->
+<!-- Simplified menu that works with Play Store ATAK without SDK dependencies -->
+<menu>
+    <!-- Main toolbar button -->
+    <entry 
+        class="item"
+        text="SkyFi"
+        icon="resource:/icons/skyfi_icon.png"
+        onClick="com.skyfi.atak.SHOW_PLUGIN"/>
+        
+    <!-- Radial menu integration -->
+    <entry
+        class="submenu"
+        text="SkyFi Options">
+        
+        <entry
+            class="item"
+            text="Task Satellite"
+            icon="resource:/icons/satellite_icon.png"
+            onClick="com.skyfi.atak.TASK_SATELLITE"/>
+            
+        <entry
+            class="item"
+            text="View Orders"
+            icon="resource:/icons/orders_icon.png"
+            onClick="com.skyfi.atak.VIEW_ORDERS"/>
+            
+        <entry
+            class="item"
+            text="Archive Search"
+            icon="resource:/icons/archive_icon.png"
+            onClick="com.skyfi.atak.ARCHIVE_SEARCH"/>
+            
+        <entry
+            class="item"
+            text="Draw AOI"
+            icon="resource:/icons/draw_icon.png"
+            onClick="com.skyfi.atak.DRAW_AOI"/>
+            
+    </entry>
+</menu>

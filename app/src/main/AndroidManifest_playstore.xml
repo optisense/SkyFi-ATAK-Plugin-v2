@@ -1,0 +1,63 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.optisense.skyfi.atak"
+    android:versionCode="200"
+    android:versionName="2.0.0"
+    tools:ignore="GoogleAppIndexingWarning">
+
+    <!-- Permissions required for network operations -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    
+    <!-- Permissions for file operations -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <application
+        android:allowBackup="false"
+        android:icon="@drawable/ic_launcher"
+        android:label="SkyFi for ATAK"
+        android:description="Satellite tasking plugin for ATAK"
+        android:theme="@style/AppTheme"
+        tools:replace="android:allowBackup">
+        
+        <!-- Play Store ATAK plugin metadata -->
+        <meta-data 
+            android:name="plugin-api" 
+            android:value="com.atakmap.app@5.3.0" />
+        
+        <meta-data 
+            android:name="app_desc" 
+            android:value="SkyFi satellite tasking plugin for ATAK - easily task satellites and view imagery directly within ATAK" />
+        
+        <!-- Direct component registration for Play Store ATAK -->
+        <meta-data 
+            android:name="component" 
+            android:value="com.optisense.skyfi.atak.playstore.SkyFiPlayStorePlugin" />
+        
+        <!-- ATAK 4.6+ plugin discovery activity -->
+        <!-- This allows Play Store ATAK to discover and load the plugin -->
+        <activity 
+            android:name="com.atakmap.app.component"
+            android:exported="true"
+            tools:ignore="MissingClass">
+            <intent-filter android:label="SkyFi for ATAK">
+                <action android:name="com.atakmap.app.component" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        
+        <!-- Optional: Add a launcher activity for standalone testing -->
+        <activity
+            android:name=".PlayStoreInfoActivity"
+            android:exported="true"
+            android:label="SkyFi Plugin Info">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.INFO" />
+            </intent-filter>
+        </activity>
+
+    </application>
+
+</manifest>

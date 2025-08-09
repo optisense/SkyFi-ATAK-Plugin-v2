@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<radial_menu>
+    <!-- SkyFi Radial Menu Items for Shapes/Polygons -->
+    
+    <!-- Main SkyFi menu item for shapes -->
+    <menu_item 
+        id="skyfi_shape_menu"
+        icon="asset://icons/skyfi_logo.png"
+        title="SkyFi"
+        description="SkyFi satellite imagery options"
+        action_type="submenu"
+        show_for="shape,polygon,rectangle,circle,polyline">
+        
+        <!-- Submenu items -->
+        <submenu>
+            <menu_item
+                id="skyfi_save_aoi"
+                icon="asset://icons/aoi_icon.png"
+                title="Save as AOI"
+                description="Save this shape as an Area of Interest"
+                action_type="broadcast"
+                action="com.skyfi.atak.SAVE_AOI"/>
+                
+            <menu_item
+                id="skyfi_create_order"
+                icon="asset://icons/satellite_icon.png"
+                title="Order Imagery"
+                description="Create a tasking order for this area"
+                action_type="broadcast"
+                action="com.skyfi.atak.CREATE_ORDER"/>
+                
+            <menu_item
+                id="skyfi_view_archive"
+                icon="asset://icons/preview_icon.png"
+                title="View Archives"
+                description="Search archive imagery for this area"
+                action_type="broadcast"
+                action="com.skyfi.atak.VIEW_ARCHIVE"/>
+                
+            <menu_item
+                id="skyfi_calculate_feasibility"
+                icon="asset://icons/info_icon.png"
+                title="Feasibility"
+                description="Calculate satellite feasibility for this area"
+                action_type="broadcast"
+                action="com.skyfi.atak.CALCULATE_FEASIBILITY"/>
+        </submenu>
+    </menu_item>
+    
+    <!-- Quick action for common task -->
+    <menu_item
+        id="skyfi_quick_order"
+        icon="asset://icons/skyfi_logo.png"
+        title="Quick Order"
+        description="Quickly create a satellite imagery order"
+        action_type="broadcast"
+        action="com.skyfi.atak.QUICK_ORDER"
+        show_for="shape,polygon"
+        position="top"/>
+        
+</radial_menu>

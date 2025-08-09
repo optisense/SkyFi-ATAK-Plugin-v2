@@ -1,0 +1,32 @@
+# Optimized for dependency caching
+FROM openjdk:17-slim
+
+RUN apt-get update && apt-get install -y wget unzip && rm -rf /var/lib/apt/lists/*
+
+# Android SDK setup
+ENV ANDROID_SDK_ROOT=/opt/android-sdk
+ENV PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin
+
+RUN mkdir -p $ANDROID_SDK_ROOT/cmdline-tools && \
+    cd $ANDROID_SDK_ROOT/cmdline-tools && \
+    wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip && \
+    unzip -q commandlinetools-linux-9477386_latest.zip && \
+    mv cmdline-tools latest && \
+    rm commandlinetools-linux-9477386_latest.zip
+
+RUN yes | sdkmanager --licenses && \
+    sdkmanager "platform-tools" "platforms;android-29" "build-tools;30.0.3"
+
+WORKDIR /app
+
+# Only copy what's needed for dependency resolution
+COPY gradlew gradlew
+COPY gradle gradle
+COPY build.gradle build.gradle
+COPY settings.gradle settings.gradle
+COPY gradle.properties gradle.properties
+COPY .takdev .takdev
+COPY app/build.gradle app/build.gradle
+
+# Pre-download all dependencies
+RUN ./gradlew dependencies --no-daemon || true

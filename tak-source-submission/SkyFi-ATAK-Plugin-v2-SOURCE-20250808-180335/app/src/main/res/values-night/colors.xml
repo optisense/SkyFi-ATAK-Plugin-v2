@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <!-- SkyFi Brand Colors - Dark Mode Override -->
+    <color name="skyfi_accent">#6BB6FF</color>
+    <color name="skyfi_surface">#1F1F1F</color>
+    <color name="skyfi_surface_variant">#2A2A2A</color>
+    
+    <!-- Card and Shadow Colors - Dark Mode -->
+    <color name="card_background">#252525</color>
+    <color name="card_hover">#333333</color>
+    
+    <!-- Button Colors - Dark Mode -->
+    <color name="button_primary_pressed">#CCCCCC</color>
+    <color name="button_secondary_bg">#252525</color>
+    <color name="button_secondary_border">#404040</color>
+    
+    <!-- Input Field Colors - Dark Mode -->
+    <color name="input_bg">#252525</color>
+    <color name="input_border">#404040</color>
+    
+</resources>

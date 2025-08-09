@@ -1,0 +1,40 @@
+<set>
+    <!-- SkyFi shape action handler -->
+    <dialog 
+        title="SkyFi Options"
+        message="What would you like to do with this shape?"
+        positiveButtonText="Save as AOI"
+        negativeButtonText="Task Satellite"
+        neutralButtonText="Cancel">
+        
+        <!-- Save as AOI action -->
+        <positiveAction>
+            <broadcast>
+                <action>com.skyfi.SHAPE_ACTION</action>
+                <extras>
+                    <string key='targetUID'>${uid}</string>
+                    <string key='action'>save_aoi</string>
+                </extras>
+            </broadcast>
+        </positiveAction>
+        
+        <!-- Task satellite action -->
+        <negativeAction>
+            <broadcast>
+                <action>com.skyfi.SHAPE_ACTION</action>
+                <extras>
+                    <string key='targetUID'>${uid}</string>
+                    <string key='action'>task_satellite</string>
+                </extras>
+            </broadcast>
+        </negativeAction>
+    </dialog>
+    
+    <!-- Hide default menus -->
+    <broadcast>
+        <action>com.atakmap.android.maps.UNFOCUS</action>
+    </broadcast>
+    <broadcast>
+        <action>com.atakmap.android.maps.HIDE_MENU</action>
+    </broadcast>
+</set>

@@ -1,0 +1,258 @@
+////////////////////////////////////////////////////////////////////////////////
+//
+// Play Store ATAK Plugin Build Configuration
+// This build file is specifically for Google Play Store deployment
+// It does NOT use the takdev plugin or any SDK-specific dependencies
+//
+////////////////////////////////////////////////////////////////////////////////
+
+apply plugin: 'com.android.application'
+
+android {
+    compileSdk 33
+    buildToolsVersion "33.0.2"
+    
+    defaultConfig {
+        applicationId "com.optisense.skyfi.atak"
+        minSdkVersion 21
+        targetSdkVersion 33
+        versionCode 200
+        versionName "2.0.0"
+        
+        // Use unique package name for Play Store
+        namespace "com.optisense.skyfi.atak"
+        
+        multiDexEnabled true
+        
+        // Resource configs
+        resConfigs "en"
+        
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    
+    signingConfigs {
+        playstore {
+            // Play Store signing config - use your actual keystore
+            storeFile file('../keystores/playstore-skyfi.keystore')
+            storePassword System.getenv("PLAYSTORE_KEYSTORE_PASSWORD") ?: "default"
+            keyAlias System.getenv("PLAYSTORE_KEY_ALIAS") ?: "skyfi"
+            keyPassword System.getenv("PLAYSTORE_KEY_PASSWORD") ?: "default"
+        }
+        
+        debug {
+            storeFile file('../android_keystore')
+            storePassword "tnttnt"
+            keyAlias "SkyFi_ATAK_Plugin_v2"
+            keyPassword "tnttnt"
+        }
+    }
+    
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules-playstore.pro'
+            signingConfig signingConfigs.playstore
+            
+            // Optimize for Play Store
+            shrinkResources true
+            zipAlignEnabled true
+            
+            // Remove debug info
+            debuggable false
+            jniDebuggable false
+            
+            // Set release build properties
+            buildConfigField "boolean", "PLAY_STORE_BUILD", "true"
+            buildConfigField "String", "BUILD_TYPE", '"PLAY_STORE"'
+        }
+        
+        debug {
+            minifyEnabled false
+            debuggable true
+            signingConfig signingConfigs.debug
+            
+            buildConfigField "boolean", "PLAY_STORE_BUILD", "true"
+            buildConfigField "String", "BUILD_TYPE", '"PLAY_STORE_DEBUG"'
+        }
+    }
+    
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+    
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/*.RSA'
+        exclude 'META-INF/*.SF'
+        exclude 'META-INF/*.DSA'
+    }
+    
+    sourceSets {
+        main {
+            // Use Play Store specific manifest
+            manifest.srcFile 'src/main/AndroidManifest_playstore.xml'
+            
+            // Use Play Store specific plugin.xml
+            assets {
+                srcDirs 'src/main/assets'
+                exclude 'plugin.xml'
+                // Copy plugin_playstore.xml as plugin.xml during build
+            }
+            
+            java {
+                srcDirs 'src/main/java'
+                // Exclude SDK-specific classes
+                exclude '**/SkyFiPluginWrapper.java'
+                exclude '**/SkyFiPluginBridge.java'
+                exclude '**/PluginNativeLoader.java'
+                exclude '**/compat/CompatibilityHelper.java'
+            }
+            
+            res.srcDirs = ['src/main/res']
+        }
+    }
+    
+    // Lint options for Play Store
+    lintOptions {
+        abortOnError false
+        checkReleaseBuilds true
+        disable 'InvalidPackage', 'MissingTranslation'
+        warning 'ResourceType'
+    }
+}
+
+dependencies {
+    // Core Android dependencies
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.3.2'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'com.google.android.material:material:1.11.0'
+    
+    // ATAK Play Store dependencies (minimal, no SDK)
+    // These are the bare minimum ATAK classes available in Play Store version
+    compileOnly files('libs/atak-playstore-stubs.jar')
+    
+    // Networking
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.12.0'
+    
+    // JSON processing
+    implementation 'com.google.code.gson:gson:2.10.1'
+    
+    // Image loading
+    implementation 'com.github.bumptech.glide:glide:4.16.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
+    
+    // Location/geometry
+    implementation 'org.locationtech.jts:jts-core:1.19.0'
+    
+    // Utilities
+    implementation 'org.apache.commons:commons-lang3:3.14.0'
+    implementation 'commons-io:commons-io:2.15.1'
+    
+    // Testing
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+}
+
+// Custom task to copy Play Store plugin.xml
+task copyPlayStorePluginXml(type: Copy) {
+    from 'src/main/assets/plugin_playstore.xml'
+    into "$buildDir/intermediates/assets/playstore/release"
+    rename 'plugin_playstore.xml', 'plugin.xml'
+}
+
+tasks.whenTaskAdded { task ->
+    if (task.name == 'mergePlaystoreReleaseAssets') {
+        task.dependsOn copyPlayStorePluginXml
+    }
+}
+
+// ProGuard rules for Play Store build
+task createPlayStoreProguardRules {
+    doLast {
+        def proguardFile = file('proguard-rules-playstore.pro')
+        proguardFile.text = '''
+# Play Store ATAK Plugin ProGuard Rules
+
+# Keep all ATAK interfaces and classes
+-keep class com.atakmap.** { *; }
+-keep interface com.atakmap.** { *; }
+
+# Keep our plugin classes
+-keep class com.optisense.skyfi.atak.** { *; }
+-keep class com.optisense.skyfi.atak.playstore.** { *; }
+
+# Keep plugin entry point
+-keep class com.optisense.skyfi.atak.playstore.SkyFiPlayStorePlugin { *; }
+
+# Keep R class
+-keepclassmembers class **.R$* {
+    public static <fields>;
+}
+
+# Keep native methods
+-keepclasseswithmembernames class * {
+    native <methods>;
+}
+
+# Keep custom views
+-keep public class * extends android.view.View {
+    public <init>(android.content.Context);
+    public <init>(android.content.Context, android.util.AttributeSet);
+    public <init>(android.content.Context, android.util.AttributeSet, int);
+}
+
+# Retrofit
+-keepattributes Signature
+-keepattributes Exceptions
+-keepattributes *Annotation*
+
+-keep class retrofit2.** { *; }
+-keep class okhttp3.** { *; }
+-keep class okio.** { *; }
+
+# Gson
+-keep class com.google.gson.** { *; }
+-keep class * implements com.google.gson.TypeAdapterFactory
+-keep class * implements com.google.gson.JsonSerializer
+-keep class * implements com.google.gson.JsonDeserializer
+
+# Keep models
+-keep class com.optisense.skyfi.atak.skyfiapi.** { *; }
+
+# Glide
+-keep public class * implements com.bumptech.glide.module.GlideModule
+-keep class * extends com.bumptech.glide.module.AppGlideModule {
+ <init>(...);
+}
+-keep public enum com.bumptech.glide.load.ImageHeaderParser$** {
+  **[] $VALUES;
+  public *;
+}
+
+# JTS
+-keep class org.locationtech.jts.** { *; }
+
+# Apache Commons
+-keep class org.apache.commons.** { *; }
+
+# Suppress warnings
+-dontwarn javax.annotation.**
+-dontwarn sun.misc.Unsafe
+-dontwarn java.nio.file.**
+-dontwarn org.codehaus.mojo.**
+        '''
+    }
+}
+
+preBuild.dependsOn createPlayStoreProguardRules

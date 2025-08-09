@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/skyfi_card_bg"
+    android:padding="16dp">
+
+    <!-- Header -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="AI Assistant"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Input Container -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardBackgroundColor="#2C2C2C"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="4dp"
+        android:layout_marginBottom="12dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="12dp"
+            android:gravity="center_vertical">
+
+            <!-- Text Input -->
+            <AutoCompleteTextView
+                android:id="@+id/ai_text_input"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Ask AI about the area..."
+                android:textColor="#FFFFFF"
+                android:textColorHint="#CCFFFFFF"
+                android:background="@android:color/transparent"
+                android:imeOptions="actionSend"
+                android:inputType="textCapSentences|textMultiLine"
+                android:maxLines="3"
+                android:minHeight="40dp"
+                android:gravity="center_vertical"
+                android:textSize="16sp" />
+
+            <!-- Voice Button -->
+            <ImageButton
+                android:id="@+id/ai_voice_button"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/skyfi_button_primary"
+                android:src="@drawable/ic_mic"
+                android:contentDescription="Voice input"
+                android:scaleType="centerInside"
+                android:tint="#FFFFFF"
+                android:layout_marginLeft="8dp" />
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <!-- Listening Indicator -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="8dp"
+        android:visibility="gone">
+
+        <ProgressBar
+            android:id="@+id/ai_listening_indicator"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="4dp"
+            android:layout_weight="1"
+            android:progressTint="#4CAF50"
+            android:progressBackgroundTint="#333333"
+            android:max="100" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🎤"
+            android:textSize="16sp"
+            android:layout_marginLeft="8dp" />
+
+    </LinearLayout>
+
+    <!-- Status Text -->
+    <TextView
+        android:id="@+id/ai_status_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#CCFFFFFF"
+        android:textSize="12sp"
+        android:gravity="center"
+        android:minHeight="16dp"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Quick Suggestions -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Quick Actions:"
+        android:textColor="#CCFFFFFF"
+        android:textSize="12sp"
+        android:layout_marginBottom="8dp" />
+
+    <LinearLayout
+        android:id="@+id/ai_suggestions_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_horizontal" />
+
+    <!-- Usage Tips -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="💡 Try: 'Show vehicles nearby' or 'Find safe routes'"
+        android:textColor="#99FFFFFF"
+        android:textSize="10sp"
+        android:gravity="center"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/skyfi_dialog_bg"
+        android:padding="8dp" />
+
+</LinearLayout>

@@ -65,7 +65,7 @@ public class SkyFiPlugin implements MainRecyclerViewAdapter.ItemClickListener {
     MainRecyclerViewAdapter mainRecyclerViewAdapter;
     private MapView mapView;
     private TextView radiusTextView;
-    private ImageryPreviewManager previewManager;
+    // private ImageryPreviewManager previewManager; // Disabled for compatibility
     private SkyFiDrawingToolsHandler drawingHandler;
     private AOIVisualizationManager aoiVisualizationManager;
     private SkyFiMapComponent mapComponent;
@@ -161,8 +161,8 @@ public class SkyFiPlugin implements MainRecyclerViewAdapter.ItemClickListener {
         mapView = MapView.getMapView();
         if (mapView != null) {
             registerDropDownReceivers();
-            // Initialize preview manager
-            previewManager = new ImageryPreviewManager(pluginContext, mapView);
+            // Initialize preview manager - disabled for compatibility
+            // previewManager = new ImageryPreviewManager(pluginContext, mapView);
             // Initialize drawing handler
             drawingHandler = new SkyFiDrawingToolsHandler(pluginContext, mapView);
             // Initialize AOI visualization
@@ -228,9 +228,10 @@ public class SkyFiPlugin implements MainRecyclerViewAdapter.ItemClickListener {
         // Cleanup is handled, toolbar removal not needed with menu.xml approach
         
         // Cleanup preview manager
-        if (previewManager != null) {
-            previewManager.cleanup();
-        }
+        // Preview manager cleanup disabled for compatibility
+        // if (previewManager != null) {
+        //     previewManager.cleanup();
+        // }
         
         // Cleanup drawing handler
         if (drawingHandler != null) {
@@ -372,14 +373,15 @@ public class SkyFiPlugin implements MainRecyclerViewAdapter.ItemClickListener {
                 break;
             case 5:
                 // Toggle preview mode
-                if (previewManager != null) {
-                    if (previewManager.isPreviewModeEnabled()) {
-                        previewManager.disablePreviewMode();
-                    } else {
-                        previewManager.enablePreviewMode();
-                    }
-                    // Toggle state is shown via Toast
-                }
+                // Preview mode toggle disabled for compatibility
+                // if (previewManager != null) {
+                //     if (previewManager.isPreviewModeEnabled()) {
+                //         previewManager.disablePreviewMode();
+                //     } else {
+                //         previewManager.enablePreviewMode();
+                //     }
+                //     // Toggle state is shown via Toast
+                // }
                 break;
             case 6:
                 // Set API key
@@ -1015,23 +1017,24 @@ public class SkyFiPlugin implements MainRecyclerViewAdapter.ItemClickListener {
         CardView previewModeSetting = settingsView.findViewById(R.id.preview_mode_setting);
         TextView previewModeTitle = settingsView.findViewById(R.id.preview_mode_title);
         
-        // Update title based on current state
-        if (previewManager != null && previewManager.isPreviewModeEnabled()) {
-            previewModeTitle.setText("Disable Preview Mode");
-        }
+        // Update title based on current state - disabled for compatibility
+        // if (previewManager != null && previewManager.isPreviewModeEnabled()) {
+        //     previewModeTitle.setText("Disable Preview Mode");
+        // }
         
         previewModeSetting.setOnClickListener(v -> {
-            if (previewManager != null) {
-                if (previewManager.isPreviewModeEnabled()) {
-                    previewManager.disablePreviewMode();
-                    Toast.makeText(pluginContext, "Preview mode disabled", Toast.LENGTH_SHORT).show();
-                    previewModeTitle.setText("Enable Preview Mode");
-                } else {
-                    previewManager.enablePreviewMode();
-                    Toast.makeText(pluginContext, "Preview mode enabled", Toast.LENGTH_SHORT).show();
-                    previewModeTitle.setText("Disable Preview Mode");
-                }
-            }
+            // Preview mode toggle disabled for compatibility
+            // if (previewManager != null) {
+            //     if (previewManager.isPreviewModeEnabled()) {
+            //         previewManager.disablePreviewMode();
+            //         Toast.makeText(pluginContext, "Preview mode disabled", Toast.LENGTH_SHORT).show();
+            //         previewModeTitle.setText("Enable Preview Mode");
+            //     } else {
+            //         previewManager.enablePreviewMode();
+            //         Toast.makeText(pluginContext, "Preview mode enabled", Toast.LENGTH_SHORT).show();
+            //         previewModeTitle.setText("Disable Preview Mode");
+            //     }
+            // }
         });
         
         // Set up about setting

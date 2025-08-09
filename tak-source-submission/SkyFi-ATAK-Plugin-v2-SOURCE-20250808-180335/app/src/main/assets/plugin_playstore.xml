@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Play Store ATAK Plugin Configuration -->
+<!-- This configuration is for Google Play Store ATAK ONLY -->
+<!-- No SDK dependencies, no IPlugin interface -->
+<plugin>
+    <!-- Direct MapComponent registration for Play Store ATAK -->
+    <component>com.optisense.skyfi.atak.playstore.SkyFiPlayStorePlugin</component>
+</plugin>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="320dp"
+    android:layout_height="320dp"
+    android:background="@android:color/transparent">
+
+    <!-- Semi-transparent background when menu is open -->
+    <View
+        android:id="@+id/ai_menu_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80000000"
+        android:visibility="gone" />
+
+    <!-- Center Action Button -->
+    <ImageView
+        android:id="@+id/ai_center_button"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_gravity="center"
+        android:background="@drawable/ai_center_button_bg"
+        android:src="@drawable/ic_ai_sparkles"
+        android:tint="#FFFFFF"
+        android:scaleType="centerInside"
+        android:elevation="8dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:contentDescription="AI Quick Actions Menu" />
+
+    <!-- Ripple effect overlay for center button -->
+    <View
+        android:id="@+id/ai_center_ripple"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_gravity="center"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="false"
+        android:focusable="false" />
+
+</FrameLayout>

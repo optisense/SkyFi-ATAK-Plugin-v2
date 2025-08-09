@@ -8,11 +8,12 @@
 
 buildscript {
 
-    ext.PLUGIN_VERSION = "2.0-beta5"
-    ext.ATAK_VERSION = "5.3.0"  // Use exact same version as working test plugin
-    ext.MIN_ATAK_VERSION = "5.3.0"
-    ext.MAX_ATAK_VERSION = "5.4.0.19"
+    ext.PLUGIN_VERSION = "2.0-stable"
+    ext.ATAK_VERSION = "5.5.0"
+    ext.MIN_ATAK_VERSION = "5.4.0"
+    ext.MAX_ATAK_VERSION = "5.5.0.19"
 
+    // Use official TAK.gov plugin version 2.+ for ATAK 4.2+
     def takdevVersion = '2.+'
 
     def getValueFromPropertiesFile = { propFile, key ->
@@ -37,9 +38,11 @@ buildscript {
     def urlKey = 'takrepo.url'
 
     ext.isDevKitEnabled = { ->
-        return getProperty(urlKey, null) != null
+        def url = getProperty(urlKey, null)
+        return url != null && url != 'https://localhost/'
     }
 
+    // Official TAK.gov repository configuration - default to localhost per TAK requirements
     ext.takrepoUrl = getProperty(urlKey, 'https://localhost/')
     ext.takrepoUser = getProperty('takrepo.user', 'invalid')
     ext.takrepoPassword = getProperty('takrepo.password', 'invalid')
@@ -72,15 +75,26 @@ buildscript {
 
 allprojects {
     repositories {
-        mavenCentral()
         google()
         mavenCentral()
         mavenLocal()
         maven {
             url "https://jitpack.io"
         }
+        // TAK.gov repository for SDK dependencies
+        maven {
+            url = takrepoUrl
+            credentials {
+                username = takrepoUser
+                password = takrepoPassword
+            }
+        }
+        // Add local SDK directories as fallback
         flatDir {
-            dirs "${rootDir}/sdk/ATAK-CIV-5.4.0.18-SDK"
+            dirs "${rootDir}/ATAK-CIV-LATEST-SDK"
+        }
+        flatDir {
+            dirs "${rootDir}/ATAK-CIV-5.4.0.19-SDK"
         }
     }
 }
@@ -132,15 +146,23 @@ android {
 
     signingConfigs {
         debug {
-            // Use the TAK.gov provided keystore at build/android_keystore
-            storeFile file("${buildDir}/android_keystore")
+            // TAK.gov will handle signing - use placeholder for local testing
+            def kf = file("${buildDir}/android_keystore")
+            if (!kf.exists()) {
+                kf = file("${rootDir}/android_keystore")
+            }
+            storeFile kf
             storePassword "tnttnt"
             keyAlias "wintec_mapping"
             keyPassword "tnttnt"
         }
         release {
-            // Use the TAK.gov provided keystore at build/android_keystore
-            storeFile file("${buildDir}/android_keystore")
+            // TAK.gov will handle signing - use placeholder for local testing
+            def kf = file("${buildDir}/android_keystore")
+            if (!kf.exists()) {
+                kf = file("${rootDir}/android_keystore")
+            }
+            storeFile kf
             storePassword "tnttnt"
             keyAlias "wintec_mapping"
             keyPassword "tnttnt"
@@ -276,6 +298,7 @@ android {
 }
 
 afterEvaluate {
+    // Fix ProGuard entry - replace "PluginTemplate" with plugin name
     project.file('proguard-gradle-repackage.txt').text = "-repackageclasses atakplugin.SkyFiATAKPlugin"
 
     try {
@@ -369,6 +392,10 @@ configurations.implementation {
     exclude group: 'androidx.tracing', module: 'tracing'
     exclude group: 'androidx.tracing', module: 'tracing-ktx'
     exclude group: 'androidx.annotation', module: 'annotation'
+    exclude group: 'androidx.collection', module: 'collection'
+    exclude group: 'androidx.customview', module: 'customview'
+    exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib'
+    exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-common'
 }
 
 // Custom tasks for Play Store compatible builds

@@ -1,0 +1,198 @@
+######################################################################
+## Skip down to the 'User Section'
+## Messing with any items in the 'System Section' will void the warranty
+######################################################################
+
+
+######################################################################
+######################################################################
+## System Section
+######################################################################
+######################################################################
+
+
+-dontskipnonpubliclibraryclasses
+-dontshrink
+-dontoptimize
+
+############### ACRA specifics
+# we need line numbers in our stack traces otherwise they are pretty useless
+-renamesourcefileattribute SourceFile
+-keepattributes SourceFile,LineNumberTable
+
+# -applymapping <atak.proguard.mapping>
+
+-keepattributes *Annotation*
+-keepattributes Signature, InnerClasses
+
+
+-keep class * implements android.os.Parcelable {
+  public static final android.os.Parcelable$Creator *;
+}
+
+-keepclassmembers class **.R$* {
+    public static <fields>;
+}
+
+# For enumeration classes, see http://proguard.sourceforge.net/manual/examples.html#enumerations
+-keepclassmembers enum * {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
+
+
+
+# Preserve all native method names and the names of their classes.
+-keepclasseswithmembernames class * {
+    native <methods>;
+}
+
+-keepclassmembers class * {
+    @org.simpleframework.xml.* *;
+}
+
+
+# For enumeration classes, see http://proguard.sourceforge.net/manual/examples.html#enumerations
+-keepclassmembers enum * {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
+
+
+
+-keep class * implements gov.tak.api.plugin.IPlugin {
+}
+-keep class * extends com.atak.plugins.impl.AbstractPluginTool {
+}
+
+# overcome an existing bug in the gradle subsystem (3.5.x)
+-keep class module-info
+
+-keep,allowobfuscation @interface gov.tak.api.annotation.DontObfuscate
+
+# Do not strip any method/class that is annotated with @DontObfuscate
+-keep @gov.tak.api.annotation.DontObfuscate class * {*;}
+-keepclassmembers class * {
+    @gov.tak.api.annotation.DontObfuscate *;
+}
+
+
+######################################################################
+## Messing with any settings above this line will void the Warranty
+######################################################################
+
+
+
+######################################################################
+######################################################################
+## User Section
+######################################################################
+######################################################################
+
+######################################################################
+## below you can add any rules specific to your plugin limited to
+## dontwarn and keep directives
+######################################################################
+
+
+-dontobfuscate
+-dontwarn okio.**
+-dontwarn okhttp3.**
+-dontwarn retrofit2.**
+
+# Keep SkyFi plugin classes
+-keep class com.skyfi.atak.plugin.SkyFiPluginWrapper {
+    public <init>(gov.tak.api.plugin.IServiceController);
+    public void onStart();
+    public void onStop();
+}
+-keep class com.skyfi.atak.plugin.SkyFiMapComponent { *; }
+-keep class com.skyfi.atak.plugin.SkyFiPlugin { *; }
+-keep class com.skyfi.atak.plugin.** { *; }
+
+
+## keep Enum in Response Objects
+-keepclassmembers enum com.android.services.** { *; }
+
+
+## Note not be needed unless some model classes don't implement Serializable interface
+## Keep model classes used by ORMlite
+-keep class com.android.model.**
+
+
+## keep classes and class members that implement java.io.Serializable from being removed or renamed
+## Fixes "Class class com.twinpeek.android.model.User does not have an id field" execption
+-keep class * implements java.io.Serializable {
+    *;
+}
+
+## Rules for Retrofit2
+-keepclasseswithmembers class * {
+    @retrofit2.http.* <methods>;
+}
+# Platform calls Class.forName on types which do not exist on Android to determine platform.
+-dontnote retrofit2.Platform
+# Platform used when running on RoboVM on iOS. Will not be used at runtime.
+-dontnote retrofit2.Platform$IOS$MainThreadExecutor
+# Platform used when running on Java 8 VMs. Will not be used at runtime.
+-dontwarn retrofit2.Platform$Java8
+# Retain generic type information for use by reflection by converters and adapters.
+-keepattributes Signature
+# Retain declared checked exceptions for use by a Proxy instance.
+-keepattributes Exceptions
+
+
+## Rules for Gson
+# For using GSON @Expose annotation
+-keepattributes *Annotation*
+# Gson specific classes
+-keep class sun.misc.Unsafe { *; }
+-keep class com.google.gson.stream.** { *; }
+
+## SkyFi Plugin specific rules
+-keep class com.skyfi.atak.plugin.** { *; }
+-keep class com.skyfi.atak.plugin.compat.** { *; }
+-keep class com.skyfi.atak.plugin.skyfiapi.** { *; }
+-keep class com.skyfi.atak.plugin.cog.** { *; }
+
+## Keep all plugin entry points
+-keep class * extends com.atakmap.android.dropdown.DropDownMapComponent { *; }
+-keep class * extends com.atakmap.android.dropdown.DropDownReceiver { *; }
+-keep class * extends com.atakmap.android.maps.MapComponent { *; }
+
+## Keep menu action handlers
+-keep class * extends com.atakmap.android.menu.PluginMenuParser$PluginMenuFactory { *; }
+-keep class com.skyfi.atak.plugin.MenuAction { *; }
+
+## Optional APIs - don't warn if not present (for compatibility)
+-dontwarn gov.tak.api.plugin.IServiceController
+-dontwarn gov.tak.api.ui.IHostUIService
+-dontwarn gov.tak.api.ui.Pane
+-dontwarn gov.tak.api.ui.PaneBuilder
+-dontwarn gov.tak.api.ui.ToolbarItem
+-dontwarn gov.tak.api.ui.ToolbarItemAdapter
+-dontwarn gov.tak.platform.marshal.MarshalManager
+
+## Keep compatibility interfaces if they exist
+-keep class gov.tak.api.plugin.IPlugin { *; }
+-keep class gov.tak.api.plugin.IServiceController { *; }
+-keep class gov.tak.api.ui.** { *; }
+
+## AndroidX rules to prevent crashes
+-keep class androidx.** { *; }
+-keep interface androidx.** { *; }
+-dontwarn androidx.**
+
+## JTS Geometry library - prevent AWT warnings
+-dontwarn java.awt.**
+-dontwarn javax.swing.**
+
+## WebSocket support
+-dontwarn javax.websocket.**
+-keep class org.java_websocket.** { *; }
+
+# Prevent proguard from stripping interface information from TypeAdapterFactory,
+# JsonSerializer, JsonDeserializer instances (so they can be used in @JsonAdapter)
+-keep class * implements com.google.gson.TypeAdapterFactory
+-keep class * implements com.google.gson.JsonSerializer
+-keep class * implements com.google.gson.JsonDeserializer

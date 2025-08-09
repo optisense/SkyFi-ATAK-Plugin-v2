@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    
+    <!-- AI Brain/Neural network icon -->
+    <path
+        android:fillColor="#4CAF50"
+        android:pathData="M9,3C6.24,3 4,5.24 4,8c0,1.85 1,3.45 2.5,4.33C6.19,13.25 6,14.1 6,15c0,3.31 2.69,6 6,6s6,-2.69 6,-6c0,-0.9 -0.19,-1.75 -0.5,-2.67C18.5,11.45 20,9.85 20,8c0,-2.76 -2.24,-5 -5,-5c-1.38,0 -2.64,0.56 -3.54,1.46C10.64,3.56 9.38,3 8,3H9z"/>
+    
+    <!-- Neural connections -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M8,7 A1,1 0 0,1 8,9 A1,1 0 0,1 8,7"/>
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M16,7 A1,1 0 0,1 16,9 A1,1 0 0,1 16,7"/>
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M12,11 A1,1 0 0,1 12,13 A1,1 0 0,1 12,11"/>
+    
+    <!-- Connection lines -->
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1"
+        android:pathData="M8,8 L12,12 L16,8"/>
+</vector>

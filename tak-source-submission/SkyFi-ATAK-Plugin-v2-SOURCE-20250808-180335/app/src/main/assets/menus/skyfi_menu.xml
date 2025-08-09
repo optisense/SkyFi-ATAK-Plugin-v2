@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu>
+    <!-- Main SkyFi Menu Entry -->
+    <entry 
+        class="com.skyfi.atak.plugin.MenuAction" 
+        text="SkyFi" 
+        icon="resource://" + R.drawable.icon_transparent
+        order="1000">
+        
+        <!-- Submenu items -->
+        <entry 
+            class="com.skyfi.atak.plugin.MenuAction" 
+            text="Dashboard" 
+            action="com.skyfi.atak.SHOW_DASHBOARD"
+            icon="resource://" + R.drawable.icon_transparent />
+            
+        <entry 
+            class="com.skyfi.atak.plugin.MenuAction" 
+            text="New Order" 
+            action="com.skyfi.atak.NEW_ORDER"
+            icon="resource://" + R.drawable.icon_transparent />
+            
+        <entry 
+            class="com.skyfi.atak.plugin.MenuAction" 
+            text="My Orders" 
+            action="com.skyfi.atak.plugin.Orders"
+            icon="resource://" + R.drawable.icon_transparent />
+            
+        <entry 
+            class="com.skyfi.atak.plugin.MenuAction" 
+            text="AOI Management" 
+            action="com.skyfi.atak.AOI_MANAGEMENT"
+            icon="resource://" + R.drawable.icon_transparent />
+            
+        <entry 
+            class="com.skyfi.atak.plugin.MenuAction" 
+            text="Settings" 
+            action="com.skyfi.atak.SHOW_SETTINGS"
+            icon="resource://" + R.drawable.icon_transparent />
+    </entry>
+</menu>
