@@ -244,6 +244,14 @@ android {
 
         resources {
             excludes += ['META-INF/INDEX.LIST']
+            excludes += ['okhttp3/internal/publicsuffix/NOTICE']
+            excludes += ['okhttp3/internal/publicsuffix/publicsuffixes.gz']
+            excludes += ['META-INF/DEPENDENCIES']
+            excludes += ['META-INF/LICENSE']
+            excludes += ['META-INF/LICENSE.txt']
+            excludes += ['META-INF/NOTICE']
+            excludes += ['META-INF/NOTICE.txt']
+            pickFirsts += ['okhttp3/internal/publicsuffix/NOTICE']
         }
 
         // Extract native libraries from the APK - required for plugin loading
