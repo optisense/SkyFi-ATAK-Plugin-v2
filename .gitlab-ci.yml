@@ -18,9 +18,8 @@ variables:
   ATAK_CI: "1"
   GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.parallel=false"
   GRADLE_USER_HOME: "${CI_PROJECT_DIR}/.gradle"
-  # Fallback credentials if CI variables not set
-  TAKREPO_USER: "jfuginay"
-  TAKREPO_PASSWORD: "glpat-EfxW36mJhsG7c_bJ3C7k"
+  # Credentials should be set as CI/CD variables in GitLab project settings
+  # TAKREPO_USER and TAKREPO_PASSWORD will be read from environment
 
 stages:
   - build
@@ -36,26 +35,29 @@ cache:
     - build/
     - app/build/
 
-# Base job for building plugin using Artifactory token
+# Base job for building plugin - using direct credentials
 .assemblePlugin:
-  extends: .artifactory_service_create_token
   stage: build
   before_script:
     - chmod +x gradlew
-    # Debug: Check if credentials are available
-    - echo "ARTIFACTORY_URL_APK=${ARTIFACTORY_URL_APK:-not_set}"
-    - echo "GITLAB_USER_EMAIL=${GITLAB_USER_EMAIL:-not_set}"
-    - echo "CI_JOB_ARTIFACTORY_TOKEN is ${CI_JOB_ARTIFACTORY_TOKEN:+set}"
+    # Use CI/CD variables for credentials (set in GitLab project settings)
+    # Use /tak/ virtual repository which includes all TAK repositories
+    - export TAKREPO_URL="${ARTIFACTORY_URL_APK:-https://artifacts.tak.gov/artifactory/tak}"
+    - export TAKREPO_USER="${TAKREPO_USER}"
+    - export TAKREPO_PASS="${TAKREPO_PASSWORD}"
+    # Debug output
+    - echo "Using repository URL: ${TAKREPO_URL}"
+    - echo "Using user: ${TAKREPO_USER}"
     # Create local.properties with credentials
     - |
       cat > local.properties << EOF
       sdk.dir=${ANDROID_SDK_ROOT:-/opt/android-sdk}
-      takrepo.url=${ARTIFACTORY_URL_APK:-https://artifacts.tak.gov/artifactory/maven}
-      takrepo.user=${GITLAB_USER_EMAIL:-jfuginay}
-      takrepo.password=${CI_JOB_ARTIFACTORY_TOKEN:-glpat-EfxW36mJhsG7c_bJ3C7k}
+      takrepo.url=${TAKREPO_URL}
+      takrepo.user=${TAKREPO_USER}
+      takrepo.password=${TAKREPO_PASS}
       EOF
   script:
-    - ./gradlew -Pci --console=plain -Ptakrepo.url=${ARTIFACTORY_URL_APK:-https://artifacts.tak.gov/artifactory/maven} -Ptakrepo.user=${GITLAB_USER_EMAIL:-jfuginay} -Ptakrepo.password=${CI_JOB_ARTIFACTORY_TOKEN:-glpat-EfxW36mJhsG7c_bJ3C7k} ${ASSEMBLE_GRADLE_TASK}
+    - ./gradlew -Pci --console=plain -Ptakrepo.url="${TAKREPO_URL}" -Ptakrepo.user="${TAKREPO_USER}" -Ptakrepo.password="${TAKREPO_PASS}" ${ASSEMBLE_GRADLE_TASK}
   artifacts:
     expire_in: 720h
     paths:
@@ -95,10 +97,14 @@ assembleProduction:
 
 # Test job
 testRelease:
-  extends: .artifactory_service_create_token
   stage: test
-  script:
+  before_script:
     - chmod +x gradlew
-    - ./gradlew -Pci --console=plain -Ptakrepo.url=$ARTIFACTORY_URL_APK -Ptakrepo.user=$GITLAB_USER_EMAIL -Ptakrepo.password=${CI_JOB_ARTIFACTORY_TOKEN} :app:testCivRelease
+    - export TAKREPO_URL="${ARTIFACTORY_URL_APK:-https://artifacts.tak.gov/artifactory/tak}"
+    - export TAKREPO_USER="${TAKREPO_USER}"
+    - export TAKREPO_PASS="${TAKREPO_PASSWORD}"
+  script:
+    - ./gradlew -Pci --console=plain -Ptakrepo.url="${TAKREPO_URL}" -Ptakrepo.user="${TAKREPO_USER}" -Ptakrepo.password="${TAKREPO_PASS}" :app:testCivRelease
   when: manual
+
 
