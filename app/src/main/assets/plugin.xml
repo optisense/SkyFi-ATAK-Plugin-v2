@@ -3,7 +3,7 @@
 
     <extension
         type="gov.tak.api.plugin.IPlugin"
-        impl="com.skyfi.atak.plugin.SkyFiPluginWrapper"
+        impl="com.skyfi.atak.plugin.SkyFiPluginCompatWrapper"
         singleton="true" />
 
 </plugin>
