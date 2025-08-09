@@ -23,13 +23,11 @@ cache:
 # Validate environment and dependencies
 validate:environment:
   stage: validate
-  image: openjdk:17-jdk-slim
+  image: gradle:6.9.1-jdk11
   script:
     - echo "Validating build environment..."
     - java -version
-    - echo "Setting up JAVA_HOME..."
-    - export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))
-    - echo "JAVA_HOME is $JAVA_HOME"
+    - gradle --version
     - echo "Checking for required files..."
     - test -f gradlew || exit 1
     - test -f app/build.gradle || exit 1
@@ -47,10 +45,8 @@ validate:environment:
 # Build debug APK for testing
 build:debug:
   stage: build
-  image: openjdk:17-jdk-slim
+  image: gradle:6.9.1-jdk11
   before_script:
-    - apt-get update && apt-get install -y wget unzip
-    - export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))
     - chmod +x gradlew
     # Configure TAK.gov repository if credentials available
     - |
@@ -83,10 +79,8 @@ build:debug:
 # Build release APK (unsigned)
 build:release:
   stage: build
-  image: openjdk:17-jdk-slim
+  image: gradle:6.9.1-jdk11
   before_script:
-    - apt-get update && apt-get install -y wget unzip
-    - export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))
     - chmod +x gradlew
     # Configure TAK.gov repository if credentials available
     - |
@@ -118,10 +112,8 @@ build:release:
 # Build all variants (CIV and MIL if configured)
 build:variants:
   stage: build
-  image: openjdk:17-jdk-slim
+  image: gradle:6.9.1-jdk11
   before_script:
-    - apt-get update && apt-get install -y wget unzip
-    - export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))
     - chmod +x gradlew
     - |
       if [[ -n "$CI_TAK_REPO_USER" && -n "$CI_TAK_REPO_PASSWORD" ]]; then
@@ -211,9 +203,8 @@ sign:prepare:
 # Test job (optional, requires Android emulator or device)
 test:unit:
   stage: build
-  image: openjdk:17-jdk-slim
+  image: gradle:6.9.1-jdk11
   script:
-    - export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))
     - chmod +x gradlew
     - ./gradlew test --stacktrace
   artifacts:
