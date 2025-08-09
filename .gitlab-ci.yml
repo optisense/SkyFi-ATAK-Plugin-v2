@@ -11,7 +11,6 @@ variables:
   GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.parallel=false"
   GRADLE_USER_HOME: "${CI_PROJECT_DIR}/.gradle"
   ANDROID_SDK_ROOT: "/opt/android-sdk"
-  JAVA_HOME: "/usr/lib/jvm/java-17-openjdk"
   
 # Cache Gradle dependencies
 cache:
@@ -28,6 +27,9 @@ validate:environment:
   script:
     - echo "Validating build environment..."
     - java -version
+    - echo "Setting up JAVA_HOME..."
+    - export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")
+    - echo "JAVA_HOME is $JAVA_HOME"
     - echo "Checking for required files..."
     - test -f gradlew || exit 1
     - test -f app/build.gradle || exit 1
@@ -48,6 +50,7 @@ build:debug:
   image: openjdk:17-jdk-slim
   before_script:
     - apt-get update && apt-get install -y wget unzip
+    - export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")
     - chmod +x gradlew
     # Configure TAK.gov repository if credentials available
     - |
@@ -83,6 +86,7 @@ build:release:
   image: openjdk:17-jdk-slim
   before_script:
     - apt-get update && apt-get install -y wget unzip
+    - export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")
     - chmod +x gradlew
     # Configure TAK.gov repository if credentials available
     - |
@@ -117,6 +121,7 @@ build:variants:
   image: openjdk:17-jdk-slim
   before_script:
     - apt-get update && apt-get install -y wget unzip
+    - export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")
     - chmod +x gradlew
     - |
       if [[ -n "$CI_TAK_REPO_USER" && -n "$CI_TAK_REPO_PASSWORD" ]]; then
@@ -208,6 +213,7 @@ test:unit:
   stage: build
   image: openjdk:17-jdk-slim
   script:
+    - export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")
     - chmod +x gradlew
     - ./gradlew test --stacktrace
   artifacts:
