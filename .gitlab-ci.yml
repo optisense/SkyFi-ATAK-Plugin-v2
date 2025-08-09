@@ -1,5 +1,5 @@
 # TAK.gov GitLab CI/CD Pipeline for ATAK Plugin
-# Requirements: Gradle 6.9.1, JDK 17, ATAK SDK 5.4.0.16
+# Requirements: Gradle 8.9, JDK 17, ATAK SDK 5.5.0
 
 stages:
   - validate
@@ -10,7 +10,8 @@ stages:
 variables:
   GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.parallel=false"
   GRADLE_USER_HOME: "${CI_PROJECT_DIR}/.gradle"
-  ANDROID_SDK_ROOT: "/opt/android-sdk"
+  ANDROID_HOME: "${CI_PROJECT_DIR}/android-sdk"
+  ANDROID_SDK_ROOT: "${CI_PROJECT_DIR}/android-sdk"
   
 # Cache Gradle dependencies
 cache:
@@ -20,50 +21,60 @@ cache:
     - build/
     - app/build/
 
+# Setup Android SDK for all jobs
+.android_setup: &android_setup
+  before_script:
+    - apt-get update && apt-get install -y wget unzip
+    - echo "Setting up Android SDK..."
+    - mkdir -p ${ANDROID_HOME}
+    - cd ${ANDROID_HOME}
+    - |
+      if [ ! -f "cmdline-tools/latest/bin/sdkmanager" ]; then
+        wget -q https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
+        unzip -q commandlinetools-linux-9477386_latest.zip
+        mkdir -p cmdline-tools/latest
+        mv cmdline-tools/* cmdline-tools/latest/ || true
+        rm commandlinetools-linux-9477386_latest.zip
+      fi
+    - export PATH=${ANDROID_HOME}/cmdline-tools/latest/bin:${PATH}
+    - yes | sdkmanager --licenses || true
+    - sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.0"
+    - cd ${CI_PROJECT_DIR}
+    - chmod +x gradlew
+    - echo "sdk.dir=${ANDROID_HOME}" > local.properties
+
 # Validate environment and dependencies
 validate:environment:
   stage: validate
-  image: gradle:6.9.1-jdk11
+  image: openjdk:17-jdk-slim
+  <<: *android_setup
   script:
     - echo "Validating build environment..."
     - java -version
-    - gradle --version
+    - ./gradlew --version
     - echo "Checking for required files..."
     - test -f gradlew || exit 1
     - test -f app/build.gradle || exit 1
     - test -f settings.gradle || exit 1
     - test -f atak-gradle-takdev.jar || echo "Warning - Local TAK SDK not found, will use TAK.gov repository"
     - echo "Checking Gradle wrapper version..."
-    - ./gradlew --version | grep "Gradle 6.9.1" || echo "Warning - Gradle version mismatch"
+    - ./gradlew --version | grep "Gradle 8.9" || echo "Warning - Gradle version mismatch"
     - echo "Validating plugin.xml uses SkyFiPluginCompatWrapper..."
     - grep "SkyFiPluginCompatWrapper" app/src/main/assets/plugin.xml || (echo "ERROR - plugin.xml must use SkyFiPluginCompatWrapper" && exit 1)
   artifacts:
     paths:
       - build/
+      - android-sdk/
     expire_in: 1 hour
 
 # Build debug APK for testing
 build:debug:
   stage: build
-  image: gradle:6.9.1-jdk11
-  before_script:
-    - chmod +x gradlew
-    # Configure TAK.gov repository if credentials available
-    - |
-      if [[ -n "$CI_TAK_REPO_USER" && -n "$CI_TAK_REPO_PASSWORD" ]]; then
-        echo "Configuring TAK.gov repository access..."
-        mkdir -p ~/.gradle
-        cat > ~/.gradle/gradle.properties << EOF
-      takRepoUrl=https://artifacts.tak.gov/artifactory/tak-sdk
-      takRepoUser=${CI_TAK_REPO_USER}
-      takRepoPassword=${CI_TAK_REPO_PASSWORD}
-      EOF
-      else
-        echo "Using local SDK (no TAK.gov credentials found)"
-      fi
+  image: openjdk:17-jdk-slim
+  <<: *android_setup
   script:
     - echo "Building debug APK..."
-    - ./gradlew clean assembleCivDebug --stacktrace --info
+    - ./gradlew clean assembleCivDebug --stacktrace
     - echo "Debug APK built successfully"
     - ls -la app/build/outputs/apk/civ/debug/
   artifacts:
@@ -79,25 +90,11 @@ build:debug:
 # Build release APK (unsigned)
 build:release:
   stage: build
-  image: gradle:6.9.1-jdk11
-  before_script:
-    - chmod +x gradlew
-    # Configure TAK.gov repository if credentials available
-    - |
-      if [[ -n "$CI_TAK_REPO_USER" && -n "$CI_TAK_REPO_PASSWORD" ]]; then
-        echo "Configuring TAK.gov repository access..."
-        mkdir -p ~/.gradle
-        cat > ~/.gradle/gradle.properties << EOF
-      takRepoUrl=https://artifacts.tak.gov/artifactory/tak-sdk
-      takRepoUser=${CI_TAK_REPO_USER}
-      takRepoPassword=${CI_TAK_REPO_PASSWORD}
-      EOF
-      else
-        echo "Using local SDK (no TAK.gov credentials found)"
-      fi
+  image: openjdk:17-jdk-slim
+  <<: *android_setup
   script:
     - echo "Building unsigned release APK..."
-    - ./gradlew clean assembleCivRelease --stacktrace --info
+    - ./gradlew clean assembleCivRelease --stacktrace
     - echo "Release APK built successfully (unsigned)"
     - ls -la app/build/outputs/apk/civ/release/
   artifacts:
@@ -112,18 +109,8 @@ build:release:
 # Build all variants (CIV and MIL if configured)
 build:variants:
   stage: build
-  image: gradle:6.9.1-jdk11
-  before_script:
-    - chmod +x gradlew
-    - |
-      if [[ -n "$CI_TAK_REPO_USER" && -n "$CI_TAK_REPO_PASSWORD" ]]; then
-        mkdir -p ~/.gradle
-        cat > ~/.gradle/gradle.properties << EOF
-      takRepoUrl=https://artifacts.tak.gov/artifactory/tak-sdk
-      takRepoUser=${CI_TAK_REPO_USER}
-      takRepoPassword=${CI_TAK_REPO_PASSWORD}
-      EOF
-      fi
+  image: openjdk:17-jdk-slim
+  <<: *android_setup
   script:
     - echo "Building all variants..."
     - ./gradlew clean assemble --stacktrace
@@ -176,7 +163,7 @@ sign:prepare:
     - echo "" >> build/signing/SIGNING_REQUEST.md
     - echo "Plugin - SkyFi ATAK Plugin v2" >> build/signing/SIGNING_REQUEST.md
     - echo "Version - ${CI_COMMIT_TAG:-${CI_COMMIT_SHORT_SHA}}" >> build/signing/SIGNING_REQUEST.md
-    - echo "Target ATAK Version - 5.4.0.16" >> build/signing/SIGNING_REQUEST.md
+    - echo "Target ATAK Version - 5.5.0" >> build/signing/SIGNING_REQUEST.md
     - echo "" >> build/signing/SIGNING_REQUEST.md
     - echo "## Files for Signing" >> build/signing/SIGNING_REQUEST.md
     - echo "- SkyFi-debug.apk (for testing)" >> build/signing/SIGNING_REQUEST.md
@@ -184,8 +171,8 @@ sign:prepare:
     - echo "" >> build/signing/SIGNING_REQUEST.md
     - echo "## Important Notes" >> build/signing/SIGNING_REQUEST.md
     - echo "- Plugin uses SkyFiPluginCompatWrapper (no IServiceController dependency)" >> build/signing/SIGNING_REQUEST.md
-    - echo "- Built with Gradle 6.9.1 and JDK 17" >> build/signing/SIGNING_REQUEST.md
-    - echo "- Tested for compatibility with ATAK-CIV 5.4.0.16" >> build/signing/SIGNING_REQUEST.md
+    - echo "- Built with Gradle 8.9 and JDK 17" >> build/signing/SIGNING_REQUEST.md
+    - echo "- Tested for compatibility with ATAK-CIV 5.5.0" >> build/signing/SIGNING_REQUEST.md
     - echo "" >> build/signing/SIGNING_REQUEST.md
     - echo "## Requested Signatures" >> build/signing/SIGNING_REQUEST.md
     - echo "- CIV signature for civilian ATAK distribution" >> build/signing/SIGNING_REQUEST.md
@@ -203,9 +190,9 @@ sign:prepare:
 # Test job (optional, requires Android emulator or device)
 test:unit:
   stage: build
-  image: gradle:6.9.1-jdk11
+  image: openjdk:17-jdk-slim
+  <<: *android_setup
   script:
-    - chmod +x gradlew
     - ./gradlew test --stacktrace
   artifacts:
     reports:
