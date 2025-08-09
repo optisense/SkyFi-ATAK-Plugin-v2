@@ -41,7 +41,14 @@ cache:
     - sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.0"
     - cd ${CI_PROJECT_DIR}
     - chmod +x gradlew
-    - echo "sdk.dir=${ANDROID_HOME}" > local.properties
+    - |
+      echo "Setting up local.properties with SDK and TAK.gov credentials..."
+      cat > local.properties << EOF
+      sdk.dir=${ANDROID_HOME}
+      takrepo.url=https://artifacts.tak.gov/artifactory/maven
+      takrepo.user=${TAKREPO_USER:-jfuginay}
+      takrepo.password=${TAKREPO_PASSWORD:-glpat-EfxW36mJhsG7c_bJ3C7k}
+      EOF
 
 # Validate environment and dependencies
 validate:environment:
