@@ -151,18 +151,10 @@ package:source:
     - export TIMESTAMP=$(date +%Y%m%d-%H%M%S)
     - export SUBMISSION_NAME="SkyFi-ATAK-Plugin-v2-TAKGOV-${TIMESTAMP}"
     - mkdir -p build/submission/${SUBMISSION_NAME}
-    - |
-      rsync -av --exclude='.git*' \
-                --exclude='build/' \
-                --exclude='app/build/' \
-                --exclude='*.apk' \
-                --exclude='releases/' \
-                --exclude='.gradle/' \
-                --exclude='.idea/' \
-                ./ build/submission/${SUBMISSION_NAME}/
+    - rsync -av --exclude='.git*' --exclude='build/' --exclude='app/build/' --exclude='*.apk' --exclude='releases/' --exclude='.gradle/' --exclude='.idea/' ./ build/submission/${SUBMISSION_NAME}/
     - cd build/submission
     - zip -r ${SUBMISSION_NAME}.zip ${SUBMISSION_NAME}/
-    - echo "Source package created: ${SUBMISSION_NAME}.zip"
+    - echo "Source package created - ${SUBMISSION_NAME}.zip"
     - ls -lh ${SUBMISSION_NAME}.zip
   artifacts:
     paths:
@@ -182,27 +174,8 @@ sign:prepare:
     - echo "Preparing APKs for TAK.gov signing..."
     - mkdir -p build/signing
     - cp app/build/outputs/apk/civ/release/*.apk build/signing/ || true
-    - |
-      cat > build/signing/SIGNING_REQUEST.md << EOF
-      # TAK.gov Signing Request
-      
-      Plugin: SkyFi ATAK Plugin v2
-      Version: ${CI_COMMIT_TAG:-${CI_COMMIT_SHORT_SHA}}
-      Target ATAK Version: 5.4.0.16
-      
-      ## Files for Signing
-      - SkyFi-debug.apk (for testing)
-      - SkyFi-release-unsigned.apk (for production)
-      
-      ## Important Notes
-      - Plugin uses SkyFiPluginCompatWrapper (no IServiceController dependency)
-      - Built with Gradle 6.9.1 and JDK 17
-      - Tested for compatibility with ATAK-CIV 5.4.0.16
-      
-      ## Requested Signatures
-      - CIV signature for civilian ATAK distribution
-      - MIL signature if applicable for military distribution
-      EOF
+    - echo "Creating signing request document..."
+    - printf "# TAK.gov Signing Request\n\nPlugin: SkyFi ATAK Plugin v2\nVersion: ${CI_COMMIT_TAG:-${CI_COMMIT_SHORT_SHA}}\nTarget ATAK Version: 5.4.0.16\n\n## Files for Signing\n- SkyFi-debug.apk (for testing)\n- SkyFi-release-unsigned.apk (for production)\n\n## Important Notes\n- Plugin uses SkyFiPluginCompatWrapper (no IServiceController dependency)\n- Built with Gradle 6.9.1 and JDK 17\n- Tested for compatibility with ATAK-CIV 5.4.0.16\n\n## Requested Signatures\n- CIV signature for civilian ATAK distribution\n- MIL signature if applicable for military distribution\n" > build/signing/SIGNING_REQUEST.md
     - echo "Signing preparation complete"
   artifacts:
     paths:
