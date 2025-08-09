@@ -48,7 +48,7 @@
             android:orientation="vertical">
 
             <!-- API Configuration Card -->
-            <androidx.cardview.widget.CardView
+            <FrameLayout
                 android:id="@+id/api_key_setting"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -56,9 +56,9 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?android:attr/selectableItemBackground"
-                app:cardBackgroundColor="#37474F"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp">
+                android:background="#37474F"
+                
+                >
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -95,10 +95,10 @@
                             android:textSize="13sp" />
                     </LinearLayout>
                 </LinearLayout>
-            </androidx.cardview.widget.CardView>
+            </FrameLayout>
 
             <!-- Profile Card -->
-            <androidx.cardview.widget.CardView
+            <FrameLayout
                 android:id="@+id/profile_setting"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -106,9 +106,9 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?android:attr/selectableItemBackground"
-                app:cardBackgroundColor="#37474F"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp">
+                android:background="#37474F"
+                
+                >
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -145,10 +145,10 @@
                             android:textSize="13sp" />
                     </LinearLayout>
                 </LinearLayout>
-            </androidx.cardview.widget.CardView>
+            </FrameLayout>
 
             <!-- Preview Mode Card -->
-            <androidx.cardview.widget.CardView
+            <FrameLayout
                 android:id="@+id/preview_mode_setting"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -156,9 +156,9 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?android:attr/selectableItemBackground"
-                app:cardBackgroundColor="#37474F"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp">
+                android:background="#37474F"
+                
+                >
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -196,10 +196,10 @@
                             android:textSize="13sp" />
                     </LinearLayout>
                 </LinearLayout>
-            </androidx.cardview.widget.CardView>
+            </FrameLayout>
 
             <!-- About Card -->
-            <androidx.cardview.widget.CardView
+            <FrameLayout
                 android:id="@+id/about_setting"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -207,9 +207,9 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?android:attr/selectableItemBackground"
-                app:cardBackgroundColor="#37474F"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp">
+                android:background="#37474F"
+                
+                >
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -246,7 +246,7 @@
                             android:textSize="13sp" />
                     </LinearLayout>
                 </LinearLayout>
-            </androidx.cardview.widget.CardView>
+            </FrameLayout>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

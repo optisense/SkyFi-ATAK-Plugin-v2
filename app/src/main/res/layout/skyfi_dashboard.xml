@@ -128,7 +128,7 @@
             android:orientation="vertical">
 
             <!-- New Tasking Order Button -->
-            <androidx.cardview.widget.CardView
+            <FrameLayout
                 android:id="@+id/new_order_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -136,9 +136,9 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?android:attr/selectableItemBackground"
-                app:cardBackgroundColor="@color/skyfi_success"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="8dp">
+                android:background="@color/skyfi_success"
+                
+                >
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -175,10 +175,10 @@
                             android:textSize="14sp" />
                     </LinearLayout>
                 </LinearLayout>
-            </androidx.cardview.widget.CardView>
+            </FrameLayout>
 
             <!-- View Orders Button -->
-            <androidx.cardview.widget.CardView
+            <FrameLayout
                 android:id="@+id/view_orders_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -186,9 +186,9 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?android:attr/selectableItemBackground"
-                app:cardBackgroundColor="@color/skyfi_accent"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="8dp">
+                android:background="@color/skyfi_accent"
+                
+                >
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -225,10 +225,10 @@
                             android:textSize="14sp" />
                     </LinearLayout>
                 </LinearLayout>
-            </androidx.cardview.widget.CardView>
+            </FrameLayout>
 
             <!-- Manage AOIs Button -->
-            <androidx.cardview.widget.CardView
+            <FrameLayout
                 android:id="@+id/manage_aois_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -236,9 +236,9 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?android:attr/selectableItemBackground"
-                app:cardBackgroundColor="@color/skyfi_surface_variant"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="8dp">
+                android:background="@color/skyfi_surface_variant"
+                
+                >
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -275,10 +275,10 @@
                             android:textSize="14sp" />
                     </LinearLayout>
                 </LinearLayout>
-            </androidx.cardview.widget.CardView>
+            </FrameLayout>
 
             <!-- Settings Button -->
-            <androidx.cardview.widget.CardView
+            <FrameLayout
                 android:id="@+id/settings_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -286,9 +286,9 @@
                 android:clickable="true"
                 android:focusable="true"
                 android:foreground="?android:attr/selectableItemBackground"
-                app:cardBackgroundColor="@color/skyfi_surface"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="8dp">
+                android:background="@color/skyfi_surface"
+                
+                >
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -325,7 +325,7 @@
                             android:textSize="14sp" />
                     </LinearLayout>
                 </LinearLayout>
-            </androidx.cardview.widget.CardView>
+            </FrameLayout>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
