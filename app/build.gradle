@@ -8,9 +8,9 @@
 
 buildscript {
 
-    ext.PLUGIN_VERSION = "2.0-stable"
+    ext.PLUGIN_VERSION = "2.1"
     ext.ATAK_VERSION = "5.5.0"
-    ext.MIN_ATAK_VERSION = "5.4.0"
+    ext.MIN_ATAK_VERSION = "5.5.0"
     ext.MAX_ATAK_VERSION = "5.5.0.19"
 
     // Use official TAK.gov plugin version 2.+ for ATAK 4.2+
